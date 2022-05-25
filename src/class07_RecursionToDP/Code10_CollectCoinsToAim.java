@@ -34,10 +34,37 @@ public class Code10_CollectCoinsToAim {
         return min;
     }
 
+    private static int ways(int[] amount,int aim){
+        if (amount==null||amount.length==0||aim<0){
+            return 0;
+        }
+        return process2(amount,0,aim);
+    }
+
+    /**
+     *
+     * @param amount:
+     * @param index:
+     * @param rest:
+     * @return :返回的是有多少种方法凑成rest
+     */
+    private static int process2(int[] amount, int index, int rest) {
+        if (index==amount.length){
+            return rest==0?1:0;
+        }
+        int sum=0;
+        for (int i=0;amount[index]*i<=rest;i++){//i代表amount[index]硬币选了几个
+            int next=process2(amount, index+1, rest-amount[index]*i);
+            sum+=next;
+        }
+        return sum;
+    }
+
     public static void main(String[] args) {
-        int[] amount={1,2,3,4,5,6,7};
-        int aim=50;
-        System.out.println(minCoins(amount,aim));
+        int[] amount={2,3,5,8,7,6};
+        int aim=100;
+//        System.out.println(minCoins(amount,aim));
+        System.out.println(ways(amount,aim));
     }
 
 }
