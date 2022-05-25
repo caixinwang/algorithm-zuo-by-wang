@@ -2,7 +2,7 @@ package class07_RecursionToDP;
 
 public class Code10_CollectCoinsToAim {
 
-    /**
+    /**每一层按照特点一种硬币（index）使用了几个来进行展开
      * @param amount:硬币的面额
      * @param aim:目标
      * @return :返回的是最少的硬币数
@@ -52,6 +52,49 @@ public class Code10_CollectCoinsToAim {
             }
         }
         return dp[0][aim];
+    }
+
+    /**
+     * 用另一种递归过程来实现。每一层按照是否能够使用每一种硬币来展开，每层都只能使用一个
+     * @param amount:面额数组
+     * @param aim:要凑成的金额
+     * @return
+     */
+    private static int minCoins2(int[] amount, int aim) {
+        if (amount == null || amount.length == 0 || aim < 0) {
+            return 0;
+        }
+        return process3(amount, aim);
+    }
+
+    private static int process3(int[] amount, int rest) {
+        if (rest==0){//顶层调用收集这些1
+            return 0;
+        }
+        if (!restIsOk(amount,rest)){
+            return -1;
+        }
+        int min=Integer.MAX_VALUE;
+        for (int coin:amount){
+            if (rest-coin>=0){
+                int next=process3(amount,rest-coin);
+                if (next==-1){
+                    continue;
+                }
+                min=Math.min(min,1+process3(amount,rest-coin));
+            }
+        }
+        return min==Integer.MAX_VALUE?-1:min;
+    }
+
+    private static boolean restIsOk(int[] amount ,int rest){//至少有一个硬币可以用
+        boolean ok=false;
+        for (int coin:amount){
+            if (rest>=coin){
+                ok=true;
+            }
+        }
+        return ok;
     }
 
     private static int minCoinsDp2(int[] amount, int aim) {
@@ -152,11 +195,12 @@ public class Code10_CollectCoinsToAim {
 
 
     public static void main(String[] args) {
-        int[] amount = {2, 3, 5, 8, 7, 6};
-        int aim = 100;
+        int[] amount = {10,20,30};
+        int aim = 60;
         System.out.println(minCoins(amount, aim));
         System.out.println(minCoinsDp1(amount, aim));
         System.out.println(minCoinsDp2(amount, aim));
+        System.out.println(minCoins2(amount, aim));
         System.out.println("====================");
         System.out.println(ways(amount,aim));
         System.out.println(waysDp1(amount,aim));
