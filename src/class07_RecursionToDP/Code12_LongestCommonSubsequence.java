@@ -66,5 +66,6 @@ public class Code12_LongestCommonSubsequence {
         String b = "ab123sadjhagsdHASDJKFHSJKADHF";
         System.out.println(longestCommonSubsequence(a, b));
         System.out.println(longestCommonSubsequence2(a, b));
+        System.out.println();
     }
 }
