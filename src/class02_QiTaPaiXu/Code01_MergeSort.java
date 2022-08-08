@@ -3,37 +3,45 @@ package class02_QiTaPaiXu;
 import java.util.Arrays;
 
 public class Code01_MergeSort {
+
     private static void mergeSort(int[] arr){
-        if (arr==null||arr.length<2) 
+        if (arr==null||arr.length<2)
             return;
         mergeSort(arr,0,arr.length-1);
     }
 
     private static void mergeSort(int[] arr, int l, int r) {
-        if (l==r)//只有一个元素就是有序的，不需要排序
-            return;
+        if (l>=r)return;
         int mid=l+((r-l)>>1);
         mergeSort(arr,l,mid);
         mergeSort(arr,mid+1,r);
-        merge(arr,l,mid,r);
+        merge(arr,l,mid+1,r);
     }
 
-    private static void merge(int[] arr, int l, int mid, int r) {
-        int p1=l,p2=mid+1,i =0;
-        int[] help=new int[r-l+1];
-        while(p1<=mid&&p2<=r){
-            help[i++]=arr[p1]<arr[p2]?arr[p1++]:arr[p2++];
+    /**
+     *
+     * @param arr:在arr数组的相应下标进行merge
+     * @param ls:merge的左边数组的开始下标
+     * @param rs:merge的右边数组的开始下标
+     * @param re：merge的右边数组的结束下标
+     */
+    private static void merge(int[] arr, int ls, int rs, int re) {
+        int[] help =new int[re-ls+1];
+        int p1=ls;
+        int p2=rs;
+        int i=0;//help的辅助指针
+        while(p1<=rs-1&&p2<=re){
+            help[i++]=arr[p1]<=arr[p2]?arr[p1++]:arr[p2++];
         }
-        //出来就是p1和p2中有一个越界了
-        while(p1<=mid)
+        //出来就是p1和p2有其中一个越界了，下面的两个while循环只会进入一个
+        while(p1<=rs-1)
             help[i++]=arr[p1++];
-        while(p2<=r)
+        while(p2<=re)
             help[i++]=arr[p2++];
         for (i=0;i<help.length;i++){
-            arr[l+i]=help[i];
+            arr[ls+i]=help[i];
         }
     }
-
     // for test
     public static void comparator(int[] arr) {
         Arrays.sort(arr);
@@ -92,7 +100,7 @@ public class Code01_MergeSort {
 
     // for test
     public static void main(String[] args) {
-        int testTime = 500000;
+        int testTime = 500;
         int maxSize = 100;
         int maxValue = 100;
         boolean succeed = true;

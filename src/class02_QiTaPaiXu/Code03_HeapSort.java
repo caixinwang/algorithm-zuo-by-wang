@@ -6,32 +6,46 @@ public class Code03_HeapSort {
     private static void heapSort(int[] arr){
         if (arr==null||arr.length<2)
             return;
-//        for (int i=0;i<arr.length;i++){//把数组调整成最大堆
-//            insert(arr,i);
+//        for (int i = 0; i < arr.length; i++) {//把数组调整成最大堆
+//            insert(arr, i);
 //        }
-        for (int index=arr.length-1;index>=0;index--){//比上面注释的代码快一点
-            percDown(arr,index,arr.length);
+        for (int i=arr.length-1;i>=0;i--){//比上面注释的代码快一点，目的也是把数组调整成最大堆
+            percDown(arr,i,arr.length);
         }
-        for (int size=arr.length;size>=1;){
-            swap(arr,0,size-1);
-            size--;//注意要把最后一个排除在堆的外面
-            percDown(arr,0,size);
+        for (int i=arr.length-1;i>=1;i--){
+            swap(arr,0,i);//这边的i代表下标
+            percDown(arr,0,i);//这边的i代表大小
         }
     }
 
-    private static void percDown(int[] arr, int index, int size) {
-        int temp=arr[index];
-        int parent,child;
-        for (parent=index;parent*2+1<size;parent=child){
-            child=parent*2+1;
-            child=child+1<size&&arr[child+1]>arr[child]?child+1:child;//找到了大孩子
-            if (temp<arr[child]){
-                arr[parent]=arr[child];
-            }else {
-                break;
-            }
-        }
+    /**
+     * 从i的地方开始向上调整成最大堆。不需要知道size因为向上的边界自动是0
+     * @param arr
+     * @param i
+     */
+    private static void insert(int[] arr, int i) {
+        int child=i,temp=arr[i];
+        for (;child>0&&arr[(child-1)/2]<temp;child=(child-1)/2)
+            arr[child]=arr[(child-1)/2];
+        arr[child]=temp;
+    }
 
+    /**
+     * 从index的地方向下调整成最大堆，堆的大小为size。这里需要知道size，因为我们需要确定
+     * 向下调整时候的边界。从树的角度看，index结点下面的子树都是最大堆。
+     * @param arr
+     * @param index
+     * @param size
+     */
+    private static void percDown(int[] arr, int index, int size) {
+        int child,parent=index,temp=arr[index];
+        for (;parent*2+1<size;parent=child){//迭代如果不是直接利用本身迭代的，那么最好就用一个额外变量
+            child=parent*2+2<size&&arr[parent*2+2]>arr[parent*2+1]?parent*2+2:parent*2+1;//只有存在右孩子并且右孩子比左孩子大的时候才等于右孩子
+            if (temp<arr[child])
+                arr[parent]=arr[child];
+            else
+                break;//如果temp>=arr.[child]说明找到了，退出
+        }
         arr[parent]=temp;
     }
 
@@ -40,22 +54,6 @@ public class Code03_HeapSort {
         arr[a]=arr[b];
         arr[b]=temp;
     }
-
-    private static void insert(int[] arr, int index) {
-        int parent,child;
-        int temp=arr[index];
-        for (child=index;(child-1)/2>0;child=parent){//注意：这边的条件是出不去的，要自己判断
-            parent=(child-1)/2;
-//            if (child==0)  break;//说明到顶了。
-            if (temp>arr[parent]){
-                arr[child]=arr[parent];
-            }else{
-                break;
-            }
-        }
-        arr[child]=temp;
-    }
-
     // for test
     public static void comparator(int[] arr) {
         Arrays.sort(arr);
@@ -114,7 +112,7 @@ public class Code03_HeapSort {
 
     // for test
     public static void main(String[] args) {
-        int testTime = 5000;
+        int testTime = 10000;
         int maxSize = 100;
         int maxValue = 100;
         boolean succeed = true;
