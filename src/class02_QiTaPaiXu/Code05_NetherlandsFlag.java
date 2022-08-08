@@ -8,9 +8,9 @@ public class Code05_NetherlandsFlag {
         int less=l-1;
         int more=r+1;
         while(l<more){
-            if (arr[l]<num){
+            if (arr[l]<num){//跟左边界右边一个的数交换，然后左边界右扩，l++
                 swap(arr,++less,l++);
-            }else if (arr[l]>num){
+            }else if (arr[l]>num){//这里l不动，因为从more左边过来的数还没有被遍历过
                 swap(arr,--more,l);
             }else {
                 l++;
@@ -22,10 +22,7 @@ public class Code05_NetherlandsFlag {
     private static void twoArea(int []arr,int num){
         int less=-1;
         for (int i=0;i<arr.length;i++){
-            if (arr[i]<=num){
-                swap(arr,less+1,i);
-                less++;
-            }
+            if (arr[i]<=num) swap(arr,++less,i);
         }
     }
 

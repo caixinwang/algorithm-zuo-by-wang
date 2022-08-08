@@ -6,10 +6,15 @@ public class Code03_RadixSort {
     private static void radixSort(int [] arr){
         if (arr==null||arr.length<2)
             return;
-        int maxDigit=maxDigit(arr);
+        int maxDigit=maxDigit(arr);//得到最大的位数，例如21就是两位数
         radixSort(arr,0,arr.length-1,maxDigit);
     }
 
+    /**
+     *
+     * @param arr :找出arr数组所有数中最高位数是多少
+     * @return
+     */
     private static int maxDigit(int[] arr) {
         int max=arr[0];
         boolean flag=false;
@@ -28,7 +33,7 @@ public class Code03_RadixSort {
 
     /**
      *
-     * @param arr
+     * @param arr:数组中所有的数都要是大于等于0的数
      * @param l
      * @param r
      * @param maxDigit:确定要出入桶几次，maxDigit是arr数组中最大的位数，个位数是1，十位是2....
@@ -37,15 +42,15 @@ public class Code03_RadixSort {
         final int radix=10;
         int i,j;
         int[] help=new int[r-l+1];
-        for (i=1;i<=maxDigit;i++){//进出桶的轮数控制
+        for (i=1;i<=maxDigit;i++){//进出桶的轮数控制，i从1开始因为个位数digit是算作1
             int[] count=new int[radix];//十进制0-9
-            for (j=l;j<=r;j++){
+            for (j=l;j<=r;j++){//统计i位上各个数字出现的频率
                 count[getDigit(arr[j],i)]++;
             }
-            for (j=1;j<count.length;j++){
+            for (j=1;j<count.length;j++){//更新后count数组存放的是在arr数组中i位为j的最后一个数应该排在arr中的位置
                 count[j]+= count[j-1];
             }
-            for (j=r;j>=l;j--){
+            for (j=r;j>=l;j--){//从后往前保证排序是稳定的
                 help[--count[getDigit(arr[j],i)]]=arr[j];
             }
             for (j=0;j< help.length;j++){
@@ -54,6 +59,12 @@ public class Code03_RadixSort {
         }
     }
 
+    /**
+     *得到num第digit位的数是多少
+     * @param num
+     * @param digit:个位是1，十位是2，依次类推
+     * @return
+     */
     private static int getDigit(int num, int digit) {
         return ((int)(num/Math.pow(10,digit-1)))%10;
     }

@@ -10,6 +10,7 @@ public class Code07_CountSort {
         int count[]=new int[max+1];
         for (int a:arr)
             count[a]++;
+
         for (int i=0,j=0;i<count.length;i++){
             while(count[i]!=0){
                 arr[j++]=i;
@@ -22,6 +23,6 @@ public class Code07_CountSort {
         int[] arr={4,3,2,1,2,3,4,84,46,12,46,8,2,15,46,76};
         countSort(arr);
         for (int a:arr)
-            System.out.println(a);
+            System.out.print(a+" ");
     }
 }
