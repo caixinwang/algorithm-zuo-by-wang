@@ -3,57 +3,68 @@ package class02_QiTaPaiXu;
 import java.util.Arrays;
 
 public class Code03_HeapSort {
+
+    /**
+     * 这里arr是从0下标开始放的，所以more函数还有swap函数中所有下标都要-1
+     * @param arr
+     */
     private static void heapSort(int[] arr){
-        if (arr==null||arr.length<2)
-            return;
-//        for (int i = 0; i < arr.length; i++) {//把数组调整成最大堆
-//            insert(arr, i);
-//        }
-        for (int i=arr.length-1;i>=0;i--){//比上面注释的代码快一点，目的也是把数组调整成最大堆
-            percDown(arr,i,arr.length);
-        }
-        for (int i=arr.length-1;i>=1;i--){
-            swap(arr,0,i);//这边的i代表下标
-            percDown(arr,0,i);//这边的i代表大小
+        int N=arr.length;
+        for (int k=N/2;k>=1;k--) sink(arr,k,N);//构建堆
+        while(N>1){
+            swap(arr,1,N--);
+            sink(arr,1,N);
         }
     }
 
     /**
-     * 从i的地方开始向上调整成最大堆。不需要知道size因为向上的边界自动是0
+     * 从数组的k位置开始向上调整，也就是说k位置的值可能大于父节点
      * @param arr
-     * @param i
+     * @param k:这里的k是从下标1~N的范围。
      */
-    private static void insert(int[] arr, int i) {
-        int child=i,temp=arr[i];
-        for (;child>0&&arr[(child-1)/2]<temp;child=(child-1)/2)
-            arr[child]=arr[(child-1)/2];
-        arr[child]=temp;
+    private static void swim(int[] arr, int k) {
+        for (; k > 1 && more(arr, k, k / 2); k /= 2) swap(arr, k, k / 2);
     }
 
     /**
-     * 从index的地方向下调整成最大堆，堆的大小为size。这里需要知道size，因为我们需要确定
-     * 向下调整时候的边界。从树的角度看，index结点下面的子树都是最大堆。
+     * 从数组k位置开始向下调整，也就是说k位置的值可能小于子节点
      * @param arr
-     * @param index
-     * @param size
+     * @param k:范围从1~N
+     * @param N:堆中元素的个数
      */
-    private static void percDown(int[] arr, int index, int size) {
-        int child,parent=index,temp=arr[index];
-        for (;parent*2+1<size;parent=child){//迭代如果不是直接利用本身迭代的，那么最好就用一个额外变量
-            child=parent*2+2<size&&arr[parent*2+2]>arr[parent*2+1]?parent*2+2:parent*2+1;//只有存在右孩子并且右孩子比左孩子大的时候才等于右孩子
-            if (temp<arr[child])
-                arr[parent]=arr[child];
-            else
-                break;//如果temp>=arr.[child]说明找到了，退出
+    private static void sink(int[] arr, int k, int N) {
+        while (2 * k <= N) {
+            int j = 2 * k;//左孩子
+            if (j + 1 <= N && more(arr, j + 1, j)) j++;//右孩子存在并且比左孩子大的时候j才等于2*k+1
+            if (more(arr, k, j)) break;//如果比最大的孩子还大那么就不需要交换了
+            else swap(arr,k,j);
+            k=j;
         }
-        arr[parent]=temp;
     }
 
+    /**
+     * 所有下标的位置都-1就能对应从0位置开始放的数组
+     * @param arr
+     * @param a
+     * @param b
+     * @return
+     */
+    private static boolean more(int[] arr, int a, int b) {
+        return arr[a - 1] > arr[b - 1];
+    }
+
+    /**
+     * 所有下标的位置都-1就能对应从0位置开始放的数组
+     * @param arr
+     * @param a
+     * @param b
+     */
     private static void swap(int[] arr, int a, int b) {
-        int temp=arr[a];
-        arr[a]=arr[b];
-        arr[b]=temp;
+        int temp = arr[a - 1];
+        arr[a - 1] = arr[b - 1];
+        arr[b - 1] = temp;
     }
+
     // for test
     public static void comparator(int[] arr) {
         Arrays.sort(arr);
