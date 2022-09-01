@@ -170,6 +170,12 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
         else              return rank(hi) - rank(lo);//hi太大了就为N，跑出数组范围了
     }
 
+    /**
+     *
+     * @param lo:low
+     * @param hi:high
+     * @return
+     */
     public Iterable<Key> keys(Key lo, Key hi) {
         if (lo == null) throw new IllegalArgumentException("first argument to keys() is null");
         if (hi == null) throw new IllegalArgumentException("second argument to keys() is null");
