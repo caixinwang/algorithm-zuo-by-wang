@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Code04_PrintAllPermutations {
+public class Code04_PrintAllPermutations {// 打印一个字符串的全部排列
 
     /**
      * @param str
@@ -37,7 +37,7 @@ public class Code04_PrintAllPermutations {
             res.add(path);
             return;
         }
-        for (int i = 0; i < rest.size(); i++) {
+        for (int i = 0; i < rest.size(); i++) {//相当于yes和on做选择。只不过这里不止两种情况，这个要把整个list都循环一遍
             char c = rest.get(i);
             rest.remove(i);
             process1(rest, path + c, res);//这里我们不写成path=path+c然后里面是path。如果这样写我们也需要恢复现场
@@ -72,7 +72,6 @@ public class Code04_PrintAllPermutations {
                 swap(s,index,i);
             }
         }
-
     }
 
     private static void swap(char[] s, int a, int b) {

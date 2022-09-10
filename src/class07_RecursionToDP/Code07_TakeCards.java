@@ -106,7 +106,6 @@ public class Code07_TakeCards {
             }
         }
         return Math.max(dps[0][N - 1], dpf[0][N - 1]);
-
     }
 
 
