@@ -20,10 +20,6 @@ public class Code11_StickersToSpellWord {
             String s = minus(rest, str);
             if (s.length() != rest.length()) {//贴纸有用才递归
                 int next = process1(sticker, s);
-//                if (next==Integer.MAX_VALUE){
-//                    continue;
-//                }
-//                min=Math.min(1+next,min);
                 min = next == Integer.MAX_VALUE ? min : Math.min(min, next + 1);//和上面这段可以互换
             }
         }
@@ -31,7 +27,7 @@ public class Code11_StickersToSpellWord {
     }
 
     /**
-     * 观察到这里的减法是先转化成数组才进行的。所以自然可以想到，如果我们一开始就把贴纸和目标转化成数组的话就可以剩下转化的时间。
+     * 观察到这里的减法是先转化成数组才进行的。所以自然可以想到，如果我们一开始就把贴纸和目标转化成数组的话就可以省下转化的时间。
      *
      * @param a
      * @param b
@@ -58,6 +54,12 @@ public class Code11_StickersToSpellWord {
         return res;
     }
 
+    /**
+     * 这里不把aim也转化成char[]是因为，如果转化了就不能通过每次消除第一个字符来做贪心算法了
+     * @param stickers
+     * @param aim
+     * @return
+     */
     private static int minStickers2(String[] stickers, String aim) {
         if (stickers == null || stickers.length == 0 || aim == null) {
             return 0;
@@ -76,14 +78,10 @@ public class Code11_StickersToSpellWord {
             return 0;
         }
         char[] charsAim = aim.toCharArray();
-        int[] aimCount = new int[26];
-        for (char c : charsAim) {
-            aimCount[c - 'a']++;
-        }
         int min = Integer.MAX_VALUE;
         for (int[] charsSticker : stickers) {//每张贴纸都试
             if (charsSticker[charsAim[0] - 'a'] > 0) {//目标的第一个字符先变为0.这是一步贪心。只有能消去目标的第一个字符的贴纸我才选
-                int next = process2(stickers, minus2(charsSticker, aim));
+                int next = process2(stickers, minus2(charsSticker, aim));//改变目标，继续删除它的第一个字符
                 min = next == Integer.MAX_VALUE ? min : Math.min(min, next + 1);
             }
         }
@@ -130,14 +128,10 @@ public class Code11_StickersToSpellWord {
             return dp.get(aim);
         }
         char[] charsAim = aim.toCharArray();
-        int[] aimCount = new int[26];
-        for (char c : charsAim) {
-            aimCount[c - 'a']++;
-        }
         int min = Integer.MAX_VALUE;
         for (int[] charsSticker : stickers) {//每张贴纸都试
             if (charsSticker[charsAim[0] - 'a'] > 0) {//目标的第一个字符先变为0.这是一步贪心。只有能消去目标的第一个字符的贴纸我才选
-                int next = process2(stickers, minus2(charsSticker, aim));
+                int next = process2(stickers, minus2(charsSticker, aim));//改变目标，继续删除它的第一个字符
                 min = next == Integer.MAX_VALUE ? min : Math.min(min, next + 1);
             }
         }
@@ -147,8 +141,8 @@ public class Code11_StickersToSpellWord {
 
 
     public static void main(String[] args) {
-        String[] arr = {"abc", "aaa", "bc"};
-        String aim = "aaaacabcba";
+        String[] arr = {"abc", "aaa", "bbbbbccccc"};
+        String aim = "abcbbbbccccc";
         System.out.println(minStickers1(arr, aim));
         System.out.println(minStickers2(arr, aim));
         System.out.println(minStickers3(arr, aim));

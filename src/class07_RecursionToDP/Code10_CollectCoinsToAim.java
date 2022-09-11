@@ -16,7 +16,7 @@ public class Code10_CollectCoinsToAim {
         return process1(amount, 0, aim);
     }
 
-    /**
+    /**为什么要保证next!=MAX,因为在Java程序中MAX+i会变成负数，这是底层决定的。
      * @param amount:固定参数面额
      * @param index:index之前的硬币已经决定使用多少
      * @param rest:需要用index及其往后的硬币凑成rest
@@ -34,7 +34,7 @@ public class Code10_CollectCoinsToAim {
         return min;
     }
 
-    /**
+    /**为什么要保证next!=MAX,因为在Java程序中MAX+i会变成负数，这是底层决定的。
      * 没有优化过的动态规划，里面有for循环
      * @param amount
      * @param aim
@@ -54,7 +54,8 @@ public class Code10_CollectCoinsToAim {
                 int min = Integer.MAX_VALUE;
                 for (int i = 0; amount[index] * i <= rest; i++) {//i代表amount[index]硬币选了几个
                     int next = dp[index + 1][rest - amount[index] * i];
-                    min = Math.min(next != Integer.MAX_VALUE ? i + next : Integer.MAX_VALUE, min);
+//                    min = Math.min(next != Integer.MAX_VALUE ? i + next : Integer.MAX_VALUE, min);
+                    min=next != Integer.MAX_VALUE ?Math.min(min,i+next):min;
                 }
                 dp[index][rest] = min;
             }
@@ -62,7 +63,7 @@ public class Code10_CollectCoinsToAim {
         return dp[0][aim];
     }
 
-    /**
+    /**dp[index][rest - amount[index]] != Integer.MAX_VALUE需要保证，因为MAX+1是没有意义的
      * 优化过的动态规划，去掉了for循环
      * @param amount
      * @param aim
@@ -103,59 +104,54 @@ public class Code10_CollectCoinsToAim {
         return process3(amount, aim);
     }
 
+    /**
+     * 注意：此题是利用递归的深度来解题。并不是收集最底层的1来进行解题。所以rest==0的时候return 0.如果return 1的话边数会多一个
+     * @param amount:面值
+     * @param rest:还剩下多少钱要凑
+     * @return
+     */
     private static int process3(int[] amount, int rest) {
-        if (rest == 0) {//顶层调用收集这些1
+        if (rest == 0) {
             return 0;
         }
         if (!restIsOk(amount, rest)) {
-            return -1;
+            return Integer.MAX_VALUE;
         }
         int min = Integer.MAX_VALUE;
         for (int coin : amount) {
             if (rest - coin >= 0) {//每一层选择性展开
                 int next = process3(amount, rest - coin);
-                if (next == -1) {
-                    continue;
-                }
-                min = Math.min(min, 1 + next);
+                min = next!= Integer.MAX_VALUE?Math.min(min,next+1):min;
             }
         }
-        return min == Integer.MAX_VALUE ? -1 : min;
+        return min;
     }
 
     private static boolean restIsOk(int[] amount, int rest) {//至少有一个硬币可以用
-        boolean ok = false;
-        for (int coin : amount) {
-            if (rest >= coin) {
-                ok = true;
-            }
-        }
-        return ok;
+        for (int coin : amount)
+            if (rest >= coin) return true;
+        return false;
     }
 
     private static int minCoins2Dp(int[] amount, int aim) {
         if (amount == null || amount.length == 0 || aim < 0) {
             return 0;
         }
-        int[] dp = new int[aim + 1];
-        dp[0] = 0;
-        for (int rest = 1; rest <= aim; rest++) {
+        int []dp=new int[aim+1];//dp[rest]=0,
+        for (int rest=1;rest<aim+1;rest++){
             if (!restIsOk(amount, rest)) {
-                dp[rest]= -1;
-                continue;
+                dp[rest]= Integer.MAX_VALUE;
             }
             int min = Integer.MAX_VALUE;
             for (int coin : amount) {
-                if (rest - coin >= 0) {
-                    int next = dp[rest - coin];
-                    if (next == -1) {
-                        continue;
-                    }
-                    min = Math.min(min, 1 + dp[rest - coin]);
+                if (rest - coin >= 0) {//每一层选择性展开
+                    int next = dp[rest-coin];
+                    min = next!= Integer.MAX_VALUE?Math.min(min,next+1):min;
                 }
             }
-            dp[rest]= min == Integer.MAX_VALUE ? -1 : min;
+            dp[rest]=min;
         }
+
         return dp[aim];
     }
 
@@ -237,28 +233,28 @@ public class Code10_CollectCoinsToAim {
     }
 
     public static void main(String[] args) {
-        int[] amount = {2,3};
-        int aim = 100000;
+        int[] amount = {2};
+        int aim = 50;
 
         long start = System.currentTimeMillis();
 //        System.out.println(minCoins(amount, aim));
         long end = System.currentTimeMillis();
 //        System.out.println("cost time: " + (end - start) + "ms");
 
-        start = System.currentTimeMillis();
+//        start = System.currentTimeMillis();
 //        System.out.println(minCoinsDp1(amount, aim));
-        end = System.currentTimeMillis();
+//        end = System.currentTimeMillis();
 //        System.out.println("cost time: " + (end - start) + "ms");
 
         start = System.currentTimeMillis();
-//        System.out.println(minCoinsDp2(amount, aim));
+        System.out.println(minCoinsDp2(amount, aim));
         end = System.currentTimeMillis();
-//        System.out.println("cost time: " + (end - start) + "ms");
+        System.out.println("cost time: " + (end - start) + "ms");
 
         start = System.currentTimeMillis();
-//        System.out.println(minCoins2(amount, aim));
+        System.out.println(minCoins2(amount, aim));
         end = System.currentTimeMillis();
-//        System.out.println("cost time: " + (end - start) + "ms");
+        System.out.println("cost time: " + (end - start) + "ms");
 
         start = System.currentTimeMillis();
         System.out.println(minCoins2Dp(amount, aim));

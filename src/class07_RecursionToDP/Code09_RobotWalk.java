@@ -2,14 +2,14 @@ package class07_RecursionToDP;
 
 public class Code09_RobotWalk {
 
-    private static int ways(int n, int start, int end, int k){
-        if (n<=1||start>n-1||start<0||end>n-1||end<0||k<0){
+    private static int ways(int n, int start, int end, int k){//给用户的接口是从1~N
+        if (n<2||start>n||start<1||end>n||end<1||k<=0){
             return 0;
         }
-        return process1(n,start,end,k);
+        return process1(n,start-1,end-1,k);//转化为我们熟悉的数组下标的表示方法
     }
 
-    private static int process1(int n, int cur, int end, int rest) {
+    private static int process1(int n, int cur, int end, int rest) {//这个方法里面就是从0开始标号
         if (rest==0){//base case，上层收集这些1
             return cur==end?1:0;
         }
@@ -19,7 +19,7 @@ public class Code09_RobotWalk {
     }
 
     private static int ways2(int n, int start, int end, int k){
-        if (n<=1||start>n-1||start<0||end>n-1||end<0||k<0){
+        if (n<2||start>n||start<1||end>n||end<1||k<=0){
             return 0;
         }
         int [][]dp=new int[n][k+1];//0~n-1  0~k
@@ -28,7 +28,7 @@ public class Code09_RobotWalk {
                 dp[i][j]=-1;
             }
         }
-        return process2(n,start,end,k,dp);
+        return process2(n,start-1,end-1,k,dp);
 
 
     }
@@ -47,7 +47,14 @@ public class Code09_RobotWalk {
     }
 
     private static int ways3(int n, int start, int end, int k){
-        if (n<=1||start>n-1||start<0||end>n-1||end<0||k<0){
+        if (n<2||start>n||start<1||end>n||end<1||k<=0){
+            return 0;
+        }
+        return process3(n,start-1,end -1,k);
+    }
+
+    private static int process3(int n, int start, int end, int k){
+        if (n<2||start>n||start<1||end>n||end<1||k<=0){
             return 0;
         }
         int dp[][]=new int[n][k+1];//[cur][rest]
@@ -62,10 +69,32 @@ public class Code09_RobotWalk {
         return dp[start][k];
     }
 
+    private static void testMethod(){
+        long l = System.currentTimeMillis();
+        for (int i = 0; i < 5000000; i++) {
+            ways(9,2,4,10);
+        }
+        long l2= System.currentTimeMillis()-l;
+        System.out.println(ways(9,2,4,10)+" 运行时间为"+l2/1000+"s");
+
+        l= System.currentTimeMillis();
+        for (int i = 0; i < 5000000; i++) {
+            ways2(9,2,4,10);
+        }
+        l2= System.currentTimeMillis()-l;
+        System.out.println(ways(9,2,4,10)+" 运行时间为"+l2/1000+"s");
+
+        l= System.currentTimeMillis();
+        for (int i = 0; i < 5000000; i++) {
+            ways3(9,2,4,10);
+        }
+        l2= System.currentTimeMillis()-l;
+        System.out.println(ways(9,2,4,10)+" 运行时间为"+l2/1000+"s");
+
+    }
+
     public static void main(String[] args) {
-        System.out.println(ways(5, 2, 4, 6));
-        System.out.println(ways2(5, 2, 4, 6));
-        System.out.println(ways3(5, 2, 4, 6));
+        testMethod();
     }
 
 }
