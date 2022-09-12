@@ -22,8 +22,9 @@ public class Code01_SlidingWindowMaxArray {
             while (!qmax.isEmpty()&&arr[qmax.peekLast()]<=arr[R]){//把队列里面值比R小的先踢出去
                 //比不过R就从尾巴出去，位置留给R
                 qmax.pollLast();
-            }
+            }//while循环还有下面的add合起来是一个加数的过程
             qmax.addLast(R);
+
             if (R>=w-1){//从窗口扩大到w开始之后。不仅要进去一个，还要过期一个。在过期一个之前顺便得到一个结果
                 res[index++]=arr[qmax.peekFirst()];//先得到一个结果再去过期一个
                 if (R-w+1==qmax.peekFirst()){//过期操作。R-w+1是过期的位置，去判断当前队头是不是过期了！
