@@ -19,11 +19,11 @@ public class Code12_LongestCommonSubsequence {
      * @return :返回a的0~index1的字符串和b的0~index2的字符串的最大公共子序列长度
      */
     private static int process1(char[] a, int index1, char[] b, int index2) {
-        if (index1 == 0 && index2 == 0) {
+        if (index1 == 0 && index2 == 0) {//二维递归的base case
             return a[index1] == b[index2] ? 1 : 0;
-        } else if (index1 == 0) {
+        } else if (index1 == 0) {//base case
             return a[index1] == b[index2] ? 1 : process1(a, index1, b, index2 - 1);
-        } else if (index2 == 0) {
+        } else if (index2 == 0) {//base case
             return a[index1] == b[index2] ? 1 : process1(a, index1 - 1, b, index2);
         } else {//至少都有两个字符
             //p1这里一定有一个前提条件就是a[index1]==b[index2]

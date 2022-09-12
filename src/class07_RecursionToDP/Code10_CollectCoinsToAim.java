@@ -29,7 +29,7 @@ public class Code10_CollectCoinsToAim {
         int min = Integer.MAX_VALUE;
         for (int i = 0; amount[index] * i <= rest; i++) {//i代表amount[index]硬币选了几个
             int next = process1(amount, index + 1, rest - amount[index] * i);
-            min = Math.min(next != Integer.MAX_VALUE ? i + next : Integer.MAX_VALUE, min);
+            min=next != Integer.MAX_VALUE ?Math.min(min,i+next):min;
         }
         return min;
     }
@@ -54,7 +54,6 @@ public class Code10_CollectCoinsToAim {
                 int min = Integer.MAX_VALUE;
                 for (int i = 0; amount[index] * i <= rest; i++) {//i代表amount[index]硬币选了几个
                     int next = dp[index + 1][rest - amount[index] * i];
-//                    min = Math.min(next != Integer.MAX_VALUE ? i + next : Integer.MAX_VALUE, min);
                     min=next != Integer.MAX_VALUE ?Math.min(min,i+next):min;
                 }
                 dp[index][rest] = min;
@@ -114,9 +113,9 @@ public class Code10_CollectCoinsToAim {
         if (rest == 0) {
             return 0;
         }
-        if (!restIsOk(amount, rest)) {
-            return Integer.MAX_VALUE;
-        }
+//        if (!restIsOk(amount, rest)) {//这段代码可以省略，因为这里的min进去之后如果还是MAX也就代表着现在没有合适的硬币了
+//            return Integer.MAX_VALUE;
+//        }
         int min = Integer.MAX_VALUE;
         for (int coin : amount) {
             if (rest - coin >= 0) {//每一层选择性展开
