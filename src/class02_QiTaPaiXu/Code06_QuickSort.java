@@ -30,12 +30,12 @@ public class Code06_QuickSort {
     /**
      * 荷兰国旗问题---三向切分
      * @param arr:将arr数组三项切分，切分的元素是arr[r]
-     * @param l:
-     * @param r:
+     * @param l:下标
+     * @param r:下标
      * @return :返回两个数a,b。arr[a]~arr[b]相等。
      */
     private static int[] partition(int[] arr, int l, int r) {
-        int less = l - 1;//arr[0]~arr[less]是小于切分元素的，开区间
+        int less = l - 1;//arr[0]~arr[less]是小于切分元素的，闭区间
         int more = r;//设置为r而不是r+1是因为r位置为我们的切分元素。arr[more]~arr[N-1]是大于切分元素的
         while (l < more) {
             if (arr[l] < arr[r]) {
@@ -85,8 +85,8 @@ public class Code06_QuickSort {
         int p1=l;//从while出来的时候l-1~p1-1都是小于等于num的，同时p1指向的是>=num的元素。
         int p2=r+1;//从while出来的时候p2+1~r都是大于等于num的，同时p2指向的是<=num的元素。
         while(true){
-            while(arr[++p1]<num) if (p1==r) break;//如果if条件成立，说明数组中所有的数都比num小
-            while(arr[--p2]>num) if (p2==l) break;//这里的if冗余
+            while(arr[++p1]<num) if (p1==r) break;//防止越界。如果if条件成立，说明数组中所有的数都比num小
+            while(arr[--p2]>num) if (p2==l) break;//这里的if冗余，因为arr[l]!>arr[l]
             if (p1>=p2){//两指针交叉，没有交换p1和p2的必要了，p2此时指向的就是<=num的元素，直接与arr[l]交换即可
                 break;
             }else {
