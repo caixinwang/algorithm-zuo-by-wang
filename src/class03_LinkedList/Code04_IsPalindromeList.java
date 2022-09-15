@@ -31,9 +31,9 @@ public class Code04_IsPalindromeList {//判断一个链表是不是回文序列
     private static boolean isPalindrome2(Node head){
         if (head==null||head.next==null)// 确定至少有两个元素
             return true;
-        Node n1=head.next;//慢指针设置在1位置可以保证快指针遍历结束后慢指针在对称轴的右边
-        Node n2=head;//快指针在0位置,控制快指针不跳出链表，也就是要在[0-N]范围上
-        while(n2.next!=null&&n2.next.next!=null){
+        Node n1=head.next;//定制快慢指针返回中和中右(2,2)
+        Node n2=head.next;
+        while(n2.next!=null&&n2.next.next!=null){//返回中和右中
             n2=n2.next.next;
             n1=n1.next;
         }
@@ -52,46 +52,48 @@ public class Code04_IsPalindromeList {//判断一个链表是不是回文序列
     }
 
     private static boolean isPalindrome3(Node head){
-        if (head==null||head.next==null)
+        if (head==null||head.next==null)//0~1个结点直接返回true
             return true;
-        Node n1=head;//快
-        Node n2= head.next;//慢,快指针结束慢指针指在对称轴右边的位置
-        while(n1.next!=null&&n1.next.next!=null){
-            n1=n1.next.next;
-            n2=n2.next;
+        Node fast=head.next;
+        Node slow= head.next;//返回中和中右(2,2)
+        while(fast.next!=null&&fast.next.next!=null){
+            fast=fast.next.next;
+            slow=slow.next;
         }
-        n1=null;//作为pre
-        Node n3;//作为next
-        while(n2!=null){
-            n3=n2.next;
-            n2.next=n1;
-            n1=n2;
-            n2=n3;
-        }
-        //退出循环n1现在是尾结点，而head是头节点
+        Node tail=reverse(slow);//从尾巴出发，副作用为翻转slow以后的链表
+        Node tail2=tail;
+        Node h=head;//从头出发
         boolean res=true;
-        n2=n1;//保存尾结点
-        n3=head;//n3充当左边链表的头
-        while(n1!=null){//从n1这里开始因为右边比较短
-            if (n1.value!= n3.value){
+        while(tail!=null){//从n1这里开始因为偶数的时候右边比较短
+            if (tail.value!= h.value){
                 res= false;
                 break;
             }
-            n1=n1.next;
-            n3=n3.next;
+            tail=tail.next;
+            h=h.next;
         }
-
         //恢复链表
-        n1=null;//pre
-        while(n2!=null){
-            n3=n2.next;
-            n2.next=n1;
-            n1=n2;
-            n2=n3;
-        }
+        reverse(tail2);
         return res;
-
     }
+
+    /**
+     * 翻转以head为头节点的链表，并最终返回新的链表的头节点
+     * @param head
+     * @return
+     */
+    private static Node reverse(Node head){
+        if (head==null||head.next==null) return head;
+        Node pre=null,next=null;
+        while(head!=null){
+            next=head.next;
+            head.next=pre;
+            pre=head;
+            head=next;
+        }
+        return pre;
+    }
+
 
     public static void printLinkedList(Node node) {
         System.out.print("Linked List: ");
