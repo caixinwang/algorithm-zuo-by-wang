@@ -19,10 +19,10 @@ public class Code03_PrintCommonPart {
         System.out.print("common part is ");
         while(head1!=null&&head2!=null){
             if (head1.value<head2.value)
-                head1= head1.next;
+                head1= head1.next;//谁小谁动
             else if (head2.value< head1.value)
-                head2= head2.next;
-            else {
+                head2= head2.next;//谁小谁动
+            else {//相等一起动
                 System.out.print(head1.value+" ");
                 head1= head1.next;
                 head2= head2.next;

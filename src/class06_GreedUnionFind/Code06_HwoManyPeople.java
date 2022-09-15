@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-public class Code_06HwoManyPeople {
+public class Code06_HwoManyPeople {
 
     public static class Person {
         public String a;

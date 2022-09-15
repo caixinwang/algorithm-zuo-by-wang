@@ -2,7 +2,7 @@ package class03_LinkedList;
 
 import java.util.Stack;
 
-public class Code04_IsPalindromeList {
+public class Code04_IsPalindromeList {//判断一个链表是不是回文序列
 
     public static class Node {
         public int value;
@@ -13,14 +13,14 @@ public class Code04_IsPalindromeList {
         }
     }
 
-    private static boolean isPalindrome1(Node head){
+    private static boolean isPalindrome1(Node head){//暴力解法。利用栈逆序
         Stack<Node> stack=new Stack<>();
         Node temp=head;
-        while(temp!=null){
+        while(temp!=null){//压栈实现逆序
             stack.push(temp);
             temp= temp.next;
         }
-        while(!stack.isEmpty()){
+        while(!stack.isEmpty()){//从栈中弹出比对
             if (stack.pop().value!=head.value)
                 return false;
             head= head.next;
