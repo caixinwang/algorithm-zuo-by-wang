@@ -2,7 +2,7 @@ package Class11_KMPandManacher;
 
 public class Code02_Manacher {
 
-    /**
+    /** 回文半径的大小.12321回文半径为2,4-2=2。
      * pArr[i] = i<=R ? Math.min(pArr[2 * C - i], R - i) : 0;这一句代表了4个分支Parr应该赋值的Parr
      * 1. 当i在R的外面的时候，parr[i]就初始化为0。因为自己到自己的距离为0.
      * 2. 当i在R里面，就可以利用parr数组进行加速，也就是直接把parr[i]设置为parr[i']的值，但是如果i+parr[i']大于R那么就设置为R-i。
@@ -11,11 +11,9 @@ public class Code02_Manacher {
      */
     public static int manacher(String s) {
         if (s == null || s.length() == 0) return 0;
-        // "12132" -> "#1#2#1#3#2#"
-        char[] str = manacherString(s);
-        // 回文半径的大小.12321回文半径为2,4-2=2。
-        int[] parr = new int[str.length];
-        int C = -1;
+        char[] str = manacherString(s);//垫上#
+        int[] parr = new int[str.length];//回文半径数组，用于加速过程
+        int C = -1;//和R对应的中心位置
         int R = -1;//最后一个成功的位置
         int max = Integer.MIN_VALUE;
         for (int i = 0; i < str.length; i++) {
@@ -24,7 +22,7 @@ public class Code02_Manacher {
                 if (str[i + parr[i]+1] == str[i - parr[i]-1])
                     parr[i]++;
                 else {
-                    break;
+                    break;//情况23一进while就会从这里出去。可以证明他们不可能再扩了
                 }
             }
             if (i + parr[i] > R) {
