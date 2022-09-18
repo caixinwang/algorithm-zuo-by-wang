@@ -35,24 +35,24 @@ public class Code06_CopyListWithRandom {
             return null;
         Node p=head;
         Node next;
-        while(p!=null){
+        while(p!=null){//在每一个老结点的后面插上对应的新结点，插入完成以后链表的长度一定为偶数，2N
             next=p.next;//把p的后继存起来，后面要迭代
             p.next=new Node(p.value);
-            p.next.next=next;
+            p.next.next=next;//让新节点指向老结点的下一个
             p=next;
         }
         p=head;
         while(p!=null){//不涉及到破坏next链，一个p变量就可以搞定
-            p.next.rand=p.rand==null?null:p.rand.next;
-            p=p.next.next;//偶数个节点数，不会报错
+            p.next.rand=p.rand==null?null:p.rand.next;//p.next代表新结点x，老结点的random指向另一个老结点y，y.next就是对应的新结点
+            p=p.next.next;//下一个老结点。偶数个节点数，不会报错
         }
         p=head;
         Node p2,res;
         res=head.next;//保存新链头节点
-        while(p!=null){
-            next=p.next.next;//偶数个结点跳不出去
-            p2=p.next;
-            p.next=next;
+        while(p!=null){//分离新老结点。奇偶结点分离
+            next=p.next.next;//老结点。偶数个结点跳不出去
+            p2=p.next;//新结点
+            p.next=next;//老结点和老结点相连
             p2.next=next==null?null:next.next;
             p=next;
         }

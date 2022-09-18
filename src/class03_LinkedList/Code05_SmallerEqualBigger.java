@@ -1,5 +1,7 @@
 package class03_LinkedList;
 
+import java.util.ArrayList;
+
 public class Code05_SmallerEqualBigger {
 
     public static class Node {
@@ -25,7 +27,6 @@ public class Code05_SmallerEqualBigger {
             arr[i++]=temp;
             temp=temp.next;
         }
-        partition(arr,pivot);
         for (i=0;i<arr.length-1;i++){
             arr[i].next=arr[i+1];
         }
@@ -54,52 +55,57 @@ public class Code05_SmallerEqualBigger {
         arr[b]=temp;
     }
 
+    /**
+     *思路：创建三个单向链表，分别用来存储小于、等于、大于的。这样一来就要三个头节点，但是为了速度更快，不需要每次都遍历到尾结点，所以
+     *     我们对于每个单向链表还额外增加了一个尾结点。这样一来最后拼接三个链表就很容易，而且中途增加新节点也很容易。创建完了三个单链表
+     *     以后，我们从头遍历链表，每次孤立一个结点。孤立一个结点指的是让这个结点和后面的结点脱离联系，也就是让这个结点的next指针置为null
+     * @param head:head为头的单向链表
+     * @param pivot:以pivot作为划分值，把单向链表划分成三段
+     * @return
+     */
     public static Node listPartition2(Node head, int pivot) {
-        Node ss=null;
-        Node se=null;
-        Node es=null;
-        Node ee=null;
-        Node bs=null;
-        Node be=null;
+        Node ss=null,se=null,es=null,ee=null,bs=null,be=null;
         while(head!=null){
             Node next=head.next;
-            head.next=null;//如果不置空，可能会导大于链的最后一个结点和某一个其它结点连接形成闭环，导致无限循环
+            head.next=null;//孤立这个结点。如果不置空，可能会导致大于链的最后一个结点和某一个其它结点连接形成闭环，导致无限循环。
             if (head.value<pivot){
-                if (ss==null){
-                    ss=head;
-                    se=head;
-                }else{
-                    se.next=head;
-                    se=head;
-                }
+                add(ss,se,head);//重新写成一个方法
             }else if (head.value==pivot){
-                if (es==null){
-                    es=head;
-                    ee=head;
-                }else{
-                    ee.next=head;
-                    ee=head;
-                }
+                add(es,ee,head);
             }else {
-                if (bs==null){
-                    bs=head;
-                    be=head;
-                }else {
-                    be.next=head;
-                    be=head;
-                }
+                add(bs,be,head);
             }
             head=next;
         }
-        //开始连接这三个链
-        if (se!=null){//要对尾巴进行判断
-            se.next=es;
-            ee=ee==null?se:ee;
+        //开始连接这三个链。如果小于链有东西，就让小于链的末尾连接等于链，然后更新小于链的尾结点，因为最后我们是返回小于链、等于链，大于链
+        //中第一个非空链的头节点。
+        if (ss!=null){//小于链有东西，最后肯定返回小于链---我们在小于链的我们串上东西
+            se.next=es;//小于链末尾连上等于链的头。
+            se=es==null?se:ee;//如果等于链为空小于链的尾就不更新，而如果等于链不为空就换成等于链的尾
+            se.next=bs;//接着连上大于链的头，现在可以返回了
+            return ss;
         }
-        if (ee!=null){//都是对尾巴进行判断，因为是尾巴的next
+        if (es!=null){//潜台词是小于链已经为空了，最后直接返回等于链的头
             ee.next=bs;
+            return es;
         }
-        return ss!=null?ss:es!=null?es:bs;
+        return bs;
+    }
+
+    /**
+     *
+     * @param head:
+     * @param tail:
+     * @param val:将val结点加到以head为头，tail为尾的单链表上
+     */
+    private static void add(Node head,Node tail,Node val){
+        if (head==null){//蕴含着tail也为null
+            head=val;
+            tail=val;
+        }else {
+            tail.next=val;
+            tail=tail.next;
+        }
     }
 
     public static void printLinkedList(Node node) {

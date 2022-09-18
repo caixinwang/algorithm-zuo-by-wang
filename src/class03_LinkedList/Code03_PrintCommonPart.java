@@ -1,6 +1,6 @@
 package class03_LinkedList;
 
-public class Code03_PrintCommonPart {
+public class Code03_PrintCommonPart {//打印两个链表的相同值
 
     public static class Node {
         public int value;
