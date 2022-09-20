@@ -2,7 +2,8 @@ package class03_LinkedList;
 
 import java.util.HashMap;
 
-public class Code06_CopyListWithRandom {
+public class Code06_CopyListWithRandom {//复制一个Node带有Random域的单链表
+
     public static class Node {
         public int value;
         public Node next;

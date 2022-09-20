@@ -1,6 +1,6 @@
 package class03_LinkedList;
 
-public class Code07_FindFirstIntersectNode {
+public class Code07_FindFirstIntersectNode {//找到两个链表第一个相交的结点
 
     public static class Node {
         public int value;
@@ -15,10 +15,9 @@ public class Code07_FindFirstIntersectNode {
      * 传进来两个链表要判断他们两个是否相交，由于这两个链表可能是循环链表也可能不是。所以我们要写一个函数来判断
      * 他们的类型。由于无环链表只能和无环链表相交，循环链表只能和循环链表相交，其中无环链表和循环链表不可能相交。
      * 所以我们这里就分成两种情况就行。
-     *
-     * @param head1
-     * @param head2
-     * @return
+     * @param head1:链表1的头节点
+     * @param head2:链表2的头节点
+     * @return :
      */
     public static Node getIntersectNode(Node head1, Node head2) {
         Node in1=getLoopNode(head1);//入环结点1
