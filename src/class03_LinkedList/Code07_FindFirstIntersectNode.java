@@ -32,23 +32,23 @@ public class Code07_FindFirstIntersectNode {
         }
     }
 
+    /**
+     * @param head:判断以head为头的链表是不是循环链表
+     * @return :是循环链表返回第一个入环结点，否则返回null
+     */
     public static Node getLoopNode(Node head) {
-        if (head==null||head.next==null){
+        if (head==null||head.next==null){//可能有单节点自己循环,head.next==head
             return null;
         }
-        Node p1=head.next.next;//快
+        Node p1=head.next.next;//快，这里不能设置成head，因为有p1与p2的判断
         Node p2=head.next;//慢，都从下标为0的位置开始
-        while(p1.next!=null&&p1.next.next!=null){
-            if (p1==p2) {
-                break;//说明是循环链表
-            }
+        while(p1.next!=null&&p1.next.next!=null&&p1!=p2){//要么是到头了，要么是相交了
             p1=p1.next.next;
             p2=p2.next;
         }
-        //判断是从哪一个分支出来
-        if (p1==p2){
-            p1=head;
-            while(p1!=p2){
+        if (p1==p2){//是循环链表
+            p1=head;//p1从头开始跑
+            while(p1!=p2){//p1、p2一人走一步，相遇的结点就是第一个入环结点
                 p1=p1.next;
                 p2=p2.next;
             }
@@ -58,14 +58,19 @@ public class Code07_FindFirstIntersectNode {
         }
     }
 
+    /**
+     * @param head1:链表1，不是循环链表
+     * @param head2:链表2，不是循环链表
+     * @return :如果两个都是非循环链表，如果相交返回相交结点，如果不相交，返回null
+     */
     public static Node noLoop(Node head1, Node head2) {
         if (head1==null||head2==null){
             return null;
         }
         Node p1=head1;
         Node p2=head2;
-        int len=0;
-        while(p1.next!=null){
+        int len=0;//最终len代表两链表相差的结点个数。len并不是链表长度，他比长度少1
+        while(p1.next!=null){//p.next!=null的形式是返回最后一个节点
             len++;
             p1=p1.next;
         }
@@ -76,7 +81,7 @@ public class Code07_FindFirstIntersectNode {
         if (p1==p2){//说明有相交
             p1=head1;
             p2=head2;
-            if(len>0){
+            if(len>0){//让长的链表多走相差的节点数
                 while(len>0){
                     p1=p1.next;
                     len--;
@@ -87,7 +92,7 @@ public class Code07_FindFirstIntersectNode {
                     len++;
                 }
             }
-            while(p1!=p2){
+            while(p1!=p2){//p1和p2相遇的地方一定是相交结点
                 p1=p1.next;
                 p2=p2.next;
             }
@@ -95,31 +100,28 @@ public class Code07_FindFirstIntersectNode {
         }else{
             return null;
         }
-
     }
 
+    /**
+     *
+     * @param head1:链表1的头节点，是循环链表
+     * @param loop1:链表1的第一个入环结点
+     * @param head2:链表2的头节点，是循环链表
+     * @param loop2:链表2的第一个入环结点
+     * @return ：如果两链表有相交则返回相交结点，否则返回null。
+     */
     public static Node bothLoop(Node head1, Node loop1, Node head2, Node loop2) {
         Node p1=loop1;
         Node p2=loop2;
         if (p1==p2){//转化成两个单链的情况
-            //把后面循环的部分拆掉最后再复原
-            p1=loop1.next;
-            p2=loop2.next;
-            loop1.next=null;
-            loop2.next=null;
-            //调用之前写的函数算出res的值
-            Node res=null;
-            res=noLoop(head1,head2);
-            //恢复后面的循环部分
-            loop1.next=p1;
-            loop2.next=p2;
+            p2=p1.next;//记住p1的后继结点，方便后面复原
+            p1.next=null;//把循环的部分拆掉最后再复原
+            Node res=noLoop(head1,head2);
+            p1.next=p2;//恢复后面的循环部分
             return res;
         }else{
             p1=loop1.next;
-            while(p1!=loop1){
-                if (p1==loop2){
-                    break;
-                }
+            while(p1!=loop1&&p1!=loop2){
                 p1=p1.next;
             }
             if (p1==loop2){//说明相交了

@@ -1,6 +1,6 @@
 package class03_LinkedList;
 
-public class Code02_ReverseList {//反转链表
+public class Code01_ReverseList {//反转链表
 
     private static class Node {//单向链表
         public int value;
