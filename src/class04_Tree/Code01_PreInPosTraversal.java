@@ -16,35 +16,36 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
     }
 
     public static void preOrderRecur(Node head) {
-        if (head==null)
-            return;
+        if (head==null) return;
         System.out.print(head.value+" ");
         preOrderRecur(head.left);
         preOrderRecur(head.right);
     }
 
     public static void inOrderRecur(Node head) {
-        if (head==null)
-            return;
+        if (head==null) return;
         inOrderRecur(head.left);
         System.out.print(head.value+" ");
         inOrderRecur(head.right);
     }
 
     public static void posOrderRecur(Node head) {
-        if (head==null)
-            return;
+        if (head==null) return;
         posOrderRecur(head.left);
         posOrderRecur(head.right);
         System.out.print(head.value+" ");
     }
 
+    /**
+     * 思路：和下面这种实现不同，这种实现一个结点，特别是head的左节点，刚进栈就要出来了，也就是说只来到每个结点一次。没有打印时机的选择问题，只能
+     * 弹出的时候打印.栈的作用只是维持弹出结点的顺序。保证是按左边界分解的弹出顺序。
+     * @param head:先序打印二叉树，非递归实现
+     */
     public static void preOrderUnRecur(Node head){
         System.out.print("preorder unrecur:");
-        if (head==null)
-            return;
+        if (head==null) return;
         Stack<Node> stack =new Stack<>();
-        stack.push(head);
+        stack.push(head);//头先进去
         while(!stack.isEmpty()){
             head=stack.pop();
             System.out.print(head.value+" ");
@@ -58,22 +59,31 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
         System.out.println();
     }
 
-    public static void preOrderUnRecur2(Node head){//ZheJiang
-        if (head==null)
-            return;
+    /**
+     * 思路：把整棵二叉树按照左边界来分解。实际上就是模拟递归一直往左边走的过程，控制在第一次遇到一个结点的时候打印
+     * 这种方法的唯一劣势是无法第三次来到一个结点，也就是这种方法没有办法实现后序遍历
+     * @param head:以先序打印以head为头的二叉树
+     */
+    public static void preOrderUnRecur2(Node head){//浙大的实现
+        System.out.print("preorder unrecur:");
+        if (head==null) return;
         Stack<Node> stack =new Stack<>();
         while(!stack.isEmpty()||head!=null){
             while(head!=null){
-                stack.push(head);
-                System.out.print(head.value+" ");
-                head= head.left;
+                stack.push(head);//第一次来到一个结点
+                System.out.print(head.value+" ");//第一次来到一个结点的时候就打印
+                head= head.left;//沿着左边界分解一棵树
             }
-            head= stack.pop();
-            head=head.right;
+            head= stack.pop();//第二次来到一个结点
+            head=head.right;//往右边走
         }
         System.out.println();
     }
 
+    /**
+     * 把整棵二叉树按照左边界来分解。实际上就是模拟递归一直往左边走的过程，控制在第一次遇到一个结点的时候打印
+     * @param head:以中序打印以head为头的二叉树
+     */
     public static void inOrderUnRecur(Node head) {
         if (head==null)
             return;
@@ -91,10 +101,13 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
         System.out.println();
     }
 
+    /**
+     *
+     * @param head:利用先序遍历的根左右，我们可以把中序遍历改成根右左。然后逆序一下就变成了左右根
+     */
     public static void posOrderUnRecur1(Node head){
         System.out.print("postorder unrecur:");
-        if (head==null)
-            return;
+        if (head==null) return;
         Stack<Node> stack1=new Stack<>();
         Stack<Node> stack2=new Stack<>();
         while(head!=null||!stack1.isEmpty()){
@@ -113,26 +126,16 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
     }
 
     /**
-     * 这里利用head来跟踪刚才打印过的结点，这样就能知道当前栈顶的结点的左子树处理完了没，右子树处理完了没。如果处理完了那么
-     * 会打印孩子，这时候head也就跟踪了孩子。如果p.left!=head说明p的左孩子没处理过（注意这里p.right!=head因为右树处理完了就
-     * 代表左孩子肯定处理完了），左孩子没有处理过那么我就去处理左孩子，就把左孩子压栈。如果p.right!=head那么就说明右孩子没有处理
-     * 右孩子进栈。如果发现左右孩子都处理完了，那么我就打印自己。
-     *
-     * 代码有另外一种写法，就是先让左边界一条线压栈，然后打印，然后设置head。我们这里就是让head处理不会干扰我们的位置，
-     * 这里“干扰”的含义就是不会干扰我们走逻辑分支，我们就是首先一条线左边界压栈了。head一开始是没有意义的，只要不干扰
-     * 走逻辑分支1就行了。
-     *
      * 核心思想就是利用head来标记现在栈顶的结点的子过程有没有完毕。
      * @param head
      */
     public static void posOrderUnRecur2(Node head) {
-        if (head==null)
-            return;
+        if (head==null) return;
         System.out.print("postorder unrecur :");
         Stack<Node> stack=new Stack<>();
         stack.push(head);
         Node p=null;
-        while(!stack.isEmpty()){
+        while(!stack.isEmpty()){//一直往下走，先走左边后走右边，最后一定会来到一个叶子结点，打印叶子结点并且让head指向这个叶子结点。
             p= stack.peek();//瞥一眼栈顶，通过下面的逻辑分支来判断是三种情况的哪一种
             if (p.left!=null&&p.left!=head&&p.right!=head){//说明左子树还没有处理
                 stack.push(p.left);
@@ -199,6 +202,7 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
         // unrecursive
         System.out.println("============unrecursive=============");
         preOrderUnRecur(head);
+        preOrderUnRecur2(head);
         inOrderUnRecur(head);
         posOrderUnRecur1(head);
         posOrderUnRecur2(head);

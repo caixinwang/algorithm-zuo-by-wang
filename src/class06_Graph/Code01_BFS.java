@@ -3,7 +3,7 @@ package class06_Graph;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-public class Code1_BFS {
+public class Code01_BFS {
 
     public static void bfs(Node node){
         if (node==null){

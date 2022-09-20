@@ -18,12 +18,11 @@ public class Code03_TreeMaxWidth {
 
 	/**
 	 * 使用hashmap来实现最大宽度的求解
-	 * @param head
-	 * @return
+	 * @param head:根节点
+	 * @return :返回树所有层中结点数最多的层有多少个结点
 	 */
 	public static int getMaxWidth(Node head) {
-		if (head==null)
-			return 0;
+		if (head==null) return 0;
 		int max=-1;
 		int curLay=1;
 		int cur=0;
@@ -33,6 +32,13 @@ public class Code03_TreeMaxWidth {
 		hashMap.put(head,1);
 		while(!queue.isEmpty()){
 			head=queue.poll();
+			if (hashMap.get(head)!=curLay){//这段代码一定要在前面，因为要先确定当前结点的层数。后面存进map才不会错！
+				max=Math.max(max,cur);
+				curLay++;
+				cur=1;
+			}else{
+				cur++;
+			}
 			if (head.left!=null){
 				queue.add(head.left);
 				hashMap.put(head.left,curLay+1);
@@ -41,15 +47,9 @@ public class Code03_TreeMaxWidth {
 				queue.add(head.right);
 				hashMap.put(head.right,curLay+1);
 			}
-			if (hashMap.get(head)!=curLay){
-				max=Math.max(max,cur);
-				curLay++;
-				cur=1;
-			}else{
-				cur++;
-			}
 		}
-		return max;
+		max=Math.max(max,cur);
+		return cur;
 	}
 
 	/**
@@ -69,14 +69,14 @@ public class Code03_TreeMaxWidth {
 			cur=queue.poll();//每次弹出一个节点，把他的左右孩子入队（如果有的话）
 			if (cur.left!=null){
 				queue.add(cur.left);
-				nextLevel= curLevel.left;//nextLevel的值就是最新入队的结点的值
+				nextLevel= cur.left;//nextLevel的值就是最新入队的结点的值
 			}
 			if (cur.right!=null){
 				queue.add(cur.right);
-				nextLevel=curLevel.right;
+				nextLevel=cur.right;
 			}
 			curNum++;//cur的左右孩子都已经入队了之后把cur统计进当前层的结点总数
-			if (cur==curLevel){//说明已经到大了当前层的最后一个结点了,结算max，并且迭代curlevel和nextlevel
+			if (cur==curLevel){//说明已经到了当前层的最后一个结点了,结算max，并且迭代curlevel和nextlevel
 				max=Math.max(max,curNum);
 				curNum=0;//归零
 				curLevel=nextLevel;
@@ -86,6 +86,17 @@ public class Code03_TreeMaxWidth {
 		return max;
 	}
 
+	private static Node generateTree(){
+		Node head=null;
+		int size=(int)(Math.random()*101);
+		Node[] nodes=new Node[size];
+		for (int i = 0; i < size; i++) {
+
+		}
+		return head;
+	}
+
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
@@ -94,15 +105,16 @@ public class Code03_TreeMaxWidth {
 		head.right = new Node(8);
 		head.left.left = new Node(2);
 		head.left.right = new Node(4);
-		head.left.left.left = new Node(1);
-		head.right.left = new Node(7);
-		head.right.left.left = new Node(6);
-		head.right.right = new Node(10);
-		head.right.right.left = new Node(9);
-		head.right.right.right = new Node(11);
+//		head.left.left.left = new Node(2);
+//		head.left.left.right = new Node(2);
+//		head.left.right.left=new Node(4);
+//		head.left.right.right= new Node(2);
+//		head.right.left = new Node(7);
+//		head.right.right = new Node(10);
+//		head.left.left.left = new Node(1);
+//		head.right.left.left = new Node(6);
 
 		System.out.println(getMaxWidth(head));
-
 		System.out.println(getMaxWidth2(head));
 
 	}
