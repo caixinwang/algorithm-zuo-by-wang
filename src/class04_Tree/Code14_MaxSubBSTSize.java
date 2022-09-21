@@ -2,7 +2,7 @@ package class04_Tree;
 
 import java.util.ArrayList;
 
-public class Code14_MaxSubBSTSize {
+public class Code14_MaxSubBSTSize {//最大二插搜索子树
 
     public static class Node {
         public int value;
@@ -15,9 +15,7 @@ public class Code14_MaxSubBSTSize {
     }
 
     public static int getBSTSize(Node head) {
-        if (head == null) {
-            return 0;
-        }
+        if (head == null) return 0;
         ArrayList<Node> arr = new ArrayList<>();
         in(head, arr);
         for (int i = 1; i < arr.size(); i++) {
@@ -29,29 +27,21 @@ public class Code14_MaxSubBSTSize {
     }
 
     public static void in(Node head, ArrayList<Node> arr) {
-        if (head == null) {
-            return;
-        }
+        if (head == null) return;
         in(head.left, arr);
         arr.add(head);
         in(head.right, arr);
     }
 
     public static int maxSubBSTSize1(Node head) {
-        if (head == null) {
-            return 0;
-        }
+        if (head == null) return 0;
         int h = getBSTSize(head);
-        if (h != 0) {
-            return h;
-        }
+        if (h != 0) return h;
         return Math.max(maxSubBSTSize1(head.left), maxSubBSTSize1(head.right));
     }
 
     public static int maxSubBSTSize2(Node head) {
-        if(head == null) {
-            return 0;
-        }
+        if(head == null) return 0;
         return process(head).maxBSTSubtreeSize;
     }
 
@@ -71,43 +61,32 @@ public class Code14_MaxSubBSTSize {
     }
 
     /**
-     * 方法就是向左右子树要信息。
+     * 在判断isBST的递归套路上多了计算最大搜索子树的大小
      * 可能性1.信息和x结点无关。也就是说明左右子树有至少一个为不是二叉搜索树。此时最大的二叉搜索子树大小就是左右子树的最大二插子树大小中较大的那个
      * 可能性2.信息和x结点有关。这时候就说明左右子树都是二叉搜索树。最大的二叉搜索子树就变成了以x为头的树的大小。
      *
      * @param x:返回以x为头的树的相关信息，包括了以x为头的子树是不是二叉搜索树、x为头的子树的最大值、x为头的子树的最小值、
      *         x为头的最大子搜索树的大小（结点个数）。
-     * @return
+     * @return ：
      */
     public static Info process(Node x) {
-        if (x==null){
-            return null;//返回空是因为min和max返回什么都不是很合适
-        }
-
+        if (x==null) return null;//返回空是因为min和max返回什么都不是很合适
         Info left=process(x.left);
         Info right=process(x.right);
-
         int maxBSTSubtreeSize=0;
         boolean isAllBst=true;
         int max=x.value;
         int min=x.value;
-
         if (right!=null){
             max=Math.max(right.min,x.value);
         }
         if (left!=null){
             min=Math.min(left.max,x.value);
         }
-
         isAllBst= left.isAllBst&&right.isAllBst&&x.value> left.max&&x.value< right.min;
-
         maxBSTSubtreeSize=isAllBst? left.maxBSTSubtreeSize+ right.maxBSTSubtreeSize+1:
                 Math.max(left.maxBSTSubtreeSize,right.maxBSTSubtreeSize);
-
         return new Info(maxBSTSubtreeSize,isAllBst,max,min);
-
-
-
     }
 
     // for test

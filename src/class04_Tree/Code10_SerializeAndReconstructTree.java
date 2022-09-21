@@ -99,7 +99,6 @@ public class Code10_SerializeAndReconstructTree {
         if (prelist==null||prelist.isEmpty()){
             return null;
         }
-
         return preb(prelist);
     }
 
@@ -134,7 +133,6 @@ public class Code10_SerializeAndReconstructTree {
         head.right=posb(posstack);
         head.left=posb(posstack);
         return head;
-
     }
 
     public static Queue<String> levelSerial(Node head){

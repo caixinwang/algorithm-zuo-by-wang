@@ -14,8 +14,6 @@ public class Code16_TrieTree {
             end=0;
             next=new Node[26];//假设我们只放26个字母的小写，那么我们就有26条路
         }
-
-
     }
 
     public static class Trie1 {
@@ -26,34 +24,25 @@ public class Code16_TrieTree {
         }
 
         public void insert(String val){
-            if (val==null) {
-                return;
-            }
-
+            if (val==null) return;
             char[] arr=val.toCharArray();
             Node p=head;
-            p.pass++;
+            p.pass++;//头节点的pass++，代表有多少个字符串存在我这个结构里
             for (char a:arr){
                 if (p.next[a-'a']==null){
                     p.next[a-'a']=new Node();
                 }
                 p=p.next[a-'a'];
-                p.pass++;
+                 p.pass++;
             }
             p.end++;
         }
 
         /**
-         * 找val在前缀树中存入了几次。
-         * 思路很简单，就是怎么加的就怎么找。
-         * @param val
-         * @return
+         * 找val在前缀树中存入了几次。思路很简单，就是怎么加的就怎么找。
          */
         public int search(String val){
-            if (val==null) {
-                return 0;
-            }
-
+            if (val==null) return 0;
             char[] arr=val.toCharArray();
             Node p=head;
             for(char a:arr){
@@ -65,11 +54,12 @@ public class Code16_TrieTree {
             return p.end;
         }
 
+        /**
+         * @param val：
+         * @return 返回以val作为前缀的字符串有多少
+         */
         public int prefixNumber(String val){
-            if (val==null){
-                return 0;
-            }
-
+            if (val==null)return 0;
             char[] arr=val.toCharArray();
             Node p=head;
             for (char a:arr){
@@ -82,16 +72,13 @@ public class Code16_TrieTree {
         }
 
         public void delete(String val){
-            if (search(val)==0){
-                return;
-            }
-
+            if (search(val)==0)return;
             char[] arr=val.toCharArray();
             Node p=head;
             p.pass--;
             for (char a:arr){
                 if (--p.next[a-'a'].pass==0){
-                    p.next[a-'a']=null;
+                    p.next[a-'a']=null;//后面还连着的结点会被GC回收
                     return;
                 }
                 p=p.next[a-'a'];

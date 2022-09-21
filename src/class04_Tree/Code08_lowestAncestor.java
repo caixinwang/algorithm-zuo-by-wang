@@ -24,36 +24,25 @@ public class Code08_lowestAncestor {
      * 如果在集合里面那么就说明当前这个结点就是o1和o2的公共祖先。那么这里的问题就是如何有一个机制可以使得孩子结点
      * 找到父亲结点？方法就是先遍历一遍二叉树，把树里面的所有的结点的父亲结点都放到一个带附加值的hashtable里面。
      * 我们可以专门写一个函数fillParentMap来做这件事情。
-     * @param head
-     * @param o1
-     * @param o2
-     * @return
      */
     public static Node lowestAncestor1(Node head, Node o1, Node o2) {
-        if (head==null)
-            return null;
+        if (head==null) return null;
         HashMap<Node,Node>parentMap=new HashMap<>();
         parentMap.put(head,null);
         fillParentMap(head,parentMap);
-
         HashSet<Node>set=new HashSet<>();
-        Node Ancestor=null;
         while(o1!=null){
             set.add(o1);
-            o1=parentMap.get(o1);
+            o1=parentMap.get(o1);//往上翻
         }
-        while(o2!=null){
-            if (set.contains(o2)){
-                break;
-            }
+        while(o2!=null&&!set.contains(o2)){
             o2=parentMap.get(o2);
         }
         return o2;
     }
 
     public static void fillParentMap(Node head, HashMap<Node, Node> parentMap) {
-        if (head==null)
-            return;
+        if (head==null) return;
         if (head.left!=null){
             parentMap.put(head.left,head);
         }
@@ -66,10 +55,6 @@ public class Code08_lowestAncestor {
 
     /**
      * 利用递归套路来做。
-     * @param head
-     * @param a
-     * @param b
-     * @return
      */
     public static Node lowestAncestor2(Node head, Node a, Node b) {
         return process(head,a,b).ancestor;
@@ -79,7 +64,7 @@ public class Code08_lowestAncestor {
         public boolean findA;
         public boolean findB;
         public Node ancestor;
-
+        //info是给某一个结点用的信息，代表这个结点是不是最低公共祖先，以及以这个结点为头的树能不能找到a和b
         public Info(boolean findA,boolean findB,Node ancestor){
             this.ancestor=ancestor;
             this.findA=findA;
@@ -91,24 +76,21 @@ public class Code08_lowestAncestor {
         if (head==null){
            return new Info(false,false,null);
         }
-
         Info left=process(head.left,a,b);
         Info right=process(head.right,a,b);
-
         Node ancestor=null;
         boolean findA=false;
         boolean findB=false;
-
+        //如果从head结点走下去能够同时找到a和b，并且左子树和右子树中无法同时找到a和b，那么head就是最低公共祖先
         findA= left.findA|| right.findA||head==a;
         findB= left.findB|| right.findB||head==b;
-        if (left.ancestor!=null){
+        if (left.ancestor!=null){//如果左子树中也能同时找到a和b，说明当前的head结点不是最低公共祖先。
             ancestor= left.ancestor;
         }else if (right.ancestor!=null){
             ancestor= right.ancestor;
-        }else if (findA&& findB){
+        }else if (findA&& findB){//左右子树都找不到a和b，但是在head同时找到了，说明head就是最低公共祖先
             ancestor=head;
         }
-
         return new Info(findA,findB,ancestor);
     }
 
@@ -117,18 +99,16 @@ public class Code08_lowestAncestor {
      * 也就是说左右两边分别找到了a和b了，那么就直接返回当前这个结点，继续往上扔，这种情况是返回当前结点的，也就是a和b分别在
      * 两侧的情况。还有另外一种情况是a和b在同一边，这种情况就只返回a或者b。这种情况也会把非空的其中一边一路往上扔，也就是a和b
      * 的其中一个一直往上扔。
-     * @param head
-     * @param a
-     * @param b
-     * @return
+     *
+     * 思想：利用递归的返回来模拟往上找父亲的过程！！
      */
     public static Node lowestAncestor3(Node head, Node a, Node b){
-        if (head==null||head==a||head==b){
+        if (head==null||head==a||head==b){//走到空了或者找到了a或者b就返回
             return head;
         }
         Node left=lowestAncestor3(head.left,a,b);
         Node right=lowestAncestor3(head.right,a,b);
-        if (left!=null&&right!=null){
+        if (left!=null&&right!=null){//说明两边都找到了
             return head;
         }
         return left!=null?left:right;
@@ -174,12 +154,12 @@ public class Code08_lowestAncestor {
     public static void main(String[] args) {
         int maxLevel = 4;
         int maxValue = 100;
-        int testTimes = 1000;
+        int testTimes = 100000;
         for (int i = 0; i < testTimes; i++) {
             Node head = generateRandomBST(maxLevel, maxValue);
             Node o1 = pickRandomOne(head);
             Node o2 = pickRandomOne(head);
-            if (lowestAncestor1(head, o1, o2) != lowestAncestor3(head, o1, o2)) {
+            if (lowestAncestor1(head, o1, o2) != lowestAncestor2(head, o1, o2)) {
                 System.out.println("Oops!");
             }
         }

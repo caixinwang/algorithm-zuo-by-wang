@@ -21,16 +21,13 @@ public class Code05_IsCBT {
      * @return
      */
     public static boolean isCBT1(Node head) {
-        if (head==null)
-            return true;
-
+        if (head==null) return true;
         LinkedList<Node>list=new LinkedList<>();//队列
         list.add(head);
         boolean thing=false;//标记是否出现过左右儿子不双全的情况
         while(!list.isEmpty()){
             head= list.poll();
-            if ((thing&&(head.left!=null||head.right!=null)) ||
-                    (head.right!=null && head.left==null)){
+            if ((thing&&(head.left!=null||head.right!=null)) || (head.right!=null && head.left==null)){
                 return false;
             }
             if (head.left!=null){
@@ -67,20 +64,15 @@ public class Code05_IsCBT {
         if (head==null){
             return new Info(true,true,0);
         }
-
         Info left=process(head.left);
         Info right=process(head.right);
-
         boolean isCom=false;
         boolean isFull=false;
         int height=0;
-
         if (left.isFull&& right.isFull&& left.height== right.height){
             isFull=true;
         }
-
         height=Math.max(left.height, right.height)+1;
-
         if (isFull){
             isCom=true;
         }else{

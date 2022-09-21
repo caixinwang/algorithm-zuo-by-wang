@@ -27,8 +27,7 @@ public class Code06_IsBalanced {
     }
 
     public static int process1(Node head, boolean[] ans) {
-        if (head==null)
-            return 0;//空树默认高度为0
+        if (head==null) return 0;//空树默认高度为0
         int left=process1(head.left,ans);
         int right=process1(head.right,ans);
         if ((Math.abs(left-right))>1){
@@ -55,27 +54,19 @@ public class Code06_IsBalanced {
         if (x==null){//base case
             return new Info(true,0);
         }
-
         boolean isBalance=true;
         int height=0;
-
         Info left=process(x.left);
         Info right=process(x.right);
-
         if (!left.isBalance|| !right.isBalance){
             isBalance=false;
         }
-
         if (Math.abs(left.height- right.height)>1){
             isBalance=false;
         }
-
         height=Math.max(left.height, right.height)+1;
-
         return new Info(isBalance,height);
-
     }
-
 
     // for test
     public static Node generateRandomBST(int maxLevel, int maxValue) {

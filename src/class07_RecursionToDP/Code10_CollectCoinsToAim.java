@@ -16,7 +16,7 @@ public class Code10_CollectCoinsToAim {
         return process1(amount, 0, aim);
     }
 
-    /**为什么要保证next!=MAX,因为在Java程序中MAX+i会变成负数，这是底层决定的。
+    /** 为什么要保证next!=MAX手动剔除不合法分支，因为在Java程序中MAX+i会变成负数
      * @param amount:固定参数面额
      * @param index:index之前的硬币已经决定使用多少
      * @param rest:需要用index及其往后的硬币凑成rest

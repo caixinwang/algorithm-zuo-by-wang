@@ -19,13 +19,10 @@ public class Code15_MaxHappy {
             happy = h;
             nexts = new ArrayList<>();
         }
-
     }
 
     public static int maxHappy1(Employee boss) {
-        if (boss == null) {
-            return 0;
-        }
+        if (boss == null) return 0;
         return process1(boss, false);
     }
 
@@ -68,21 +65,14 @@ public class Code15_MaxHappy {
     }
 
     public static Info process(Employee x) {
-        if(x==null){
-            return new Info(0,0);
-        }
-        if (x.nexts.isEmpty()){
-            return new Info(0,x.happy);
-        }
-
+        if(x==null) return new Info(0,0);
+        if (x.nexts.isEmpty()) return new Info(0,x.happy);
         int no=0;
         int yes=x.happy;
-
         for (Employee employee:x.nexts){
             no+=Math.max(process(employee).no,process(employee).yes);
             yes+=process(employee).no;
         }
-
         return new Info(no,yes);
     }
 

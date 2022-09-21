@@ -17,15 +17,13 @@ public class Code09_SuccessorNode {
      * 函数功能为找到任意一个结点x的后继结点。一种很显而易见的方法就是利用parent一直向上找，一直找到头节点，然后中序遍历找到x
      * 进而找到x的后继。但是这个一种递归序，复杂度一定是N。有一种想法就是我们能不能直接利用parent直接找到它的后继。
      * 注意到中序遍历的打印顺序是左中右。1. 如果一个结点有右孩子，那么打印完了这个结点一定是去打印右树的最左的结点。
-     * 2.如果一个结点没有右孩子，那么打印完它之后就得往上找它的后继结点了，此时它是某一个结点的左子树的最后一个结点。也就是说
-     * 我们要一直向上找，如果一个结点是父亲结点的右孩子就一直向上找，知道一个结点是父亲结点的左孩子就停，这个时候这个父亲节点
-     * 就是之前结点的后继结点。因为这个结点是这个父亲结点的左树的最右的位置，也就是最后一个打印的位置。
+     * 2.如果一个结点node没有右孩子，那么以node为根的子树最后一个打印的就是node。如果node是某个节点node2的右孩子，那么node也是
+     *   node2子树的最后一个打印的结点，所以我们只能向上找，直到找到第一棵左子树包含node的node3.
      * @param node:返回node结点的后继节点
      * @return
      */
     public static Node getSuccessorNode(Node node) {
-        if (node==null)
-            return null;
+        if (node==null) return null;
         if (node.right!=null){
             return getLeftMost(node.right);
         }else{
@@ -37,9 +35,8 @@ public class Code09_SuccessorNode {
     }
 
     public static Node getLeftMost(Node node) {
-        if (node==null)
-            return null;
-        while(node.left!=null){
+        if (node==null) return null;
+        while(node.left!=null){//找到左边界的倒数第一个结点
             node= node.left;
         }
         return node;

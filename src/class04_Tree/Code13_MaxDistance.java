@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * 题目：返回整棵树的最大距离。一个结点到另一个结点的最大距离就是中间要经过的节点数（算上自己）
+ * 题目：返回整棵树的最大距离。一个结点到另一个结点的最大距离就是中间要经过的节点数（算上自己），可以走曲线，走上走下
  */
 public class Code13_MaxDistance {
 
@@ -79,7 +79,7 @@ public class Code13_MaxDistance {
         while (!o1Set.contains(cur)) {
             cur = parentMap.get(cur);
         }
-        Node lowestAncestor = cur;
+        Node lowestAncestor = cur;//先找到最低公共祖先
         cur = o1;
         int distance1 = 1;
         while (cur != lowestAncestor) {
@@ -92,7 +92,7 @@ public class Code13_MaxDistance {
             cur = parentMap.get(cur);
             distance2++;
         }
-        return distance1 + distance2 - 1;
+        return distance1 + distance2 - 1;//重复算了最低公共祖先
     }
 
     public static int maxDistance2(Node head) {
@@ -120,21 +120,14 @@ public class Code13_MaxDistance {
      * @return
      */
     public static Info process(Node x) {
-        if (x==null){
-            return new Info(0,0);
-        }
-
+        if (x==null) return new Info(0,0);
         Info left=process(x.left);
         Info right=process(x.right);
-
         int maxDistance=0;
         int height=0;
-
         maxDistance= Math.max(Math.max(left.maxDistance,right.maxDistance), left.height+right.height+1);
         height= Math.max(left.height, right.height)+1;
-
         return new Info(maxDistance,height);
-
     }
 
     // for test

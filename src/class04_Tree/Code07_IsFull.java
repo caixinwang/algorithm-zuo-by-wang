@@ -31,19 +31,13 @@ public class Code07_IsFull {
     }
 
     public static Info1 process1(Node head) {
-        if (head==null){
-            return new Info1(0,0);
-        }
-
-        int height=0;
+        if (head==null) return new Info1(0,0);
+        int height=0;//这里得到高度是指总共有几层，1~n层。如果是从叶子结点返回0的话得到的就是边的条数，本题是从空节点得到返回0.
         int nodeNUm=0;
-
         Info1 left=process1(head.left);
         Info1 right=process1(head.right);
-
         height= Math.max(left.height, right.height)+1;
         nodeNUm= left.nodeNum+ right.nodeNum+1;
-
         return new Info1(nodeNUm,height);
     }
 
@@ -66,19 +60,13 @@ public class Code07_IsFull {
     }
 
     public static Info2 process2(Node head) {
-        if (head==null){
-            return new Info2(true,0);
-        }
-
+        if (head==null) return new Info2(true,0);
         boolean isFull=true;
         int height=0;
-
         Info2 left=process2(head.left);
         Info2 right=process2(head.right);
-
         height=Math.max(left.height, right.height)+1;
         isFull= left.isFull&& right.isFull&& left.height== right.height;
-
         return new Info2(isFull,height);
     }
 
@@ -101,7 +89,7 @@ public class Code07_IsFull {
     public static void main(String[] args) {
         int maxLevel = 5;
         int maxValue = 100;
-        int testTimes = 1000;
+        int testTimes = 1000000;
         System.out.println("测试开始");
         for (int i = 0; i < testTimes; i++) {
             Node head = generateRandomBST(maxLevel, maxValue);

@@ -1,8 +1,9 @@
 package class04_Tree;
 
 import java.util.LinkedList;
+import java.util.Stack;
 
-public class Code04_IsBST {
+public class Code04_IsBST {//判断一棵树是不是搜索二叉树---->本质：中序遍历
 
     public static class Node {
         public int value;
@@ -20,8 +21,7 @@ public class Code04_IsBST {
      * @return
      */
     public static boolean isBST1(Node head) {
-        if (head==null)
-            return true;
+        if (head==null) return true;
         LinkedList<Node>list=new LinkedList<>();
         process1(head,list);
         int pre=Integer.MIN_VALUE;
@@ -31,11 +31,10 @@ public class Code04_IsBST {
             pre=p.value;
         }
         return true;
-
     }
 
     /**
-     * 服务isBST，作用是将以head为头的二叉搜索树以中序遍历的顺序入队
+     * isBST的辅助函数，作用是将以head为头的二叉搜索树以中序遍历的顺序入队
      * @param head
      * @param list
      */
@@ -74,36 +73,48 @@ public class Code04_IsBST {
     }
 
     public static Info process2(Node head){
-        if (head==null)
-            return null;
+        if (head==null) return null;
         //获取信息
         Info left=process2(head.left);
         Info right=process2(head.right);
         //head的信息，要根据上面得到的左右子树的信息加工得到
-        int min=head.value;//设置为自己，因为左右子树可能为空
-        int max=head.value;//设置为自己，因为左右子树可能为空
+        int min=head.value;//设置为自己，因为叶子结点需要返回自己的值
+        int max=head.value;//同上
         boolean isBST=true;
-        //最小值，只可能出现在左子树。
-        if (left!=null){
-            min= left.min;
-        }
-        //最大值只可能出现在右子树上
-        if (right!=null){
-            max= right.max;
-        }
-        //如果出现根节点比左子树的最大值小的话说明不是二叉搜索树
-        if (left!=null&&left.max>=head.value){
-            isBST=false;
-        }
-        //如果出现根节点比右子树的最大值大的话说明不是二叉搜索树
-        if (right!=null&&right.min<=head.value){
-            isBST=false;
-        }
         //如果左右子树中有其中一个不是二叉搜索树则整棵树都不是二叉搜索树
         if ((right!=null&& right.isBST==false)||(left!=null&& left.isBST==false)){
             isBST= false;
         }
+        if (left!=null){//最小值，只可能出现在左子树。
+            min= left.min;
+        }
+        if (right!=null){//最大值只可能出现在右子树上
+            max= right.max;
+        }
+        if (left!=null&&left.max>=head.value){//如果出现根节点比左子树的最大值小的话说明不是二叉搜索树
+            isBST=false;
+        }
+        if (right!=null&&right.min<=head.value){//如果出现根节点比右子树的最大值大的话说明不是二叉搜索树
+            isBST=false;
+        }
         return new Info(isBST,max,min);
+    }
+
+    public static boolean isBST3(Node head){//非递归中序遍历
+        if (head==null) return true;
+        Stack<Node> stack=new Stack<>();
+        Node pre=null;
+        while(head!=null||!stack.isEmpty()){
+            while(head!=null){
+                stack.push(head);
+                head= head.left;
+            }
+            head= stack.pop();
+            if (pre!=null&&head.value<=pre.value) return false;
+            pre=head;
+            head=head.right;
+        }
+        return true;
     }
 
     // for test
@@ -125,10 +136,10 @@ public class Code04_IsBST {
     public static void main(String[] args) {
         int maxLevel = 4;
         int maxValue = 100;
-        int testTimes = 1000;
+        int testTimes = 100000;
         for (int i = 0; i < testTimes; i++) {
             Node head = generateRandomBST(maxLevel, maxValue);
-            if (isBST1(head) != isBST2(head)) {
+            if (isBST2(head) != isBST3(head)) {
                 System.out.println("Oops!");
             }
         }
