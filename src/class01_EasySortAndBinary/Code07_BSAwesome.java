@@ -1,22 +1,23 @@
 package class01_EasySortAndBinary;
 
 public class Code07_BSAwesome {
+    /**
+     * @param arr：
+     * @return 返回arr数组的局部最小值
+     */
     private static int getLessIndex(int[] arr) {//这边的数组不要求是有序数组
-        if (arr.length < 2 || arr == null)
-            return -1;
-        if (arr[0] < arr[1])
-            return 0;
-        if (arr[arr.length - 1] < arr[arr.length - 2])
-            return arr.length - 1;
+        if (arr == null || arr.length < 2) return -1;
+        if (arr[0] < arr[1]) return 0;
+        if (arr[arr.length - 1] < arr[arr.length - 2]) return arr.length - 1;
         int left = 1, right = arr.length - 2, mid = 0;//left和right设为1和len-2是为了防止后面判断局部最小的时候防止越界
         while (left <= right) {
-            mid = ((right - left) >> 1) + left;
+            mid = ((right - left) >> 1) + left;//mid如果是局部最小值，那么从mid-1或者mid+1到mid不可能是增的
             if (arr[mid] > arr[mid + 1])
-                left = mid + 1;
+                left = mid + 1;//如果斜率小于0，则迭代left
             else if (arr[mid] > arr[mid - 1])
-                right = mid - 1;
+                right = mid - 1;//如果斜率大于0，则迭代right
             else
-                return mid;
+                return mid;//此时mid就是局部最小值
         }
         return -1;
     }
