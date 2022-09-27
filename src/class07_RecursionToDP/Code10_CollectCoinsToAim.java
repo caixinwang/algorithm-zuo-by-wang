@@ -4,7 +4,6 @@ public class Code10_CollectCoinsToAim {
 
     /**
      * 每一层按照特点一种硬币（index）使用了几个来进行展开
-     *
      * @param amount:硬币的面额
      * @param aim:目标
      * @return :返回的是最少的硬币数
@@ -232,18 +231,18 @@ public class Code10_CollectCoinsToAim {
     }
 
     public static void main(String[] args) {
-        int[] amount = {2};
+        int[] amount = {1,5,10,20,50};
         int aim = 50;
 
         long start = System.currentTimeMillis();
-//        System.out.println(minCoins(amount, aim));
+        System.out.println(minCoins(amount, aim));
         long end = System.currentTimeMillis();
-//        System.out.println("cost time: " + (end - start) + "ms");
+        System.out.println("cost time: " + (end - start) + "ms");
 
-//        start = System.currentTimeMillis();
-//        System.out.println(minCoinsDp1(amount, aim));
-//        end = System.currentTimeMillis();
-//        System.out.println("cost time: " + (end - start) + "ms");
+        start = System.currentTimeMillis();
+        System.out.println(minCoinsDp1(amount, aim));
+        end = System.currentTimeMillis();
+        System.out.println("cost time: " + (end - start) + "ms");
 
         start = System.currentTimeMillis();
         System.out.println(minCoinsDp2(amount, aim));
@@ -260,18 +259,18 @@ public class Code10_CollectCoinsToAim {
         end = System.currentTimeMillis();
         System.out.println("cost time: " + (end - start) + "ms");
 
-//        System.out.println("====================");
-//
-//        System.out.println(minCoins(amount, aim));
-//        System.out.println(minCoinsDp1(amount, aim));
-//        System.out.println(minCoinsDp2(amount, aim));
-//        System.out.println(minCoins2(amount, aim));
-//        System.out.println(minCoins2Dp(amount, aim));
-//        System.out.println("====================");
-//        System.out.println(ways(amount, aim));
-//        System.out.println(waysDp1(amount, aim));
-//        System.out.println(waysDp2(amount, aim));
+        System.out.println("====================");
+
+        System.out.println(minCoins(amount, aim));
+        System.out.println(minCoinsDp1(amount, aim));
+        System.out.println(minCoinsDp2(amount, aim));
+        System.out.println(minCoins2(amount, aim));
+        System.out.println(minCoins2Dp(amount, aim));
+        System.out.println("====================");
+        System.out.println(ways(amount, aim));
+        System.out.println(waysDp1(amount, aim));
+        System.out.println(waysDp2(amount, aim));
+
+        }
 
     }
-
-}
