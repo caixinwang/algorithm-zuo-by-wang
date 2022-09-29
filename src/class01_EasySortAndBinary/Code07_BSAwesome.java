@@ -3,7 +3,7 @@ package class01_EasySortAndBinary;
 public class Code07_BSAwesome {
     /**
      * @param arr：
-     * @return 返回arr数组的局部最小值
+     * @return 返回arr数组的局部最小值的下标
      */
     private static int getLessIndex(int[] arr) {//这边的数组不要求是有序数组
         if (arr == null || arr.length < 2) return -1;
@@ -19,7 +19,7 @@ public class Code07_BSAwesome {
             else
                 return mid;//此时mid就是局部最小值
         }
-        return -1;
+        return -1;//不可能返回-1，一个数组一定有局部最小值
     }
 
     private static boolean isLessIndex(int[] arr, int lessIndex) {

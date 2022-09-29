@@ -7,7 +7,7 @@ import static class01_EasySortAndBinary.Code01_SelectSort.generateArray;
 public class Code06_BSNearRight {
 
     private static int nearestIndex(int[] sortedArray,int num){//小于num的最大数
-        if (sortedArray==null&&sortedArray.length==0)
+        if (sortedArray==null||sortedArray.length==0)
             return -1;
         int left=0,right=sortedArray.length-1,mid=0,index=-1;
         while(left<=right){
@@ -20,6 +20,20 @@ public class Code06_BSNearRight {
                 right=mid-1;//右边找不到，往左边去去找
         }
         return index;//如果没有找到那么index就是等于-1
+    }
+
+    private static int nearestIndex2(int[] arr,int num){
+        if (arr==null||arr.length==0) return -1;
+        int l=0,r=arr.length-1,mid=0;
+        while(l<=r){
+            mid=(r-l)/2+l;
+            if (arr[mid] < num) {
+                l=mid+1;//如果中了这个条件一次，那么数组中至少有一个位置满足条件。
+            }else {
+                r=mid-1;//如果数组中没有小于num的数，最终r会走到-1，所有情况都归结于r的返回值
+            }
+        }
+        return r;
     }
 
     private static int Test(int[] sortedArray,int checkNum){

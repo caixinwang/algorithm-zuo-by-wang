@@ -17,7 +17,7 @@ public class Code08_EvenTimesOddTimes {
          * 问题关键来到如何找出a和b不同的那一位，事实上a^b为1的那些位都是a和b不同的位，这里我们找a^b最右边的1
          * 小结论：一个数和它的补码的与运算得到的就是最右边的那一位---想想补码是怎么求的
          */
-        int mask=eor&(~eor+1);//得到了掩码
+        int mask=eor&(~eor+1);//得到了最右边的1
         int aORb=0,another=0 ;
         for(int i:arr)  {
             if((i&mask)==mask) aORb^=i;//该位置为1的全部异或起来
