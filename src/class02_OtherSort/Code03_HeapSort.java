@@ -6,7 +6,6 @@ public class Code03_HeapSort {
 
     /**
      * 这里arr是从0下标开始放的，所以more函数还有swap函数中所有下标都要-1
-     * @param arr
      */
     private static void heapSort(int[] arr){
         int N=arr.length;
@@ -19,7 +18,6 @@ public class Code03_HeapSort {
 
     /**
      * 从数组的k位置开始向上调整，也就是说k位置的值可能大于父节点
-     * @param arr
      * @param k:这里的k是从下标1~N的范围。
      */
     private static void swim(int[] arr, int k) {
@@ -28,7 +26,6 @@ public class Code03_HeapSort {
 
     /**
      * 从数组k位置开始向下调整，也就是说k位置的值可能小于子节点
-     * @param arr
      * @param k:范围从1~N
      * @param N:堆中元素的个数
      */
@@ -44,10 +41,6 @@ public class Code03_HeapSort {
 
     /**
      * 所有下标的位置都-1就能对应从0位置开始放的数组
-     * @param arr
-     * @param a
-     * @param b
-     * @return
      */
     private static boolean more(int[] arr, int a, int b) {
         return arr[a - 1] > arr[b - 1];
@@ -55,9 +48,6 @@ public class Code03_HeapSort {
 
     /**
      * 所有下标的位置都-1就能对应从0位置开始放的数组
-     * @param arr
-     * @param a
-     * @param b
      */
     private static void swap(int[] arr, int a, int b) {
         int temp = arr[a - 1];
