@@ -1,6 +1,10 @@
 package class02_OtherSort;
 
+/**
+ * 在一个数组中，数组中每一个数的左边比当前数小的数累加起来，叫做这个数组的小和。求一个数组的小和
+ */
 public class Code02_SmallSum {
+
     private static int smallSum(int[] arr) {
         if (arr == null || arr.length < 2)
             return 0;
