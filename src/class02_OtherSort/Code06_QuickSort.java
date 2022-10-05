@@ -82,12 +82,12 @@ public class Code06_QuickSort {
      */
     private static int partition2(int[] arr,int l,int r){//由于是在快排中调用，所以r>l，即至少两个元素
         int num=arr[l];//切分元素
-        int p1=l;//从while出来的时候l-1~p1-1都是小于等于num的，同时p1指向的是>=num的元素。
+        int p1=l;//从while出来的时候都是小于等于num的，同时p1指向的是>=num的元素。
         int p2=r+1;//从while出来的时候p2+1~r都是大于等于num的，同时p2指向的是<=num的元素。
         while(true){
             while(arr[++p1]<num) if (p1==r) break;//防止越界。如果if条件成立，说明数组中所有的数都比num小
             while(arr[--p2]>num) if (p2==l) break;//这里的if冗余，因为arr[l]!>arr[l]
-            if (p1>=p2){//两指针交叉，没有交换p1和p2的必要了，p2此时指向的就是<=num的元素，直接与arr[l]交换即可
+            if (p1>=p2){//此时arr[p2+1...r]>=num,arr[l,p2-1]<=num因为[l,p2-1]范围比[l,p1-1]小，后者满足条件
                 break;
             }else {
                 swap(arr,p1,p2);
