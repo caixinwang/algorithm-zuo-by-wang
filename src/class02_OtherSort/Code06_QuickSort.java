@@ -21,7 +21,7 @@ public class Code06_QuickSort {
      */
     private static void quickSort(int[] arr, int l, int r) {
         if (l >= r) return;
-        swap(arr, r, l + (int) ((r - l + 1) * Math.random()));
+        swap(arr, l, l + (int) ((r - l + 1) * Math.random()));
         int[] a = partition(arr, l, r);
         quickSort(arr, l, a[0] - 1);
         quickSort(arr, a[1] + 1, r);
@@ -35,20 +35,21 @@ public class Code06_QuickSort {
      * @return :返回两个数a,b。arr[a]~arr[b]相等。
      */
     private static int[] partition(int[] arr, int l, int r) {
-        int less = l - 1;//arr[0]~arr[less]是小于切分元素的，闭区间
-        int more = r;//设置为r而不是r+1是因为r位置为我们的切分元素。arr[more]~arr[N-1]是大于切分元素的
-        while (l < more) {
-            if (arr[l] < arr[r]) {
-                swap(arr, ++less, l++);
-            } else if (arr[l] > arr[r]) {
-                swap(arr, --more, l);
+        int less = l ;//arr[0]~arr[less]是小于切分元素的，闭区间
+        int more = r+1;//设置为r而不是r+1是因为r位置为我们的切分元素。arr[more]~arr[N-1]是大于切分元素的
+        int p=l+1,num=arr[l];
+        while (p < more) {
+            if (arr[p] < num) {
+                swap(arr, ++less, p++);
+            } else if (arr[p] > num) {
+                swap(arr, --more, p);
             } else {
-                l++;
+                p++;
             }
         }
         //[less+1~more-1]是等于切分元素的。r与more交换之后，变为[less+1~more]是等于切分元素的
-        swap(arr, r, more);
-        return new int[]{less + 1, more};
+        swap(arr, less, l);
+        return new int[]{less, more-1};
     }
 
     private static void swap(int[] arr, int a, int b) {
@@ -95,6 +96,39 @@ public class Code06_QuickSort {
         }
         swap(arr,l,p2);
         return p2;
+    }
+
+    /**
+     * //partition2的低配版本，只从一侧开始扫描数组，交换次数比较多。思想是把数组切分成一侧全部小于num，另一侧全部大于num
+     * @param arr:将数组切分成a[l...i-1] a[i] a[i+1...r],这里的a[i]的值实际上是切分前arr[l]的值
+     * @param l：进行切分的数组范围的左边界,默认选择arr[l]作为划分元素
+     * @param r：进行切分的数组范围的右边界
+     * @return ：返回切分元素在切分之后排在数组的哪一个位置（index）
+     */
+    private static int partition3(int[] arr,int l,int r){
+        int num=arr[l];//划分
+        int i=l+1;
+        int less=l;//小于等于的边界,闭区间--包住的都是小于等于num的
+        while(i<=r){//出while时，less为小于等于num的最右边界
+            if (arr[i]<=num){
+                swap(arr,i,++less);//左边界外扩，然后和i位置交换。
+            }
+            i++;
+        }
+        swap(arr,less,l);
+        return less;
+    }
+
+    private static void quickSort3(int[] arr){
+        quickSort3(arr,0,arr.length-1);
+    }
+
+    private static void quickSort3(int[] arr, int a, int b) {
+        if (a>=b||arr==null) return;
+        swap(arr,a,a+(int)(Math.random()*(b-a+1)));
+        int i = partition3(arr, a, b);
+        quickSort3(arr,a,i-1);
+        quickSort3(arr,i+1,b);
     }
 
 
@@ -156,14 +190,14 @@ public class Code06_QuickSort {
 
     // for test
     public static void main(String[] args) {
-        int testTime = 5000;
+        int testTime = 50000;
         int maxSize = 100;
         int maxValue = 100;
         boolean succeed = true;
         for (int i = 0; i < testTime; i++) {
             int[] arr1 = generateRandomArray(maxSize, maxValue);
             int[] arr2 = copyArray(arr1);
-            quickSort2(arr1);
+            quickSort(arr1);
             comparator(arr2);
             if (!isEqual(arr1, arr2)) {
                 succeed = false;
@@ -176,7 +210,7 @@ public class Code06_QuickSort {
 
         int[] arr = generateRandomArray(maxSize, maxValue);
         printArray(arr);
-        quickSort2(arr);
+        quickSort(arr);
         printArray(arr);
 
     }
