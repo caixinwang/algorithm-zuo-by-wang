@@ -160,11 +160,11 @@ public class Code06_QuickSort {
 
     // for test
     public static boolean isEqual(int[] arr1, int[] arr2) {
-        if ((arr1 == null && arr2 != null) || (arr1 != null && arr2 == null)) {
-            return false;
-        }
         if (arr1 == null && arr2 == null) {
             return true;
+        }
+        if (arr1==null||arr2==null) {
+            return false;
         }
         if (arr1.length != arr2.length) {
             return false;
