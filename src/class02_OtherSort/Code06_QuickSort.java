@@ -94,7 +94,7 @@ public class Code06_QuickSort {
                 swap(arr,p1,p2);
             }
         }
-        swap(arr,l,p2);
+        swap(arr,l,p2);//进行了尾部的定制，使用while(true),当p1>=p2的时候是p1和p2交换了。
         return p2;
     }
 

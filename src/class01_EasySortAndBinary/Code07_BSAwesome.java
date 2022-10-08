@@ -1,29 +1,33 @@
 package class01_EasySortAndBinary;
 
+
+import java.util.Arrays;
+
 public class Code07_BSAwesome {
     /**
-     * @param arr：
+     * 这里的局部最小值是严格的，两边的数都要比自己大才行，等于也不行
+     * @param arr：arr中一定至少存在一个局部最小值并且数组不要求是有序数组但是要求相邻不相等
      * @return 返回arr数组的局部最小值的下标
      */
-    private static int getLessIndex(int[] arr) {//这边的数组不要求是有序数组
+    private static int getLessIndex(int[] arr) {
         if (arr == null || arr.length < 2) return -1;
         if (arr[0] < arr[1]) return 0;
         if (arr[arr.length - 1] < arr[arr.length - 2]) return arr.length - 1;
-        int left = 1, right = arr.length - 2, mid = 0;//left和right设为1和len-2是为了防止后面判断局部最小的时候防止越界
+        int left = 1, right = arr.length - 2, mid = 0;//0位置和len-1位置单独判断过
         while (left <= right) {
             mid = ((right - left) >> 1) + left;//mid如果是局部最小值，那么从mid-1或者mid+1到mid不可能是增的
-            if (arr[mid] > arr[mid + 1])
+            if (arr[mid] >= arr[mid + 1])
                 left = mid + 1;//如果斜率小于0，则迭代left
-            else if (arr[mid] > arr[mid - 1])
+            else if (arr[mid] >= arr[mid - 1])
                 right = mid - 1;//如果斜率大于0，则迭代right
             else
                 return mid;//此时mid就是局部最小值
         }
-        return -1;//不可能返回-1，一个数组一定有局部最小值
+        return -1;//不可能在这里返回-1，一个数组一定有局部最小值
     }
 
     private static boolean isLessIndex(int[] arr, int lessIndex) {
-        if (arr.length < 2 || arr == null)
+        if (arr == null ||arr.length < 2 )
             return true;
         if (lessIndex == 0)
             return arr[lessIndex] < arr[lessIndex + 1];
@@ -52,10 +56,10 @@ public class Code07_BSAwesome {
         for (int i = 0; i < testTimes; i++) {
             int[] arr = generateRandomArray(maxSize, maxValue);
             int[] arr2={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
-//            selectSort(arr);//加了sort之后不行的原因是相邻不相等，sort之后不相邻的相等的数排在一起了
+//            Arrays.sort(arr);//加了sort之后不行的原因是相邻不相等，sort之后不相邻的相等的数排在一起了
 //            int checkNum=(int)((maxValue+1)*Math.random());
-            int a=getLessIndex(arr2);
-            if (!isLessIndex(arr2,a)) {//只要有一次测试不成功就退出
+            int a=getLessIndex(arr);
+            if (!isLessIndex(arr,a)) {//只要有一次测试不成功就退出
                 isSuccess = false;
                 break;
             }
