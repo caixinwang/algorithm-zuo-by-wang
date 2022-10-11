@@ -14,7 +14,6 @@ public class Code01_ReverseList {//反转链表
     /**
      * 翻转单链表
      * @param head:单链表的头节点
-     * @return
      */
     private static Node reverseList(Node head){
         Node pre=null,next=null;
@@ -40,7 +39,6 @@ public class Code01_ReverseList {//反转链表
     /**
      * 翻转双向链表
      * @param head :双向链表的头节点
-     * @return
      */
     private static DoubleNode reverseList(DoubleNode head){
         DoubleNode pre=null,next=null;//两个辅助指针，分别保存下一个结点和前一个结点

@@ -42,10 +42,9 @@ public class Code02_ReverseNodesInKGroup {
     }
 
     /**
-     * 这个函数的功能就是从start结点开始（第一个结点），返回第k个节点。
-     * @param start
-     * @param k
-     * @return
+     * @param start：开始结点
+     * @param k：第k个节点
+     * @return ：这个函数的功能就是从start结点开始（第一个结点），返回第k个节点
      */
     public static ListNode countK(ListNode start, int k) {
         while(start!=null&&k!=1){//走了k-1步
