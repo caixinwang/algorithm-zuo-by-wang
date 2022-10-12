@@ -69,7 +69,7 @@ public class Code01_FibonacciProblem {
     }
 
     public static void main(String[] args) {
-        int n =50;
+        int n =20;
         long l1,l2;
 //        l1= System.currentTimeMillis();
 //        for (int i = 0; i < 1000000; i++) {
