@@ -18,33 +18,28 @@ public class Code02_ReverseNodesInKGroup {
         }
     }
 
-    public static ListNode reverseKGroup(ListNode head, int k) {
-        ListNode start=head;
-        ListNode end=countK(head,k);
-        head=end;//最终返回的是这个结点
-        ListNode last=null;//记录上一组的最后一个结点
-        if (end==null){//不够k个，直接返回
-            return head;
+    public static ListNode reverseKGroup(ListNode head, int k) {//是一个换头函数
+        ListNode resHead=null,p1=head,p2=null,p3=null;
+        p2=countK(p1,k);//看看第一组是否满k个
+        if (p2==null) return p1;//不满k个直接返回
+        resHead=p2;//第一组满k个，头节点应该换成第一组的最后一个结点，也就是此时的p2
+        while(true){
+            p3=p2.next;//隔壁组的第一个---下一次的p1
+            ListNode nextGroupTail = countK(p3, k);//隔壁组的最后一个结点---下一次的p2
+            reverse(p1,p2);
+            if (nextGroupTail==null) break;//是否成组---满k个。不满足k个的情况特殊处理，break
+            p1.next=nextGroupTail;
+            p1=p3;
+            p2=nextGroupTail;
         }
-        reverse(start,end);//先翻转第一组，第一组前面没有结点，不需要多进行处理
-        last=start;//翻转之后start变成了最后一个
-        while(start.next!=null){//存在下一组
-            start=start.next;
-            end=countK(start,k);
-            if (end==null){//判断下一组是否满足k个
-                break;
-            }
-            reverse(start,end);
-            last.next=end;
-            last=start;
-        }
-        return head;
+        p1.next=p3;//最后一组做特殊处理，通过break出来
+        return resHead;
     }
 
     /**
      * @param start：开始结点
      * @param k：第k个节点
-     * @return ：这个函数的功能就是从start结点开始（第一个结点），返回第k个节点
+     * @return ：这个函数的功能就是从start结点开始（第一个结点），返回第k个节点。如果不足k个则返回空。
      */
     public static ListNode countK(ListNode start, int k) {
         while(start!=null&&k!=1){//走了k-1步
@@ -64,5 +59,33 @@ public class Code02_ReverseNodesInKGroup {
             pre=start;
             start=next;
         }
+    }
+
+
+    //for test
+    public static ListNode generateNLenList(int n){//>=1
+        ListNode head=new ListNode(1),p=head;
+        for (int i = 2; i <= n; i++) {
+            p.next=new ListNode(i);
+            p=p.next;
+        }
+        return head;
+    }
+
+    //for Test
+    private static void printLinkedList(ListNode head){
+        System.out.print("LinkedList: ");
+        while(head!=null){
+            System.out.print(head.val+" ");
+            head=head.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        ListNode head = generateNLenList(22);
+        printLinkedList(head);
+        head= reverseKGroup(head, 4);
+        printLinkedList(head);
     }
 }
