@@ -1,5 +1,7 @@
 package class07_RecursionToDP;
 
+import java.util.Stack;
+
 public class Code01_Hanoi {
 
     private static void Hanoi1(int n){
@@ -81,9 +83,40 @@ public class Code01_Hanoi {
         process(n-1,other,to,from);
     }
 
+    static class Info{//模拟系统递归的时候存放的信息
+        public int n;
+        public String from;
+        public String to;
+        public String other;
+
+        public Info(int n, String from, String to, String other) {
+            this.n = n;
+            this.from = from;
+            this.to = to;
+            this.other = other;
+        }
+    }
+
+    private static void Hanoi3(int  n){//汉诺塔非递归实现
+        process3(new Info(n,"left","right","middle"));
+    }
+
+    private static void  process3(Info info){
+        if (info==null) return;
+        Stack<Info> stack=new Stack<>();//递归栈
+        while(info.n!=0||!stack.isEmpty()){//观察汉诺塔的递归实现，发现和树的中序遍历相似。参考树结构中序遍历的非递归实现
+            while(info.n!=0){//将左边界一条线压栈。将递归过程按照左边界进行分解
+                stack.push(info);
+                info=new Info(info.n-1,info.from,info.other, info.to);
+            }
+            info=stack.pop();
+            System.out.println(info.from+" to "+info.to);//中序打印的时机
+            info=new Info(info.n-1,info.other,info.to, info.from);//脑补，看成树的右子树
+        }
+    }
 
     public static void main(String[] args) {
-        Hanoi1(4);
+        Hanoi3(4);
         System.out.println("==================");
         Hanoi2(4);
     }
