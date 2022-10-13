@@ -13,7 +13,7 @@ public class Code01_ReverseList {//反转链表
 
     /**
      * 翻转单链表
-     * @param head:单链表的头节点
+     * @param head:单链表的头节点。head为空，只有一个结点，全部都包含下处理逻辑中，不需要单独处理。
      */
     private static Node reverseList(Node head){
         Node pre=null,next=null;
