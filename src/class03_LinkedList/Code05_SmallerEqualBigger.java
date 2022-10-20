@@ -2,7 +2,7 @@ package class03_LinkedList;
 
 import java.util.ArrayList;
 
-public class Code05_SmallerEqualBigger {
+public class Code05_SmallerEqualBigger {//将单向链表按某值划分成左边小、中间相等、右边大的形式
 
     public static class Node {
         public int value;
@@ -13,6 +13,12 @@ public class Code05_SmallerEqualBigger {
         }
     }
 
+    /**
+     * 思路：把链表中的结点全部放入数组中，然后利用快排的三向切分排好结点的先后顺序，然后从头开始串起来。
+     * @param head 链表
+     * @param pivot 划分值
+     * @return 返回划分过后链表的头节点
+     */
     public static Node listPartition1(Node head, int pivot){
         Node temp=head;
         int num=0;
@@ -23,10 +29,11 @@ public class Code05_SmallerEqualBigger {
         Node[] arr=new Node[num];
         temp=head;
         int i=0;
-        while(temp!=null){
+        while(temp!=null){//放入数组
             arr[i++]=temp;
             temp=temp.next;
         }
+        partition(arr,pivot);//三向切分数组
         for (i=0;i<arr.length-1;i++){
             arr[i].next=arr[i+1];
         }
@@ -80,7 +87,7 @@ public class Code05_SmallerEqualBigger {
         //开始连接这三个链。如果小于链有东西，就让小于链的末尾连接等于链，然后更新小于链的尾结点，因为最后我们是返回小于链、等于链，大于链
         //中第一个非空链的头节点。
         if (ss!=null){//小于链有东西，最后肯定返回小于链---我们在小于链的我们串上东西
-            se.next=es;//小于链末尾连上等于链的头。
+            se.next=es;//小于链末尾连上等于链的头
             se=es==null?se:ee;//如果等于链为空小于链的尾就不更新，而如果等于链不为空就换成等于链的尾
             se.next=bs;//接着连上大于链的头，现在可以返回了
             return ss;
@@ -126,8 +133,8 @@ public class Code05_SmallerEqualBigger {
         head1.next.next.next.next.next = new Node(2);
         head1.next.next.next.next.next.next = new Node(5);
         printLinkedList(head1);
-         head1 = listPartition1(head1, 4);
-//        head1 = listPartition2(head1, 5);
+//         head1 = listPartition1(head1, 4);
+        head1 = listPartition2(head1, 5);
         printLinkedList(head1);
 
     }
