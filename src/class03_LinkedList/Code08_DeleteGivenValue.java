@@ -27,4 +27,34 @@ public class Code08_DeleteGivenValue {//给你一个链表和一个值val，删�
         return head;
     }
 
+    public static Node removeValue2(Node head, int num) {
+        if (head==null) return null;
+        Node p=head;
+        while(p!=null&&p.value==num) p=p.next;
+        Node res=p;
+        while(p!=null){
+            while(p.next!=null&&p.next.value==num){
+                p.next=p.next.next;
+            }
+            p=p.next;//出循环，p的next的value！=num
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Node head=new Node(1);
+        head.next=new Node(1);
+        head.next.next=new Node(1);
+        head.next.next.next=new Node(2);
+        head.next.next.next.next=new Node(3);
+        head.next.next.next.next.next=new Node(1);
+        head.next.next.next.next.next.next=new Node(1);
+        head.next.next.next.next.next.next.next=new Node(4);
+        head=removeValue2(head,1);
+        while(head!=null) {
+            System.out.println(head.value);
+            head=head.next;
+        }
+    }
+
 }

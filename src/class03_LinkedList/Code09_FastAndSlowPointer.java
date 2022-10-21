@@ -32,7 +32,7 @@ public class Code09_FastAndSlowPointer {//定制快慢指针
      * @return
      */
     public static Node MidOrRightMid(Node head) {//(2,2)-->(2,2)
-        if (head==null||head.next==null) return head;//0~1个结点自己判断返回，有1个结点是有意义的
+        if (head==null) return head;
         Node slow=head.next;
         Node fast=head.next;
         while (fast.next != null && fast.next.next != null) {
@@ -49,7 +49,7 @@ public class Code09_FastAndSlowPointer {//定制快慢指针
      * @return
      */
     public static Node MidPreOrLeftMidPre(Node head) {//(1,3)-->(1,3)
-        if (head == null || head.next == null || head.next.next == null) {//保证了至少有三台结点,少于3个都是没有意义的。
+        if (head == null || head.next == null) {
             return null;
         }
         Node slow = head;//1位置
@@ -66,8 +66,8 @@ public class Code09_FastAndSlowPointer {//定制快慢指针
      * @param head
      * @return
      */
-    public static Node MidPreOrRightMidPre(Node head) {//(1,2)-->(1,2)
-        if (head == null || head.next == null) {//至少要有两个结点,少于两个结点都是没有意义的
+    public static Node MidPreOrLeftMid(Node head) {//(1,2)-->(1,2)
+        if (head == null) {
             return null;
         }
         Node slow = head;//1位置
@@ -102,10 +102,8 @@ public class Code09_FastAndSlowPointer {//定制快慢指针
         System.out.println(MidOrRightMid(node2).value);
         System.out.print("中前和左中前：奇数"+MidPreOrLeftMidPre(node1).value+"  偶数");
         System.out.println(MidPreOrLeftMidPre(node2).value);
-        System.out.print("中前和右中前：奇数"+MidPreOrRightMidPre(node1).value+"  偶数");
-        System.out.println(MidPreOrRightMidPre(node2).value);
-
-
+        System.out.print("中前和右中前：奇数"+ MidPreOrLeftMid(node1).value+"  偶数");
+        System.out.println(MidPreOrLeftMid(node2).value);
     }
 
 
