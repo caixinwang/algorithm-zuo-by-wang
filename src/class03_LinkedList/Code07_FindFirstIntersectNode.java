@@ -1,6 +1,6 @@
 package class03_LinkedList;
 
-public class Code07_FindFirstIntersectNode {//找到两个链表第一个相交的结点
+public class Code07_FindFirstIntersectNode {//找到两个链表第一个相交的结点,链表可能是循环链表
 
     public static class Node {
         public int value;
@@ -39,19 +39,19 @@ public class Code07_FindFirstIntersectNode {//找到两个链表第一个相交�
         if (head==null||head.next==null){//可能有单节点自己循环,head.next==head
             return null;
         }
-        Node p1=head.next.next;//快，这里不能设置成head，因为有p1与p2的判断
-        Node p2=head.next;//慢，都从下标为0的位置开始
-        while(p1.next!=null&&p1.next.next!=null&&p1!=p2){//要么是到头了，要么是相交了
-            p1=p1.next.next;
-            p2=p2.next;
+        Node fast=head.next.next;//快指针。这里不能设置成head，因为有判断fast!=slow
+        Node slow=head.next;//慢指针。
+        while(fast.next!=null&&fast.next.next!=null&&fast!=slow){//非循环链表走前两个条件，循环链表走最后一个条件
+            fast=fast.next.next;
+            slow=slow.next;
         }
-        if (p1==p2){//是循环链表
-            p1=head;//p1从头开始跑
-            while(p1!=p2){//p1、p2一人走一步，相遇的结点就是第一个入环结点
-                p1=p1.next;
-                p2=p2.next;
+        if (fast==slow){//是循环链表
+            fast=head;//快指针从头开始
+            while(fast!=slow){//快慢指针一人走一步，相遇的结点就是第一个入环结点
+                fast=fast.next;
+                slow=slow.next;
             }
-            return p1;
+            return fast;
         }else{//不是循环链表
             return null;
         }
@@ -63,40 +63,28 @@ public class Code07_FindFirstIntersectNode {//找到两个链表第一个相交�
      * @return :如果两个都是非循环链表，如果相交返回相交结点，如果不相交，返回null
      */
     public static Node noLoop(Node head1, Node head2) {
-        if (head1==null||head2==null){
-            return null;
+        if (head1==null||head2==null) return null;
+        Node p1=head1,p2=head2;
+        int subtract=0;//统计相差的节点数
+        while(p1.next!=null) {
+            p1 = p1.next;
+            subtract++;
         }
-        Node p1=head1;
-        Node p2=head2;
-        int len=0;//最终len代表两链表相差的结点个数。len并不是链表长度，他比长度少1
-        while(p1.next!=null){//p.next!=null的形式是返回最后一个节点
-            len++;
-            p1=p1.next;
+        while(p2.next!=null) {
+            p2 = p2.next;
+            subtract--;
         }
-        while(p2.next!=null){
-            len--;
-            p2=p2.next;
-        }
-        if (p1==p2){//说明有相交
-            p1=head1;
-            p2=head2;
-            if(len>0){//让长的链表多走相差的节点数
-                while(len>0){
-                    p1=p1.next;
-                    len--;
-                }
-            }else if (len<0){
-                while(len<0){
-                    p2=p2.next;
-                    len++;
-                }
-            }
-            while(p1!=p2){//p1和p2相遇的地方一定是相交结点
+        if (p1==p2){
+            int step=Math.abs(subtract);
+            p1=subtract>0?head1:head2;//p1此时指向结点个数多的链表
+            p2=p1==head1?head2:head1;
+            while(step--!=0) p1=p1.next;
+            while(p1!=p2){
                 p1=p1.next;
                 p2=p2.next;
             }
             return p1;
-        }else{
+        }else {
             return null;
         }
     }
