@@ -38,12 +38,9 @@ public class Code01_SelectSort {
     }
 
     public static int[] copyArray(int[] arr) {
-        if (arr == null)
-            return null;
+        if (arr == null) return null;
         int arr2[] = new int[arr.length];
-        for (int i = 0; i < arr.length; i++) {
-            arr2[i] = arr[i];
-        }
+        for (int i = 0; i < arr.length; i++) arr2[i] = arr[i];
         return arr2;
     }
 

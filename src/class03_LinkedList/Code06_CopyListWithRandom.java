@@ -14,6 +14,11 @@ public class Code06_CopyListWithRandom {//复制一个Node带有Random域的单�
         }
     }
 
+    /**
+     * 思路：遍历一遍head链表可以顺便复制出结点。利用map来建立游离结点和链表中结点和对应关系，map就是一座桥。
+     * @param head 要复制的链表的头节点
+     * @return 返回复制成功之后的链表的头节点
+     */
     public static Node copyListWithRand1(Node head){
         Node p=head;
         HashMap<Node,Node> map=new HashMap<>();
@@ -32,29 +37,25 @@ public class Code06_CopyListWithRandom {//复制一个Node带有Random域的单�
     }
 
     public static Node copyListWithRand2(Node head){
-        if (head==null)
-            return null;
+        if (head==null) return null;
         Node p=head;
-        Node next;
-        while(p!=null){//在每一个老结点的后面插上对应的新结点，插入完成以后链表的长度一定为偶数，2N
-            next=p.next;//把p的后继存起来，后面要迭代
+        while(p!=null){//新节点串在老结点后面，形成一个2N长度的新串
+            Node next=p.next;
             p.next=new Node(p.value);
-            p.next.next=next;//让新节点指向老结点的下一个
+            p.next.next=next;
             p=next;
         }
         p=head;
-        while(p!=null){//不涉及到破坏next链，一个p变量就可以搞定
-            p.next.rand=p.rand==null?null:p.rand.next;//p.next代表新结点x，老结点的random指向另一个老结点y，y.next就是对应的新结点
-            p=p.next.next;//下一个老结点。偶数个节点数，不会报错
+        while(p!=null){//处理新节点的random域
+            p.next.rand=p.rand!=null?p.rand.next:null;//注意.next之前判断是否为空
+            p=p.next.next;
         }
         p=head;
-        Node p2,res;
-        res=head.next;//保存新链头节点
-        while(p!=null){//分离新老结点。奇偶结点分离
-            next=p.next.next;//老结点。偶数个结点跳不出去
-            p2=p.next;//新结点
-            p.next=next;//老结点和老结点相连
-            p2.next=next==null?null:next.next;
+        Node res=p.next;
+        while(p!=null){//分离新老结点，拆分出两个链表
+            Node next=p.next.next;
+            p.next.next=next!=null?next.next:null;//注意判空
+            p.next=next;
             p=next;
         }
         return res;

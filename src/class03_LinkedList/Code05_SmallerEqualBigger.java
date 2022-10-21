@@ -75,12 +75,30 @@ public class Code05_SmallerEqualBigger {//将单向链表按某值划分成左�
         while(head!=null){
             Node next=head.next;
             head.next=null;//孤立这个结点。如果不置空，可能会导致大于链的最后一个结点和某一个其它结点连接形成闭环，导致无限循环。
-            if (head.value<pivot){
-                add(ss,se,head);//重新写成一个方法
+            if (head.value<pivot){//不能重新写成一个方法，因为方法传递是值传递
+                if (ss==null){//蕴含着tail也为null
+                    ss=head;
+                    se=head;
+                }else {
+                    se.next=head;
+                    se=se.next;
+                }
             }else if (head.value==pivot){
-                add(es,ee,head);
+                if (es==null){//蕴含着tail也为null
+                    es=head;
+                    ee=head;
+                }else {
+                    ee.next=head;
+                    ee=ee.next;
+                }
             }else {
-                add(bs,be,head);
+                if (bs==null){//蕴含着tail也为null
+                    bs=head;
+                    be=head;
+                }else {
+                    be.next=head;
+                    be=be.next;
+                }
             }
             head=next;
         }
@@ -97,22 +115,6 @@ public class Code05_SmallerEqualBigger {//将单向链表按某值划分成左�
             return es;
         }
         return bs;
-    }
-
-    /**
-     *
-     * @param head:
-     * @param tail:
-     * @param val:将val结点加到以head为头，tail为尾的单链表上
-     */
-    private static void add(Node head,Node tail,Node val){
-        if (head==null){//蕴含着tail也为null
-            head=val;
-            tail=val;
-        }else {
-            tail.next=val;
-            tail=tail.next;
-        }
     }
 
     public static void printLinkedList(Node node) {
