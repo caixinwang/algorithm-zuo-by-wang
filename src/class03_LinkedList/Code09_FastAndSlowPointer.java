@@ -1,6 +1,7 @@
 package class03_LinkedList;
 
 public class Code09_FastAndSlowPointer {//定制快慢指针
+
     public static class Node {
         public int value;
         public Node next;

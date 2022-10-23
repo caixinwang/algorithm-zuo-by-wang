@@ -1,6 +1,6 @@
 package class03_LinkedList;
-
-public class Code11_MergeTwoSortedLinkedList {//题目：给定两个有序链表的头节点head1和head2,返回合并之后的大链表，要求依然有序
+//题目：给定两个有序链表的头节点head1和head2,返回合并之后的大链表，要求依然有序
+public class Code11_MergeTwoSortedLinkedList {
 
     // 不要提交这个类
     public static class ListNode {
@@ -15,11 +15,8 @@ public class Code11_MergeTwoSortedLinkedList {//题目：给定两个有序链�
      * @return :
      */
     public static ListNode mergeTwoLists(ListNode head1, ListNode head2) {
-        if (head1==null||head2==null){
-            return head1!=null?head1:head2;
-        }
-        ListNode head=null;
-        ListNode cur=null;
+        if (head1==null||head2==null) return head1!=null?head1:head2;
+        ListNode head=null,cur=null;
         if (head1.val<= head2.val){//选择一个合适的头部
             head=head1;
             head1= head1.next;

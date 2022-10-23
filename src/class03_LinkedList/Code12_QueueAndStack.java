@@ -35,8 +35,7 @@ public class Code12_QueueAndStack {//利用单链表实现栈和队列
                 head=node;
                 tail=node;
             }else {
-                tail.next=node;
-                tail=node;
+
             }
             size++;
         }
@@ -86,12 +85,10 @@ public class Code12_QueueAndStack {//利用单链表实现栈和队列
 
         public void push(V value){
             Node<V> node=new Node<>(value);
-            if (head==null){
-                head=node;
-            }else {
-                node.next=head;
-                head=node;
+            if (head != null) {
+                node.next = head;
             }
+            head=node;
             size++;
         }
 
