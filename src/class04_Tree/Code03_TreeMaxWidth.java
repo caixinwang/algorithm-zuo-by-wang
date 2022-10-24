@@ -23,9 +23,7 @@ public class Code03_TreeMaxWidth {
 	 */
 	public static int getMaxWidth(Node head) {
 		if (head==null) return 0;
-		int max=-1;
-		int curLay=1;
-		int cur=0;
+		int max=-1,curLay=1,curNum=0;
 		Queue<Node> queue=new LinkedList<>();
 		queue.add(head);
 		HashMap<Node,Integer> hashMap=new HashMap<>();
@@ -33,12 +31,11 @@ public class Code03_TreeMaxWidth {
 		while(!queue.isEmpty()){
 			head=queue.poll();
 			if (hashMap.get(head)!=curLay){//这段代码一定要在前面，因为要先确定当前结点的层数。后面存进map才不会错！
-				max=Math.max(max,cur);
+				max=Math.max(max,curNum);
 				curLay++;
-				cur=1;
-			}else{
-				cur++;
+				curNum=0;
 			}
+			curNum++;
 			if (head.left!=null){
 				queue.add(head.left);
 				hashMap.put(head.left,curLay+1);
@@ -48,8 +45,8 @@ public class Code03_TreeMaxWidth {
 				hashMap.put(head.right,curLay+1);
 			}
 		}
-		max=Math.max(max,cur);
-		return cur;
+		max=Math.max(max,curNum);
+		return max;
 	}
 
 	/**
@@ -61,8 +58,7 @@ public class Code03_TreeMaxWidth {
 	 * @return
 	 */
 	public static int getMaxWidth2(Node head){
-		int max =-1;
-		int curNum=0;
+		int max =-1,curNum=0;
 		Node cur=null;
 		Node curLevel=head;//记录当前层的最后一个，一开始默认是头节点，因为头节点很自然的是第一层的最后一个结点
 		Node nextLevel=null;//记录下一层的最后一个节点
@@ -79,12 +75,11 @@ public class Code03_TreeMaxWidth {
 				nextLevel=cur.right;
 			}
 			curNum++;//cur的左右孩子都已经入队了之后把cur统计进当前层的结点总数
-			if (cur==curLevel){//说明已经到了当前层的最后一个结点了,结算max，并且迭代curlevel和nextlevel
+			if (cur==curLevel){//说明已经到了当前层的最后一个结点了,结算max，并且迭代curLevel和nextLevel
 				max=Math.max(max,curNum);
 				curNum=0;//归零
 				curLevel=nextLevel;
 			}
-
 		}
 		return max;
 	}

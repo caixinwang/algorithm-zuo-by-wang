@@ -66,7 +66,6 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
      */
     public static void preOrderUnRecur2(Node head){//浙大的实现
         System.out.print("preorder unrecur:");
-        if (head==null) return;
         Stack<Node> stack =new Stack<>();
         while(!stack.isEmpty()||head!=null){
             while(head!=null){
@@ -85,8 +84,6 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
      * @param head:以中序打印以head为头的二叉树
      */
     public static void inOrderUnRecur(Node head) {
-        if (head==null)
-            return;
         System.out.print("inorder unrecur:");
         Stack<Node> stack=new Stack<>();
         while(head!=null||!stack.isEmpty()){
@@ -107,7 +104,6 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
      */
     public static void posOrderUnRecur1(Node head){
         System.out.print("postorder unrecur:");
-        if (head==null) return;
         Stack<Node> stack1=new Stack<>();
         Stack<Node> stack2=new Stack<>();
         while(head!=null||!stack1.isEmpty()){
@@ -126,19 +122,19 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
     }
 
     /**
-     * 核心思想就是利用head来标记现在栈顶的结点的子过程有没有完毕。
+     *
      * @param head
      */
     public static void posOrderUnRecur2(Node head) {
         if (head==null) return;
         System.out.print("postorder unrecur :");
         Stack<Node> stack=new Stack<>();
-        stack.push(head);
+        stack.push(head);//这种在while外面就先进栈的需要先判空
         Node p=null;
-        while(!stack.isEmpty()){//一直往下走，先走左边后走右边，最后一定会来到一个叶子结点，打印叶子结点并且让head指向这个叶子结点。
+        while(!stack.isEmpty()){//一直沿着最左边的通路往下走，最后一定会来到一个叶子结点，打印叶子结点并且让head指向这个叶子结点。
             p= stack.peek();//瞥一眼栈顶，通过下面的逻辑分支来判断是三种情况的哪一种
             if (p.left!=null&&p.left!=head&&p.right!=head){//说明左子树还没有处理
-                stack.push(p.left);
+                stack.push(p.left);//这里是push进入栈中，而不是更新p=p.left
             }else if (p.right!=null&&p.right!=head){ //说明右子树没有处理
                 stack.push(p.right);
             }else {//左右子树都处理完了，打印当前栈顶的结点。
@@ -154,20 +150,15 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
      * @param head
      */
     private static void printByLay(Node head){
-        if (head==null)
-            return;
+        if (head==null) return;
         System.out.print("by lay:");
         Queue<Node> queue=new LinkedList<>();
-        queue.add(head);
+        queue.add(head);//要先进入结构，需要在之前判空
         while(!queue.isEmpty()){
             head=queue.poll();
             System.out.print(head.value+" ");
-            if (head.left!=null){
-                queue.add(head.left);
-            }
-            if (head.right!=null){
-                queue.add(head.right);
-            }
+            if (head.left!=null) queue.add(head.left);
+            if (head.right!=null) queue.add(head.right);
         }
         System.out.println();
     }
