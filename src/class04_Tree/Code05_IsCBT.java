@@ -61,9 +61,7 @@ public class Code05_IsCBT {
     }
 
     public static Info process(Node head) {
-        if (head==null){
-            return new Info(true,true,0);
-        }
+        if (head==null) return new Info(true,true,0);
         Info left=process(head.left);
         Info right=process(head.right);
         boolean isCom=false;

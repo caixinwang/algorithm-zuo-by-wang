@@ -39,9 +39,7 @@ public class Code04_IsBST {//判断一棵树是不是搜索二叉树---->本质�
      * @param list
      */
     public static void process1(Node head, LinkedList<Node> list) {
-        if(head==null){
-            return;
-        }
+        if(head==null) return;
         process1(head.left,list);
         list.add(head);
         process1(head.right,list);
@@ -49,8 +47,7 @@ public class Code04_IsBST {//判断一棵树是不是搜索二叉树---->本质�
     }
 
     public static boolean isBST2(Node head){
-        if (head==null)
-            return true;
+        if (head==null) return true;
         return process2(head).isBST;
     }
 
@@ -82,20 +79,20 @@ public class Code04_IsBST {//判断一棵树是不是搜索二叉树---->本质�
         int max=head.value;//同上
         boolean isBST=true;
         //如果左右子树中有其中一个不是二叉搜索树则整棵树都不是二叉搜索树
-        if ((right!=null&& right.isBST==false)||(left!=null&& left.isBST==false)){
+        if ((right!=null&& !right.isBST)||(left!=null&& !left.isBST)){
             isBST= false;
-        }
-        if (left!=null){//最小值，只可能出现在左子树。
-            min= left.min;
-        }
-        if (right!=null){//最大值只可能出现在右子树上
-            max= right.max;
         }
         if (left!=null&&left.max>=head.value){//如果出现根节点比左子树的最大值小的话说明不是二叉搜索树
             isBST=false;
         }
         if (right!=null&&right.min<=head.value){//如果出现根节点比右子树的最大值大的话说明不是二叉搜索树
             isBST=false;
+        }
+        if (left!=null){//最小值，只可能出现在左子树。
+            min= left.min;
+        }
+        if (right!=null){//最大值只可能出现在右子树上
+            max= right.max;
         }
         return new Info(isBST,max,min);
     }

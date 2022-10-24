@@ -43,12 +43,8 @@ public class Code08_lowestAncestor {
 
     public static void fillParentMap(Node head, HashMap<Node, Node> parentMap) {
         if (head==null) return;
-        if (head.left!=null){
-            parentMap.put(head.left,head);
-        }
-        if (head.right!=null){
-            parentMap.put(head.right,head);
-        }
+        if (head.left!=null) parentMap.put(head.left,head);
+        if (head.right!=null) parentMap.put(head.right,head);
         fillParentMap(head.left,parentMap);
         fillParentMap(head.right,parentMap);
     }
@@ -73,9 +69,7 @@ public class Code08_lowestAncestor {
     }
 
     public static Info process(Node head, Node a, Node b) {
-        if (head==null){
-           return new Info(false,false,null);
-        }
+        if (head==null) return new Info(false,false,null);
         Info left=process(head.left,a,b);
         Info right=process(head.right,a,b);
         Node ancestor=null;
@@ -103,14 +97,10 @@ public class Code08_lowestAncestor {
      * 思想：利用递归的返回来模拟往上找父亲的过程！！
      */
     public static Node lowestAncestor3(Node head, Node a, Node b){
-        if (head==null||head==a||head==b){//走到空了或者找到了a或者b就返回
-            return head;
-        }
+        if (head==null||head==a||head==b) return head;//走到空了或者找到了a或者b就返回
         Node left=lowestAncestor3(head.left,a,b);
         Node right=lowestAncestor3(head.right,a,b);
-        if (left!=null&&right!=null){//说明两边都找到了
-            return head;
-        }
+        if (left!=null&&right!=null) return head;//说明两边都找到了
         return left!=null?left:right;
     }
 

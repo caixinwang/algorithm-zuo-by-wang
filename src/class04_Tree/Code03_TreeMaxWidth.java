@@ -30,7 +30,7 @@ public class Code03_TreeMaxWidth {
 		hashMap.put(head,1);
 		while(!queue.isEmpty()){
 			head=queue.poll();
-			if (hashMap.get(head)!=curLay){//这段代码一定要在前面，因为要先确定当前结点的层数。后面存进map才不会错！
+			if (hashMap.get(head)!=curLay){//这段代码一定要在递增节点数前面，因为要先确定当前结点的层数。后面存进map才不会错！
 				max=Math.max(max,curNum);
 				curLay++;
 				curNum=0;
@@ -51,8 +51,8 @@ public class Code03_TreeMaxWidth {
 
 	/**
 	 * 不使用哈希表实现最大宽度的求解，整体思路还是层序遍历。
-	 * 思路：我们知道求解这个问题需要知道本层最后一个节点是谁，以及到达最后一个结点在本层累计的结点个数。现在我们知道根节点是第一层
-	 * 的最后一个结点，如果我们之中中间某一层的结点，我们能不能知道下一层的结点方便下次迭代呢？答案是肯定的，下一层的最后一个结点
+	 * 思路：求解这个问题需要知道本层最后一个节点是谁，以及到达最后一个结点在本层累计的结点个数。现在我们知道根节点是第一层
+	 * 的最后一个结点，如果我们知道中间某一层的最后一个结点，我们能不能知道下一层的结点方便下次迭代呢？答案是肯定的，下一层的最后一个结点
 	 * 可以随着上一层一直更新，知道上一层结束，下一层的最后一个结点就成了真正的最后一个结点了。
 	 * @param head
 	 * @return
@@ -66,6 +66,7 @@ public class Code03_TreeMaxWidth {
 		queue.add(head);
 		while(!queue.isEmpty()){
 			cur=queue.poll();//每次弹出一个节点，把他的左右孩子入队（如果有的话）
+			curNum++;//把打印行为替代为统计当前层的节点数
 			if (cur.left!=null){
 				queue.add(cur.left);
 				nextLevel= cur.left;//nextLevel的值就是最新入队的结点的值
@@ -74,7 +75,6 @@ public class Code03_TreeMaxWidth {
 				queue.add(cur.right);
 				nextLevel=cur.right;
 			}
-			curNum++;//cur的左右孩子都已经入队了之后把cur统计进当前层的结点总数
 			if (cur==curLevel){//说明已经到了当前层的最后一个结点了,结算max，并且迭代curLevel和nextLevel
 				max=Math.max(max,curNum);
 				curNum=0;//归零
