@@ -1,6 +1,7 @@
 package class04_Tree;
 
 import java.util.LinkedList;
+import java.util.Queue;
 
 public class Code05_IsCBT {
 
@@ -21,23 +22,22 @@ public class Code05_IsCBT {
      * @return
      */
     public static boolean isCBT1(Node head) {
-        if (head==null) return true;
-        LinkedList<Node>list=new LinkedList<>();//队列
-        list.add(head);
-        boolean thing=false;//标记是否出现过左右儿子不双全的情况
-        while(!list.isEmpty()){
-            head= list.poll();
-            if ((thing&&(head.left!=null||head.right!=null)) || (head.right!=null && head.left==null)){
-                return false;
+        if (head == null) {
+            return true;
+        }
+        Queue<Node> queue=new LinkedList<>();
+        queue.add(head);
+        boolean flag=false;
+        while(!queue.isEmpty()){
+            head= queue.poll();
+            if (flag&&(head.left!=null||head.right!=null)) return false;//出现过左右孩子不双全的情况之后的结点必须为叶子结点
+            if (head.right!=null&&head.left==null) return false;//有右无左必定不是完全二叉树
+            if (head.left==null||head.right==null) flag=true;//是否出现过左右孩子不双全的情况
+            if (head.left != null) {
+                queue.add(head.left);
             }
-            if (head.left!=null){
-                list.add(head.left);
-            }
-            if (head.right!=null){
-                list.add(head.right);
-            }
-            if (head.left==null|| head.right==null){
-                thing=true;
+            if (head.right != null) {
+                queue.add(head.right);
             }
         }
         return true;
@@ -49,14 +49,14 @@ public class Code05_IsCBT {
 
     // 对每一棵子树，是否是满二叉树、是否是完全二叉树、高度
     public static class Info {
-        public boolean isCom;
         public boolean isFull;
+        public boolean isCom;
         public int height;
 
-        public Info(boolean isCom,boolean isFull,int height){
-            this.height=height;
-            this.isCom=isCom;
-            this.isFull=isFull;
+        public Info(boolean isFull, boolean isCom, int height) {
+            this.isFull = isFull;
+            this.isCom = isCom;
+            this.height = height;
         }
     }
 
@@ -64,27 +64,13 @@ public class Code05_IsCBT {
         if (head==null) return new Info(true,true,0);
         Info left=process(head.left);
         Info right=process(head.right);
-        boolean isCom=false;
-        boolean isFull=false;
-        int height=0;
-        if (left.isFull&& right.isFull&& left.height== right.height){
-            isFull=true;
-        }
-        height=Math.max(left.height, right.height)+1;
-        if (isFull){
-            isCom=true;
-        }else{
-            if (left.isFull&& right.isFull&& left.height==right.height+1){
-                isCom=true;
-            }
-            if (left.isFull&& right.isCom&& left.height== right.height){
-                isCom=true;
-            }
-            if (left.isCom&& right.isFull&& left.height== right.height+1){
-                isCom=true;
-            }
-        }
-        return new Info(isCom,isFull,height);
+        boolean isFull= left.isFull&& right.isFull&& left.height== right.height;
+        boolean isCom= isFull||
+                left.isFull&& right.isFull&&left.height-1==right.height||
+                left.isCom&& right.isFull&&left.height-1==right.height||
+                left.isFull&&right.isCom&& left.height== right.height;
+        int height=Math.max(left.height, right.height)+1;
+        return new Info(isFull,isCom,height);
     }
 
     // for test

@@ -36,10 +36,7 @@ public class Code10_SerializeAndReconstructTree {
     }
 
     public static Queue<String> preSerial(Node head) {
-        if (head==null){
-            return null;
-        }
-
+        if (head==null) return null;
         Queue<String> answer=new LinkedList<>();
         pres(head,answer);
         return answer;

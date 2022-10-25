@@ -27,7 +27,7 @@ public class Code09_SuccessorNode {
         if (node.right!=null){
             return getLeftMost(node.right);
         }else{
-            while(node.parent!=null&&node.parent.right==node){//除了循环说明当前的node是它父亲的左孩子
+            while(node.parent!=null&&node.parent.right==node){//出了循环说明当前的node是它父亲的左孩子
                 node=node.parent;
             }
             return node.parent;

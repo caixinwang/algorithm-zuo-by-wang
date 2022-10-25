@@ -34,7 +34,7 @@ public class Code13_MaxDistance {
         return max;
     }
 
-    public static ArrayList<Node> getPrelist(Node head) {
+    public static ArrayList<Node> getPrelist(Node head) {//获得先序序列，存进List集合中
         ArrayList<Node> arr = new ArrayList<>();
         fillPrelist(head, arr);
         return arr;

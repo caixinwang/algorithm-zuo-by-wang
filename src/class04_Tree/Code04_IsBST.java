@@ -1,6 +1,7 @@
 package class04_Tree;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class Code04_IsBST {//判断一棵树是不是搜索二叉树---->本质：中序遍历
@@ -15,40 +16,48 @@ public class Code04_IsBST {//判断一棵树是不是搜索二叉树---->本质�
         }
     }
 
-    /**
-     * 二插搜索树的中序遍历打印的次序一定是非递减的，我们可以把打印行为替代为入队，然后按照从左到右一次检查
-     * @param head
-     * @return
-     */
-    public static boolean isBST1(Node head) {
-        if (head==null) return true;
-        LinkedList<Node>list=new LinkedList<>();
-        process1(head,list);
-        int pre=Integer.MIN_VALUE;
-        for (Node p:list){
-            if (pre>=p.value)
-                return false;
-            pre=p.value;
+    public static boolean isBST1(Node head){//把树按照中序遍历放到一个集合List中，然后判断List从左到右是不是递增的
+        if (head == null) {
+            return true;
+        }
+        List<Node> list=new ArrayList<>();
+        fillList(head,list);//按照中序遍历的顺序将结点填入list集合
+        for (int i = 1; i < list.size(); i++) {
+            if (list.get(i).value<=list.get(i-1).value) return false;
         }
         return true;
     }
 
-    /**
-     * isBST的辅助函数，作用是将以head为头的二叉搜索树以中序遍历的顺序入队
-     * @param head
-     * @param list
-     */
-    public static void process1(Node head, LinkedList<Node> list) {
-        if(head==null) return;
-        process1(head.left,list);
+    private static void fillList(Node head, List<Node> list) {//用树的中序遍历改，将树的结点按照中序遍历的顺序存到到list集合
+        if (head == null) {
+            return;
+        }
+        fillList(head.left,list);
         list.add(head);
-        process1(head.right,list);
-
+        fillList(head.right,list);
     }
 
-    public static boolean isBST2(Node head){
+    public static boolean isBST2(Node head){//看看能否直接修修改中序遍历的非递归算法
         if (head==null) return true;
-        return process2(head).isBST;
+        Stack<Node> stack=new Stack<>();
+        Node pre=null;//记录结点的前驱
+        while(head!=null||!stack.isEmpty()){
+            while(head!=null){
+                stack.push(head);
+                head= head.left;
+            }
+            head= stack.pop();
+            if (pre!=null&&head.value<=pre.value) return false;//注意判空
+            pre=head;
+            head=head.right;
+        }
+        return true;
+    }
+
+
+    public static boolean isBST3(Node head){
+        if (head==null) return true;
+        return process(head).isBST;
     }
 
     /**
@@ -59,17 +68,29 @@ public class Code04_IsBST {//判断一棵树是不是搜索二叉树---->本质�
      */
     public static class Info{
         public boolean isBST;
-        public int max;
         public int min;
+        public int max;
 
-        public Info(boolean isBST,int max,int min){
-            this.isBST=isBST;
-            this.max=max;
-            this.min=min;
+        public Info(boolean isBST, int min, int max) {
+            this.isBST = isBST;
+            this.min = min;
+            this.max = max;
         }
     }
 
-    public static Info process2(Node head){
+    private static Info process(Node head){
+        if (head == null) {
+            return new Info(true,Integer.MAX_VALUE,Integer.MIN_VALUE);
+        }
+        Info left=process(head.left);
+        Info right=process(head.right);
+        boolean isBST= left.isBST&& right.isBST&&head.value> left.max&&head.value< right.min;
+        int min=Math.min(left.min, head.value);//子树为空则值为自己
+        int max=Math.max(right.max, head.value);
+        return new Info(isBST,min,max);
+    }
+
+    public static Info process2(Node head){//麻烦！
         if (head==null) return null;
         //获取信息
         Info left=process2(head.left);
@@ -94,25 +115,10 @@ public class Code04_IsBST {//判断一棵树是不是搜索二叉树---->本质�
         if (right!=null){//最大值只可能出现在右子树上
             max= right.max;
         }
-        return new Info(isBST,max,min);
+        return new Info(isBST,min,max);
     }
 
-    public static boolean isBST3(Node head){//非递归中序遍历
-        if (head==null) return true;
-        Stack<Node> stack=new Stack<>();
-        Node pre=null;
-        while(head!=null||!stack.isEmpty()){
-            while(head!=null){
-                stack.push(head);
-                head= head.left;
-            }
-            head= stack.pop();
-            if (pre!=null&&head.value<=pre.value) return false;
-            pre=head;
-            head=head.right;
-        }
-        return true;
-    }
+
 
     // for test
     public static Node generateRandomBST(int maxLevel, int maxValue) {
@@ -136,7 +142,7 @@ public class Code04_IsBST {//判断一棵树是不是搜索二叉树---->本质�
         int testTimes = 100000;
         for (int i = 0; i < testTimes; i++) {
             Node head = generateRandomBST(maxLevel, maxValue);
-            if (isBST2(head) != isBST3(head)) {
+            if (isBST3(head) != isBST2(head)) {
                 System.out.println("Oops!");
             }
         }

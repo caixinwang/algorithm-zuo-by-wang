@@ -20,8 +20,10 @@ public class Code06_IsBalanced {
      * @return
      */
     public static boolean isBalanced1(Node head) {
-        boolean[] ans=new boolean[1];
-        ans[0]=true;//如果调用process过程中检测出不是平衡的就修改为false
+        if (head == null) {//这个判断不要也行
+            return true;
+        }
+        boolean[] ans=new boolean[]{true};//如果调用process过程中检测出不是平衡的就修改为false
         process1(head,ans);
         return ans[0];
     }
@@ -30,42 +32,36 @@ public class Code06_IsBalanced {
         if (head==null) return 0;//空树默认高度为0
         int left=process1(head.left,ans);
         int right=process1(head.right,ans);
-        if ((Math.abs(left-right))>1){
-            ans[0]=false;
-        }
+        if ((Math.abs(left-right))>1) ans[0]=false;
         return Math.max(left,right)+1;
     }
 
-    public static boolean isBalanced2(Node head) {
-        return process(head).isBalance;
+    public static boolean isBalanced2(Node head){
+        if (head == null) {//这个判断不要也行
+            return true;
+        }
+        return process2(head).isBalanced;
     }
 
-    public static class Info{
-        boolean isBalance;
-        int height;
+    static class Info{
+        public boolean isBalanced;
+        public int height;
 
-        public Info(boolean isBalance,int height){
-            this.height=height;
-            this.isBalance=isBalance;
+        public Info(boolean isBalanced, int height) {
+            this.isBalanced = isBalanced;
+            this.height = height;
         }
     }
 
-    public static Info process(Node x) {
-        if (x==null){//base case
+    private static Info process2(Node head){
+        if (head == null) {
             return new Info(true,0);
         }
-        boolean isBalance=true;
-        int height=0;
-        Info left=process(x.left);
-        Info right=process(x.right);
-        if (!left.isBalance|| !right.isBalance){
-            isBalance=false;
-        }
-        if (Math.abs(left.height- right.height)>1){
-            isBalance=false;
-        }
-        height=Math.max(left.height, right.height)+1;
-        return new Info(isBalance,height);
+        Info left = process2(head.left);
+        Info right = process2(head.right);
+        boolean isBalanced= left.isBalanced&& right.isBalanced&&Math.abs(left.height- right.height)<=1;
+        int height=Math.max(left.height,right.height)+1;
+        return new Info(isBalanced,height);
     }
 
     // for test

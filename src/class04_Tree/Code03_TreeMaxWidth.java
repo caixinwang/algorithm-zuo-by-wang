@@ -58,6 +58,7 @@ public class Code03_TreeMaxWidth {
 	 * @return
 	 */
 	public static int getMaxWidth2(Node head){
+		if (head==null) return 0;
 		int max =-1,curNum=0;
 		Node cur=null;
 		Node curLevel=head;//记录当前层的最后一个，一开始默认是头节点，因为头节点很自然的是第一层的最后一个结点
@@ -84,37 +85,34 @@ public class Code03_TreeMaxWidth {
 		return max;
 	}
 
-	private static Node generateTree(){
-		Node head=null;
-		int size=(int)(Math.random()*101);
-		Node[] nodes=new Node[size];
-		for (int i = 0; i < size; i++) {
+	// for test
+	public static Node generateRandomBST(int maxLevel, int maxValue) {
+		return generate(1, maxLevel, maxValue);
+	}
 
+	// for test
+	public static Node generate(int level, int maxLevel, int maxValue) {
+		if (level > maxLevel || Math.random() < 0.5) {//一半的概率产生以head为头的子树
+			return null;
 		}
+		Node head = new Node((int) (Math.random() * maxValue));
+		head.left = generate(level + 1, maxLevel, maxValue);
+		head.right = generate(level + 1, maxLevel, maxValue);
 		return head;
 	}
 
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-		Node head = new Node(5);
-		head.left = new Node(3);
-		head.right = new Node(8);
-		head.left.left = new Node(2);
-		head.left.right = new Node(4);
-//		head.left.left.left = new Node(2);
-//		head.left.left.right = new Node(2);
-//		head.left.right.left=new Node(4);
-//		head.left.right.right= new Node(2);
-//		head.right.left = new Node(7);
-//		head.right.right = new Node(10);
-//		head.left.left.left = new Node(1);
-//		head.right.left.left = new Node(6);
-
-		System.out.println(getMaxWidth(head));
-		System.out.println(getMaxWidth2(head));
-
+		int maxLevel = 4;
+		int maxValue = 100;
+		int testTimes = 100000;
+		for (int i = 0; i < testTimes; i++) {
+			Node head = generateRandomBST(maxLevel, maxValue);
+			if (getMaxWidth(head) != getMaxWidth2(head)) {
+				System.out.println("Oops!");
+			}
+		}
+		System.out.println("finish!");
 	}
 
 }
