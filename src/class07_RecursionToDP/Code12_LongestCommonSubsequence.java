@@ -52,18 +52,20 @@ public class Code12_LongestCommonSubsequence {
         }
         for (int index1 = 1; index1 < a.length; index1++) {
             for (int index2 = 1; index2 < b.length; index2++) {
-                int p1 = a[index1] == b[index2] ? dp[index1 - 1][index2 - 1] + 1 : 0;
-                int p2 = dp[index1][index2 - 1];
-                int p3 = dp[index1 - 1][index2];
-                dp[index1][index2]= Math.max(Math.max(p2, p3), p1);
+//                int p1 = a[index1] == b[index2] ? dp[index1 - 1][index2 - 1] + 1 : 0;
+//                int p2 = dp[index1][index2 - 1];
+//                int p3 = dp[index1 - 1][index2];
+//                dp[index1][index2]= Math.max(Math.max(p2, p3), p1);
+                dp[index1][index2]=a[index1] == b[index2] ?
+                        dp[index1 - 1][index2 - 1] + 1:Math.max(dp[index1][index2 - 1],dp[index1 - 1][index2]);
             }
         }
         return dp[str1.length() - 1][str2.length() - 1];
     }
 
     public static void main(String[] args) {
-        String a = "123dsafKSJDFHKJSAHFKJSDAHFKJSDA";
-        String b = "ab123sadjhagsdHASDJKFHSJKADHF";
+        String a = "123dsafKSFKJSDA";
+        String b = "ab123sadjADHF";
         System.out.println(longestCommonSubsequence(a, b));
         System.out.println(longestCommonSubsequence2(a, b));
         System.out.println();
