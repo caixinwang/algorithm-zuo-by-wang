@@ -19,7 +19,7 @@ public class Code05_ConvertToLetterString {//数字字符串转化成字母字�
         if (index == s.length) {//base case，从最底层的调用返回1给上层收集
             return 1;
         }
-        if (s[index] == 0) {
+        if (s[index] == 0) {//打回不合格的分支
             return 0;
         }
         int ways = process1(s, index + 1);
