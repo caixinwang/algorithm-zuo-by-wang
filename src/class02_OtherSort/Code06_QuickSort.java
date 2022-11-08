@@ -110,9 +110,7 @@ public class Code06_QuickSort {
         int i=l+1;
         int less=l;//小于等于的边界,闭区间--包住的都是小于等于num的
         while(i<=r){//出while时，less为小于等于num的最右边界
-            if (arr[i]<=num){
-                swap(arr,i,++less);//左边界外扩，然后和i位置交换。
-            }
+            if (arr[i]<=num) swap(arr,i,++less);//左边界外扩，然后和i位置交换。
             i++;
         }
         swap(arr,less,l);
