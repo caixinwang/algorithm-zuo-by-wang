@@ -1,6 +1,6 @@
 package Class11_KMPandManacher;
 
-public class Code_05AddShortestEnd {//在任意一个字符串的末尾加上一个最短的字符串使得这个字符串是回文序列
+public class Code05_AddShortestEnd {//在任意一个字符串的末尾加上一个最短的字符串使得这个字符串是回文序列
 
     private static String m(String s) {
         if (s == null || s.length() == 0) return null;

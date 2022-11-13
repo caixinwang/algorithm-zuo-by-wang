@@ -5,11 +5,11 @@ import java.util.Stack;
 
 public class Code03_MonotonousStack {
 
-    public static int[][] getNearLessNoRepeat(int[] arr){
+    public static int[][] getNearLessNoRepeat(int[] arr){//求小的，栈顶放大的
         int [][] res=new int[arr.length][2];//一左一右
         Stack<Integer> stack =new Stack<>();//存放下标
         for (int i=0;i<arr.length;i++){
-            while(!stack.isEmpty()&&arr[i]<arr[stack.peek()]){
+            while(!stack.isEmpty()&&arr[i]<arr[stack.peek()]){//无重复值，要么大于要么小于
                 int index=stack.pop();//弹出
                 //设置
                 int left=stack.isEmpty()?-1:stack.peek();//前面一步有弹出，这里要检查
@@ -33,40 +33,40 @@ public class Code03_MonotonousStack {
 
     /**
      * 逻辑：1.空栈，直接创建列表入栈然后把数插进去。2.栈非空且数组中的数大于栈顶列表代表的数，创建列表入栈然后把数插进去
-     * 3.栈非空且数组中的数等于栈顶列表代表的数，直接把数插进栈顶的的列表中。
+     * 3. 栈非空且数组中的数等于栈顶列表代表的数，直接把数插进栈顶的的列表中。
      * 4. 栈非空且数组中的数小于栈顶列表代表的数，循环弹出栈顶的列表并且设置直到跳出循环进入到123的逻辑分支
      * @param arr:目标数组
      * @return :数组的行号代表arr数组中的每一个数的下标，列一左一右放左右两边的最小
      */
     public static int[][] getNearLess(int[] arr){
-        int [][] res=new int[arr.length][2];//一左一右
-        Stack<LinkedList<Integer>> stack =new Stack<>();//存放下标的列表
+        Stack<LinkedList<Integer>> stack=new Stack<>();
+        int[][] res=new int[arr.length][2];
         for (int i=0;i<arr.length;i++){
-            while(!stack.isEmpty()&&arr[i]<arr[stack.peek().peekLast()]){
-                LinkedList<Integer> list=stack.pop();//弹出
-                //设置
-                int left=stack.isEmpty()?-1:stack.peek().peekLast();//压着的队列的最后一个
-                int right=i;
-                for ( Integer j:list){
-                    res[j][0]=left;
-                    res[j][1]=right;
+            while (!stack.isEmpty() &&arr[i]<arr[stack.peek().peekLast()]){
+                LinkedList<Integer> list = stack.pop();
+                for (Integer integer : list) {//整个列表一起设置
+                    int left=stack.isEmpty()?-1:stack.peek().peekLast();
+                    int right=i;
+                    res[integer][0]=left;
+                    res[integer][1]=right;
                 }
             }
-            if (!stack.isEmpty()&&arr[i]==arr[stack.peek().getLast()]){
-                stack.peek().addLast(i);//从尾部加
-            }else {
-                LinkedList<Integer>list=new LinkedList<>();
-                list.addLast(i);//从尾部加
+            //栈为空或者大于等于栈顶,这个条件的取反就是while的条件
+            if (stack.isEmpty()||arr[i]>arr[stack.peek().peekLast()]){
+                LinkedList<Integer> list=new LinkedList<>();
+                list.addLast(i);
                 stack.push(list);
+            }else {//等于
+                stack.peek().addLast(i);
             }
         }
         while(!stack.isEmpty()){
-            LinkedList<Integer> list =stack.pop();
-            int left=stack.isEmpty()?-1:stack.peek().getLast();
-            int right=-1;
-            for (Integer i:list){
-                res[i][0]=left;
-                res[i][1]=right;
+            LinkedList<Integer> list = stack.pop();
+            for (Integer integer : list) {
+                int left=stack.isEmpty()?-1:stack.peek().peekLast();
+                int right=-1;
+                res[integer][0]=left;
+                res[integer][1]=right;
             }
         }
         return res;

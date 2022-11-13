@@ -9,6 +9,13 @@ import java.util.LinkedList;
  */
 public class Code01_SlidingWindowMaxArray {
 
+    /**
+     * 滑动窗口本来应该有两个变量，一个是l一个是r，但是这题由于窗口的大小是固定的，所以l和r可以相互推算，所以只需要设置一个r即可
+     *
+     * @param arr :窗口划过的数组
+     * @param w :窗口维持恒定的大小为w
+     * @return 返回每一次滑出状况的最大值
+     */
     public static int[] getMaxWindow(int[] arr, int w){
         if (arr == null || arr.length == 0||w<=0) {
             return null;
@@ -19,9 +26,8 @@ public class Code01_SlidingWindowMaxArray {
         LinkedList<Integer> qmax=new LinkedList<>();
         for (int R=0;R<arr.length;R++){//arr的每一个数一个一个进入窗口
             //不断的循环，直到当前队尾比R对应的值大，或者一直到队列为空。
-            while (!qmax.isEmpty()&&arr[qmax.peekLast()]<=arr[R]){//把队列里面值比R小的先踢出去
-                //比不过R就从尾巴出去，位置留给R
-                qmax.pollLast();
+            while (!qmax.isEmpty()&&arr[R]>=arr[qmax.peekLast()]){//把队列里面值比R小的先踢出去,arr[r]比尾部的“好”
+                qmax.pollLast();//比不过R就从尾巴出去，位置留给R
             }//while循环还有下面的add合起来是一个加数的过程
             qmax.addLast(R);
 
@@ -31,6 +37,36 @@ public class Code01_SlidingWindowMaxArray {
                     qmax.pollFirst();//过期就从队头出去
                 }
             }
+        }
+        return res;
+    }
+
+    //没有对l和r进行优化的版本
+    public static int[] getMaxWindow2(int[] arr, int w){
+        if (arr == null || w < 1 || arr.length < w) {
+            return null;
+        }
+        int l=0,r=-1,i=0,count=w;//窗口[l,r]
+        LinkedList<Integer> list=new LinkedList<>();//维持最大值,存的是下标
+        while(count!=0){
+            r++;//窗口进数
+            while(!list.isEmpty()&&arr[r]>=arr[list.peekLast()]){
+                list.pollLast();
+            }
+            list.addLast(r);
+            count--;
+        }
+        int[] res=new int[arr.length-w+1];//N-(w-1)
+        res[i++]=arr[list.peekFirst()];
+        while(r!=arr.length-1){//每次窗口都进一个出一个
+            l++;//出一个
+            if (!list.isEmpty()&&list.peekFirst()==l-1) list.pollFirst();
+            r++;//进一个
+            while(!list.isEmpty()&&arr[r]>=arr[list.peekLast()]){
+                list.pollLast();
+            }
+            list.addLast(r);
+            res[i++]=arr[list.peekFirst()];
         }
         return res;
     }
