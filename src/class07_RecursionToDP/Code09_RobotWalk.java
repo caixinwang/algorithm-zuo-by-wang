@@ -3,7 +3,7 @@ package class07_RecursionToDP;
 public class Code09_RobotWalk {
 
     private static int ways(int n, int start, int end, int k){//给用户的接口是从1~N
-        if (n<2||start>n||start<1||end>n||end<1||k<=0){
+        if (start>n||start<1||end>n||end<1||k<=0){
             return 0;
         }
         return process1(n,start-1,end-1,k);//转化为我们熟悉的数组下标的表示方法
@@ -19,7 +19,7 @@ public class Code09_RobotWalk {
     }
 
     private static int ways2(int n, int start, int end, int k){
-        if (n<2||start>n||start<1||end>n||end<1||k<=0){
+        if (start>n||start<1||end>n||end<1||k<=0){
             return 0;
         }
         int [][]dp=new int[n][k+1];//0~n-1  0~k
@@ -29,8 +29,6 @@ public class Code09_RobotWalk {
             }
         }
         return process2(n,start-1,end-1,k,dp);
-
-
     }
 
     private static int process2(int n, int cur, int end, int rest, int[][] dp) {
@@ -71,21 +69,21 @@ public class Code09_RobotWalk {
 
     private static void testMethod(){
         long l = System.currentTimeMillis();
-        for (int i = 0; i < 5000000; i++) {
+        for (int i = 0; i < 5000; i++) {
             ways(9,2,4,10);
         }
         long l2= System.currentTimeMillis()-l;
         System.out.println(ways(9,2,4,10)+" 运行时间为"+l2/1000+"s");
 
         l= System.currentTimeMillis();
-        for (int i = 0; i < 5000000; i++) {
+        for (int i = 0; i < 5000; i++) {
             ways2(9,2,4,10);
         }
         l2= System.currentTimeMillis()-l;
         System.out.println(ways(9,2,4,10)+" 运行时间为"+l2/1000+"s");
 
         l= System.currentTimeMillis();
-        for (int i = 0; i < 5000000; i++) {
+        for (int i = 0; i < 5000; i++) {
             ways3(9,2,4,10);
         }
         l2= System.currentTimeMillis()-l;
@@ -94,7 +92,8 @@ public class Code09_RobotWalk {
     }
 
     public static void main(String[] args) {
-        testMethod();
+//        testMethod();
+        System.out.println("ways(1,1,4,2) = " + ways(1, 1, 4, 2));
     }
 
 }

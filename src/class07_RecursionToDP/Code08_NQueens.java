@@ -34,7 +34,7 @@ public class Code08_NQueens {
      * @param record:0~index-1的皇后在棋盘上的位置
      * @param index:index行想放入一个皇后。我们的结构天生决定了两个皇后不可能共行
      * @param colum:判断把皇后放在index行的colum位置可不可行。
-     * @return
+     * @return 判断在record的排放下，(index,colum)位置能不能再放一个皇后
      */
     private static boolean isOk(int[] record, int index, int colum) {
         for (int i = 0; i < index; i++) {

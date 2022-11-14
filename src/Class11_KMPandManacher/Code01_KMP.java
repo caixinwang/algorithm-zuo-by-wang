@@ -5,7 +5,7 @@ public class Code01_KMP {
         if (str==null||match==null||match.length()<1||str.length()<match.length()) return -1;
         char[] s1 = str.toCharArray();
         char[] s2 = match.toCharArray();
-        int[] next=getNext(match);
+        int[] next=getNext2(match);
         int p1=0;
         int p2=0;
         while(p1!=str.length()&&p2!=match.length()){//不越界
@@ -21,7 +21,7 @@ public class Code01_KMP {
         return p2==match.length()?p1-p2:-1;
     }
 
-    private static int[] getNext(String match) {
+    private static int[] getNext(String match) {//next[i]代表0~i-1子串的最长前缀后缀匹配长度,也代表第一个不匹配的下标
         if (match.length() == 1) return new int[]{-1};
         char[] chars = match.toCharArray();
         int[] next = new int[match.length()];
@@ -39,6 +39,21 @@ public class Code01_KMP {
             }
         }
         return next;
+    }
+
+    private static int[] getNext2(String match) {//next[i]代表0~i-1子串的最长前缀后缀匹配长度,也代表第一个不匹配的下标
+        if (match.length()==1) return new int[]{-1};
+        char[] str = match.toCharArray();
+        int[] res=new int[str.length];
+        res[0]=-1;
+        for(int i=1;i<res.length;i++){
+            int p=res[i-1];
+            while(p!=-1&&str[i-1]!=str[p]) p=res[p];
+            //p==-1或者str[i]==str[p] 才可以确定res[i]
+            if (p==-1) res[i]=0;
+            else res[i]=p+1;
+        }
+        return res;
     }
 
     private static int baoli(String str,String match){
