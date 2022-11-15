@@ -9,27 +9,25 @@ public class Code02_Manacher {
      * @param s:返回s的最长回文子串的长度
      * @return :返回最长回文子串的长度，例如12321返回5
      */
-    public static int manacher(String s) {
+    public static int manacher(String s) {//直接由right2改过来
         if (s == null || s.length() == 0) return 0;
         char[] str = manacherString(s);//垫上#
-        int[] parr = new int[str.length];//回文半径数组，用于加速过程
-        int C = -1;//和R对应的中心位置
-        int R = -1;//最后一个成功的位置
-        int max = Integer.MIN_VALUE;
+        int[] arr=new int[str.length];//每个位置出发匹配的最大回文半径
+        int c=-1;//c是目前到达的最右的回文串，这个回文串是从c位置向左右两边扩展出来的
+        int r=-1;//r是目前到达的最右的回文串的右边界，包含。
+        int max=0;
         for (int i = 0; i < str.length; i++) {
-            parr[i] = i<=R ? Math.min(parr[2 * C - i], R - i) : 0;
-            while (i + parr[i]+1 < str.length && i - parr[i]-1 > -1) {
-                if (str[i + parr[i]+1] == str[i - parr[i]-1])
-                    parr[i]++;
-                else {
-                    break;//情况23一进while就会从这里出去。可以证明他们不可能再扩了
-                }
+            int p=i>r?0:Math.min(r-i,arr[2*c-i]);//p代表此时i位置作为中心的回文半径，只有i<r之前的记录才能帮到你，并且最多帮你到r位置
+            while(i-p>0&&i+p<str.length-1&&str[i-p-1]==str[i+p+1]){//越界了或者不等了就出while
+                p++;
             }
-            if (i + parr[i] > R) {
-                R = i + parr[i];
-                C = i;
+            if (i+p>r){//判断一下我们的帮助信息需不需要更新,i出发的回文串比r还右就更新
+                r=i+p;
+                c=i;
             }
-            max = Math.max(max, parr[i]);
+            arr[i]=p;//更新辅助结构
+            //越界或者str[r+1]!=str[l-1]
+            max = Math.max(max,p);
         }
         return max;
     }
@@ -62,6 +60,21 @@ public class Code02_Manacher {
     }
 
     // for test
+    public static int right2(String s) {
+        if (s == null || s.length() == 0) return 0;
+        char[] str = manacherString(s);
+        int max = 0;
+        for (int i = 0; i < str.length; i++) {
+            int p=0;
+            while(i-p>0&&i+p<str.length-1&&str[i-p-1]==str[i+p+1]){//越界了或者不等了就出while
+                p++;
+            }
+            max = Math.max(max, p);
+        }
+        return max;
+    }
+
+    // for test
     public static String getRandomString(int possibilities, int size) {
         char[] ans = new char[(int) (Math.random() * size) + 1];
         for (int i = 0; i < ans.length; i++) {
@@ -73,11 +86,11 @@ public class Code02_Manacher {
     public static void main(String[] args) {
         int possibilities = 5;
         int strSize = 20;
-        int testTimes = 5000000;
+        int testTimes = 500;
         System.out.println("test begin");
         for (int i = 0; i < testTimes; i++) {
             String str = getRandomString(possibilities, strSize);
-            if (manacher(str) != right(str)) {
+            if (manacher(str) != right2(str)) {
                 System.out.println("Oops!");
             }
         }
