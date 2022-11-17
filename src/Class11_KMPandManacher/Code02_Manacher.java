@@ -6,6 +6,7 @@ public class Code02_Manacher {
      * pArr[i] = i<=R ? Math.min(pArr[2 * C - i], R - i) : 0;这一句代表了4个分支Parr应该赋值的Parr
      * 1. 当i在R的外面的时候，parr[i]就初始化为0。因为自己到自己的距离为0.
      * 2. 当i在R里面，就可以利用parr数组进行加速，也就是直接把parr[i]设置为parr[i']的值，但是如果i+parr[i']大于R那么就设置为R-i。
+     * 3. 简而言之：右边界和i的距离只有R-i,就算i‘ 能帮你，也最多帮你到R-i，不能越出去。
      * @param s:返回s的最长回文子串的长度
      * @return :返回最长回文子串的长度，例如12321返回5
      */
