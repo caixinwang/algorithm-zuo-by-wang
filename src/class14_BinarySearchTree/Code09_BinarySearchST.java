@@ -1,10 +1,10 @@
-package HongBaoShi03_search;
+package class14_BinarySearchTree;
 
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-public class BinarySearchST<Key extends Comparable<Key>, Value> {
+public class Code09_BinarySearchST<Key extends Comparable<Key>, Value> {
     private static final int INIT_CAPACITY = 2;
     private Key[] keys;
     private Value[] values;
@@ -13,11 +13,11 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
     /**
      * 写成这样方便后面修改初始大小。而不是直接写死在程序中。
      */
-    public BinarySearchST() {
+    public Code09_BinarySearchST() {
         this(INIT_CAPACITY);
     }
 
-    public BinarySearchST(int capacity) {
+    public Code09_BinarySearchST(int capacity) {
         keys = (Key[]) new Comparable[capacity];
         values = (Value[]) new Object[capacity];
     }

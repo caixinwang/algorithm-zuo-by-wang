@@ -1,10 +1,10 @@
-package HongBaoShi03_search;
+package class14_BinarySearchTree;
 
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-public class RedBlackBST<Key extends Comparable<Key>,Value> {
+public class Code10_RedBlackBST<Key extends Comparable<Key>,Value> {
 
     private static final boolean RED   = true;
     private static final boolean BLACK = false;
@@ -27,7 +27,7 @@ public class RedBlackBST<Key extends Comparable<Key>,Value> {
         }
     }
 
-    public RedBlackBST() {
+    public Code10_RedBlackBST() {
     }
 
     private boolean isRed(Node x) {

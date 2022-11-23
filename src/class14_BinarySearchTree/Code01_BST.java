@@ -1,9 +1,9 @@
-package HongBaoShi03_search;
+package class14_BinarySearchTree;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class BST<Key extends Comparable<Key>, Value> {
+public class Code01_BST<Key extends Comparable<Key>, Value> {
     private Node root;
 
     private class Node {
@@ -50,8 +50,6 @@ public class BST<Key extends Comparable<Key>, Value> {
         } else {
             return x.val;
         }
-
-
     }
 
     public void put(Key key, Value val) {
