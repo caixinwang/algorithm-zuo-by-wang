@@ -7,7 +7,7 @@ public class Code03_HeapSort {
     /**
      * 这里arr是从0下标开始放的，所以more函数还有swap函数中所有下标都要-1
      */
-    private static void heapSort(int[] arr){
+    public static void heapSort(int[] arr){
         int N=arr.length;
         for (int k=N/2;k>=1;k--) sink(arr,k,N);//构建堆
         while(N>1){
