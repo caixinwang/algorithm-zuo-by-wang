@@ -53,7 +53,7 @@ public class Code01_FindMinKth {//bfprt,寻找第k小
     }
 
     /**
-     *
+     * 三向切分
      * @param arr:进行划分的函数
      * @param L:划分的左边界，包括
      * @param R:划分的右边界，包括
