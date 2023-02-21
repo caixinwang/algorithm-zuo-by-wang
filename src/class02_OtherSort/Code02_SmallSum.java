@@ -20,7 +20,8 @@ public class Code02_SmallSum {
         int[] help = new int[r - l + 1];
         int p1 = l,p2 = mid + 1,i = 0,res = 0;
         while (p1 <= mid && p2 <= r) {
-            res += arr[p1] < arr[p2] ? (r - p2 + 1) * arr[p1] : 0;//p1和p2会变化，res放在前面
+            res += arr[p1] < arr[p2] ? (r - p2 + 1) * arr[p1] : 0;//p1和p2会变
+            // 化，res放在前面
             help[i++] = arr[p1] < arr[p2] ? arr[p1++] : arr[p2++];
         }
         while (p1 <= mid) help[i++] = arr[p1++];

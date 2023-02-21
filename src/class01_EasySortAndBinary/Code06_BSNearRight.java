@@ -33,7 +33,7 @@ public class Code06_BSNearRight {//小于num的最大数
                 r=mid-1;//如果数组中没有小于num的数，最终r会走到-1，所有情况都归结于r的返回值
             }
         }
-        return r;
+        return r;//等价于l<=-1 ? -1 : l;
     }
 
     private static int Test(int[] sortedArray,int checkNum){

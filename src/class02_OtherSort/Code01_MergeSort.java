@@ -20,7 +20,7 @@ public class Code01_MergeSort {
     }
 
     /**
-     *这种方法的缺点是在归并的过程中，需要频繁申请和释放数组
+     * 缺点：是在归并的过程中，需要频繁申请和释放数组
      * @param arr:在arr数组的相应下标进行merge
      * @param ls:merge的左边数组的开始下标
      * @param rs:merge的右边数组的开始下标
@@ -39,7 +39,7 @@ public class Code01_MergeSort {
             help[i++]=arr[p1++];
         while(p2<=re)
             help[i++]=arr[p2++];
-        for (i=0;i<help.length;i++){
+        for (i=0;i<help.length;i++){//别忘了把help数组倒回arr数组
             arr[ls+i]=help[i];
         }
     }
@@ -47,7 +47,7 @@ public class Code01_MergeSort {
     private static void mergeSort2(int[] arr){
         if (arr==null||arr.length<2)
             return;
-        help2=new int[arr.length];
+        help2=new int[arr.length];//help2数组是类变量，这里初始化之后就可以在方法中直接用
         mergeSort2(arr,0,arr.length-1);
     }
 
@@ -86,12 +86,12 @@ public class Code01_MergeSort {
     }
 
     /** 适合链表组织的数据
-     * 自底向上的归并排序。也就是归并排序的非递归版本！最后一个子数组的大小大概率会小于i，所以需要min函数防止越界
-     * @param arr
+     * 自底向上的归并排序。也就是归并排序的非递归版本！最后一个子数组的大小很可能会小于i，所以需要min函数防止越界
+     * @param arr 对arr数组进行排序
      */
     private static void mergeSort3(int[]arr){
+        if (arr==null||arr.length==0) return;
         int N=arr.length;
-        if (arr==null||N==0) return;
         help2=new int[N];
         for (int i=1;i<N;i*=2)//控制子数组的大小
             for (int j=0;j+i<N;j+=2*i)//j+i<N保证了用来merge的第二个子数组有元素可以进行merge
