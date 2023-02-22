@@ -1,4 +1,4 @@
-package class16_InterviewCodings.interviewCoding02;
+package class16_InterviewCodings.InterviewCoding02;
 
 /**
  * 给定一个有序数组arr,给定一个正数aim

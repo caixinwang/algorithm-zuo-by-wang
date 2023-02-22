@@ -1,4 +1,4 @@
-package class16_InterviewCodings.interviewCoding01;
+package class16_InterviewCodings.InterviewCoding01;
 
 /**
  * maxLength:返回一个括号字符串中，最长的括号有效子串的长度

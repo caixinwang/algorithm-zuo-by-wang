@@ -1,4 +1,4 @@
-package class16_InterviewCodings.interviewCoding02;
+package class16_InterviewCodings.InterviewCoding02;
 
 public class Code04_TrappingRainWater {
 

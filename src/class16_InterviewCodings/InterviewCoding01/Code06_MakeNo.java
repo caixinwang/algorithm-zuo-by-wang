@@ -1,4 +1,4 @@
-package class16_InterviewCodings.interviewCoding01;
+package class16_InterviewCodings.InterviewCoding01;
 
 public class Code06_MakeNo {
 

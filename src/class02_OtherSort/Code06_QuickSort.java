@@ -6,7 +6,7 @@ public class Code06_QuickSort {
     /**
      * 使用了三向切分的快速排序。对于重复元素比较多的数组，效果比一般的快速排序好。
      * 对于包含大量重复元素的数组，它将排序时间从线性对数级降低到了线性级。
-     * @param arr
+     * @param arr 对arr数组进行排序
      */
     private static void quickSort(int[] arr) {
         if (arr == null || arr.length < 2) return;
@@ -60,7 +60,7 @@ public class Code06_QuickSort {
 
     /**
      * 标准快排
-     * @param arr
+     * @param arr 对arr数组进行排序
      */
     private static void quickSort2(int[] arr){
         quickSort2(arr,0,arr.length-1);
@@ -80,15 +80,16 @@ public class Code06_QuickSort {
      * @param l：进行切分的数组范围的左边界
      * @param r：进行切分的数组范围的右边界
      * @return ：返回切分元素在切分之后排在数组的哪一个位置index
+     * 事实上，p1和p2交叉的时候一定满足p1-1=p2，所以p2是<=num区间的最后一个数，直接与arr[l]交换即可
      */
     private static int partition2(int[] arr,int l,int r){//由于是在快排中调用，所以r>l，即至少两个元素
         int num=arr[l];//切分元素
         int p1=l;//从while出来的时候都是小于等于num的，同时p1指向的是>=num的元素。
-        int p2=r+1;//从while出来的时候p2+1~r都是大于等于num的，同时p2指向的是<=num的元素。
+        int p2=r+1;//从while出来的时候p2+1~r都是大于等于num的，同时p2指向的是<=num的元.素。
         while(true){
             while(arr[++p1]<num) if (p1==r) break;//防止越界。如果if条件成立，说明数组中所有的数都比num小
             while(arr[--p2]>num) if (p2==l) break;//这里的if冗余，因为arr[l]!>arr[l]
-            if (p1>=p2){//此时arr[p2+1...r]>=num,arr[l,p2-1]<=num因为[l,p2-1]范围比[l,p1-1]小，后者满足条件
+            if (p1>=p2){//此时arr[p2+1...r]>=num,arr[l,p2-1]<=num，因为[l,p2-1]范围比[l,p1-1]小，后者满足<=num
                 swap(arr,l,p2);//进行了尾部的定制，使用while(true),当p1>=p2的时候是p1和p2交换了。
                 break;
             }else {
@@ -99,7 +100,8 @@ public class Code06_QuickSort {
     }
 
     /**
-     * //partition2的低配版本，只从一侧开始扫描数组，交换次数比较多。思想是把数组切分成一侧全部小于num，另一侧全部大于num
+     * partition2的低配版本，只从一侧开始扫描数组，交换次数比较多。
+     * 思想是把数组切分成一侧全部<=num，另一侧全部>num
      * @param arr:将数组切分成a[l...i-1] a[i] a[i+1...r],这里的a[i]的值实际上是切分前arr[l]的值
      * @param l：进行切分的数组范围的左边界,默认选择arr[l]作为划分元素
      * @param r：进行切分的数组范围的右边界

@@ -1,4 +1,4 @@
-package class16_InterviewCodings.interviewCoding01;
+package class16_InterviewCodings.InterviewCoding01;
 
 /**
  * 括号有效配对是指：1)任何一个左括号都能找到和其正确配对的右括号 2)任何一个右括号都能找到和其正确配对的左括号

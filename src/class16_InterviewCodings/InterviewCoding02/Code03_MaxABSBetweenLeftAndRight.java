@@ -1,4 +1,4 @@
-package class16_InterviewCodings.interviewCoding02;
+package class16_InterviewCodings.InterviewCoding02;
 
 /**
  * 给定一个数组arr长度为N,你可以把任意长度大于0且小于N的前缀作为左部分，剩下的作为右部分。

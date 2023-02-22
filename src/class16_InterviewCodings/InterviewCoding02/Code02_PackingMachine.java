@@ -1,4 +1,4 @@
-package class16_InterviewCodings.interviewCoding02;
+package class16_InterviewCodings.InterviewCoding02;
 /**
  * 有个打包机器从左到右一字排开，上方有一个自动装置会抓取一批放物品到每个打包机上
  * 放到每个机器上的这些物品数量有多有少，由于物品数量不相同，需要工人将每个机器上的
