@@ -2,52 +2,51 @@ package class16_InterviewCodings.InterviewCoding03;
 
 public class Code03_MinPathSum {
 
+	/**
+	 * dp[i][j]代表从m[0][0]到 m[i][j]需要的最小路径和
+	 * @param m m[i][j]代表路过矩阵的[i][j]位置需要的值
+	 * @return 返回从m[0][0]到m[row][colum]需要的最小路径和，只能往右边和下边走
+	 * 这题不能多加一行一列，因为没有办法统一
+	 */
 	public static int minPathSum1(int[][] m) {
-		if (m == null || m.length == 0 || m[0] == null || m[0].length == 0) {
-			return 0;
+		if (m==null||m.length==0||m[0]==null||m[0].length==0) return 0;
+		int row=m.length,colum=m[0].length;
+		int[][] dp=new int[row][colum];
+		dp[0][0]=m[0][0];//显然从[0][0]从[0][0]是m[0][0]的值
+		for (int i = 1; i < m[0].length; i++) {//第一行初始化
+			dp[0][i]=dp[0][i-1]+m[0][i];
 		}
-		int row = m.length;
-		int col = m[0].length;
-		int[][] dp = new int[row][col];
-		dp[0][0] = m[0][0];
-		for (int i = 1; i < row; i++) {
-			dp[i][0] = dp[i - 1][0] + m[i][0];
+		for (int i = 1; i < m.length; i++) {//第一列初始化
+			dp[i][0]=dp[i-1][0]+m[i][0];
 		}
-		for (int j = 1; j < col; j++) {
-			dp[0][j] = dp[0][j - 1] + m[0][j];
-		}
-		for (int i = 1; i < row; i++) {
-			for (int j = 1; j < col; j++) {
-				dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + m[i][j];
+		for (int i = 1; i < m.length; i++) {
+			for (int j = 1; j < m[0].length; j++) {
+				dp[i][j]=m[i][j]+Math.min(dp[i-1][j],dp[i][j-1]);
 			}
 		}
-		return dp[row - 1][col - 1];
+		return dp[row-1][colum-1];
 	}
 
 	public static int minPathSum2(int[][] m) {
-		if (m == null || m.length == 0 || m[0] == null || m[0].length == 0) {
-			return 0;
+		if (m==null||m.length==0||m[0]==null||m[0].length==0) return 0;
+		int row=m.length,colum=m[0].length;
+		boolean rowMore=row>=colum;//决定横着滚还是竖着滚
+		int[] dp=new int[rowMore?colum:row];
+		dp[0]=m[0][0];
+		for (int i = 1; i < dp.length; i++) {
+			dp[i]=dp[i-1]+(rowMore?m[0][i]:m[i][0]);
 		}
-		int more = Math.max(m.length, m[0].length);
-		int less = Math.min(m.length, m[0].length);
-		boolean rowmore = more == m.length;
-		int[] arr = new int[less];
-		arr[0] = m[0][0];
-		for (int i = 1; i < less; i++) {
-			arr[i] = arr[i - 1] + (rowmore ? m[0][i] : m[i][0]);
-		}
-		for (int i = 1; i < more; i++) {
-			arr[0] = arr[0] + (rowmore ? m[i][0] : m[0][i]);
-			for (int j = 1; j < less; j++) {
-				arr[j] = Math.min(arr[j - 1], arr[j])
-						+ (rowmore ? m[i][j] : m[j][i]);
+		for (int i = 1; i < (rowMore?row:colum); i++) {//行多i代表行，列多i代表列。j相反
+			dp[0]=dp[0]+(rowMore?m[i][0]:m[0][i]);//更新第一个位置
+			for (int j = 1; j < dp.length; j++) {
+				dp[j]=Math.min(dp[j-1],dp[j])+(rowMore?m[i][j]:m[j][i]);
 			}
 		}
-		return arr[less - 1];
+		return dp[dp.length-1];
 	}
-	
-	
-	public static int minPathSum3(int[][] m) {
+
+
+	public static int minPathSum3(int[][] m) {//管它三七二十一直接竖着滚
 		if (m == null || m.length == 0 || m[0] == null || m[0].length == 0) {
 			return 0;
 		}
@@ -59,16 +58,16 @@ public class Code03_MinPathSum {
 			dp[col] = dp[col-1] + m[0][col];
 		}
 		for(int row = 1; row < N; row++) {
-			dp[0] = dp[0] + m[row][0];	
+			dp[0] = dp[0] + m[row][0];
 			for(int col = 1;col <M; col++ ) {
 				dp[col] = Math.min(dp[col-1], dp[col]) + m[row][col];
 			}
 		}
 		return dp[M-1];
 	}
-	
-	
-	
+
+
+
 
 	// for test
 	public static int[][] generateRandomMatrix(int rowSize, int colSize) {

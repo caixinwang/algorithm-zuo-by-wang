@@ -107,6 +107,25 @@ public class Code04_LCSubsequence {
 		return dp;
 	}
 
+	public static int dp2(String s1, String s2) {//空间压缩
+		char[] str1 = s1.toCharArray();
+		char[] str2 = s2.toCharArray();
+		int row = str1.length;
+		int colum = str2.length;
+		int[] dp=new int[colum+1];//向下滚.colum+1是因为要归一化，不需要单独初始化
+		int[] help=new int[colum+1];
+		for (int i = 1; i <= row ; i++) {//迭代到i行
+			for (int j = 1; j < dp.length; j++) {//dp[0]一直是0
+				if (str1[j-1]==str2[i-1]) dp[j]=help[j-1]+1;
+				else dp[j]=Math.max(dp[j],dp[j-1]);
+			}
+			for (int k = 0; k < dp.length; k++) {
+				help[k]=dp[k];
+			}
+		}
+		return dp[colum];
+	}
+
 	public static void main(String[] args) {
 		String str1 = "A1BC23Z4";
 		String str2 = "12O3YU4P";
@@ -114,6 +133,7 @@ public class Code04_LCSubsequence {
 
 		System.out.println(lcs(str1, str2));
 		System.out.println(dp(str1, str2));
+		System.out.println(dp2(str1, str2));
 
 	}
 }
