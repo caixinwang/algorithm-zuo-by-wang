@@ -14,12 +14,12 @@ public class Code07_TopKTimesRealTime {
 		}
 	}
 
-	public static class TopKRecord {
+	public static class TopKRecord {//定制需要的map一般就是用于比较的map以及其它用于特定用途的map
 		private Node[] heap;
 		private int heapSize;
 		// string -> Node(times)
 		private HashMap<String, Node> strNodeMap;
-		private HashMap<Node, Integer> nodeIndexMap;
+		private HashMap<Node, Integer> nodeIndexMap;//找到要times+1的那个结点需要的map
 
 		public TopKRecord(int K) {
 			heap = new Node[K];

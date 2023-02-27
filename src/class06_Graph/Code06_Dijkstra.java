@@ -3,7 +3,7 @@ package class06_Graph;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class Code06_Dijkstra {
+public class Code06_Dijkstra {//另外一种表示，不是邻接矩阵
 
     /**
      * 从distanceMap中选一个距离最小的结点，并且这个结点不在set里面。
