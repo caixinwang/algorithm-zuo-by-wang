@@ -25,17 +25,18 @@ public class Code03_HeapSort {
     }
 
     /**
+     * coding技巧：和swim类似的过程，但是因为这里的child比较难求，所以break只能放在中间
      * 从数组k位置开始向下调整，也就是说k位置的值可能小于子节点
      * @param k:范围从1~N
      * @param N:堆中元素的个数
      */
     private static void sink(int[] arr, int k, int N) {
         while (2 * k <= N) {
-            int j = 2 * k;//左孩子
-            if (j + 1 <= N && more(arr, j + 1, j)) j++;//右孩子存在并且比左孩子大的时候j才等于2*k+1
-            if (more(arr, k, j)) break;//如果比最大的孩子还大那么就不需要交换了
-            else swap(arr,k,j);
-            k=j;
+            int child = 2 * k;//左孩子
+            if (child + 1 <= N && more(arr, child + 1, child)) child++;//右孩子存在并且比左孩子大的时候j才等于2*k+1
+            if (more(arr, k, child)) break;//如果比最大的孩子还大那么就不需要交换了
+            else swap(arr,k,child);
+            k=child;
         }
     }
 
