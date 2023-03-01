@@ -14,106 +14,84 @@ public class Code07_TopKTimesRealTime {
 		}
 	}
 
-	public static class TopKRecord {//定制需要的map一般就是用于比较的map以及其它用于特定用途的map
-		private Node[] heap;
-		private int heapSize;
-		// string -> Node(times)
-		private HashMap<String, Node> strNodeMap;
-		private HashMap<Node, Integer> nodeIndexMap;//找到要times+1的那个结点需要的map
+	public static class TopK {
+		private String[] heap;
+		private int size;
 
-		public TopKRecord(int K) {
-			heap = new Node[K];
-			heapSize = 0;
-			strNodeMap = new HashMap<String, Node>();
-			nodeIndexMap = new HashMap<Node, Integer>();
+		private int topk;
+		//在不影响swap的情况下去更新额外的结构
+		private HashMap<String, Integer> timesMap;//string ---> times
+		private HashMap<String, Integer> indexMap;//快速找到string所在的位置
+
+		public TopK(int K) {
+			heap = new String[K + 2];//k+1 +1 ,多一个位置是因为add的过程需要多一个空间
+			topk =K;
+			size = 0;
+			timesMap = new HashMap<String, Integer>();
+			indexMap = new HashMap<String, Integer>();
 		}
 
-		// str用户现在给我的
-		public void add(String str) {
-			Node curNode = null;
-			int preIndex = -1; // str之前在堆上的位置
-			// 查词频表，看看有没有关于这个str的记录
-			if (!strNodeMap.containsKey(str)) { // str之前没进来过
-				curNode = new Node(str, 1);
-				strNodeMap.put(str, curNode);
-				nodeIndexMap.put(curNode, -1);
-			} else { // str之前进来过
-				curNode = strNodeMap.get(str);
-				curNode.times++;
-				preIndex = nodeIndexMap.get(curNode);
-			}
+		private boolean less(int a, int b) {//times小才是真的小
+			return timesMap.get(heap[a]) < timesMap.get(heap[b]);
+		}
 
-			// 词频表修改完毕，
-			if (preIndex == -1) { // 不在堆上
-				if (heapSize == heap.length) { // 堆满了
-					if (heap[0].times < curNode.times) {
-						nodeIndexMap.put(heap[0], -1);
-						nodeIndexMap.put(curNode, 0);
-						heap[0] = curNode;
-						heapify(0, heapSize);
+		private void swap(int a, int b) {
+			indexMap.put(heap[a], b);
+			indexMap.put(heap[b], a);
+			String tmp = heap[a];
+			heap[a] = heap[b];
+			heap[b] = tmp;
+		}
+
+		private void swim(int k) {
+			for (; k > 1 && less(k, k >> 1); k >>= 1) swap(k, k >> 1);
+		}
+
+		private void sink(int k) {
+			while (k << 1 <= size) {
+				int child=k<<1;
+				if (child+1<=size&&less(child+1,child)) child++;
+				if (less(k,child)) break;
+				swap(k,child);
+				k=child;
+			}
+		}
+
+		public void add(String str) {
+			if (timesMap.containsKey(str)){
+				Integer times = timesMap.get(str);
+				timesMap.put(str,times+1);
+				if (indexMap.get(str)!=-1){
+					sink(indexMap.get(str));
+				}else {
+					indexMap.put(str,size+1);
+					heap[++size]=str;
+					swim(size);
+					if (size> topk){
+						swap(1,size--);
+						sink(1);
+						indexMap.put(heap[size+1],-1);//只能放在不影响swap的地方
 					}
-				} else {// 堆没有满
-					nodeIndexMap.put(curNode, heapSize);
-					heap[heapSize] = curNode;
-					heapInsert(heapSize++);
 				}
-			} else { // str已经在堆上了
-				heapify(preIndex, heapSize);
+			}else {
+				timesMap.put(str,1);
+				indexMap.put(str,size+1);
+				heap[++size]=str;
+				swim(size);
+				if (size> topk){
+					swap(1,size--);
+					sink(1);
+					indexMap.put(heap[size+1],-1);
+				}
 			}
 		}
 
 		public void printTopK() {
-			System.out.println("TOP: ");
-			for (int i = 0; i != heap.length; i++) {
-				if (heap[i] == null) {
-					break;
-				}
-				System.out.print("Str: " + heap[i].str);
-				System.out.println(" Times: " + heap[i].times);
+			for (int i = 1; i <= topk; i++) {
+				System.out.println(heap[i]+":"+timesMap.get(heap[i]));
 			}
 		}
 
-		private void heapInsert(int index) {
-			while (index != 0) {
-				int parent = (index - 1) / 2;
-				if (heap[index].times < heap[parent].times) {
-					swap(parent, index);
-					index = parent;
-				} else {
-					break;
-				}
-			}
-		}
-
-		private void heapify(int index, int heapSize) {
-			int l = index * 2 + 1;
-			int r = index * 2 + 2;
-			int smallest = index;
-			while (l < heapSize) {
-				if (heap[l].times < heap[index].times) {
-					smallest = l;
-				}
-				if (r < heapSize && heap[r].times < heap[smallest].times) {
-					smallest = r;
-				}
-				if (smallest != index) {
-					swap(smallest, index);
-				} else {
-					break;
-				}
-				index = smallest;
-				l = index * 2 + 1;
-				r = index * 2 + 2;
-			}
-		}
-
-		private void swap(int index1, int index2) {
-			nodeIndexMap.put(heap[index1], index2);
-			nodeIndexMap.put(heap[index2], index1);
-			Node tmp = heap[index1];
-			heap[index1] = heap[index2];
-			heap[index2] = tmp;
-		}
 
 	}
 
@@ -133,15 +111,23 @@ public class Code07_TopKTimesRealTime {
 	}
 
 	public static void main(String[] args) {
-		TopKRecord record = new TopKRecord(2);
+		TopK record = new TopK(2);
 		record.add("zuo");
 		record.printTopK();
+		System.out.println("=======");
 		record.add("cheng");
 		record.add("cheng");
 		record.printTopK();
+		System.out.println("=======");
 		record.add("Yun");
 		record.add("Yun");
 		record.printTopK();
+		System.out.println("=======");
+		record.add("yes");
+		record.add("yes");
+		record.add("yes");
+		record.printTopK();
+
 
 	}
 }

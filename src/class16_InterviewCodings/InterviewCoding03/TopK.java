@@ -19,131 +19,103 @@ public class TopK {
 		}
 	}
 
-	public static class NodeHeapComp implements Comparator<Node> {
+	private String[] heap;
+	private int size;
 
-		@Override
-		public int compare(Node o1, Node o2) {
-			return o1.times != o2.times ? (o1.times - o2.times) : (o2.str.compareTo(o1.str));
-		}
-
-	}
-
-	public static class NodeTreeSetComp implements Comparator<Node> {
-
-		@Override
-		public int compare(Node o1, Node o2) {
-			return o1.times != o2.times ? (o2.times - o1.times) : (o1.str.compareTo(o2.str));
-		}
-
-	}
-
-	private Node[] heap;
-	private int heapSize;
-	private HashMap<String, Node> strNodeMap;
-	private HashMap<Node, Integer> nodeIndexMap;
-	private NodeHeapComp comp;
-	private TreeSet<Node> treeSet;
+	private int topk;
+	//在不影响swap的情况下去更新额外的结构
+	private HashMap<String, Integer> timesMap;//string ---> times
+	private HashMap<String, Integer> indexMap;//快速找到string所在的位置
 
 	public TopK(int K) {
-		heap = new Node[K];
-		heapSize = 0;
-		strNodeMap = new HashMap<String, Node>();
-		nodeIndexMap = new HashMap<Node, Integer>();
-		comp = new NodeHeapComp();
-		treeSet = new TreeSet<>(new NodeTreeSetComp());
+		heap = new String[K + 2];//k+1 +1 ,多一个位置是因为add的过程需要多一个空间
+		topk =K;
+		size = 0;
+		timesMap = new HashMap<String, Integer>();
+		indexMap = new HashMap<String, Integer>();
+	}
+
+	private boolean less(int a, int b) {//times小才是真的小,time一样的话
+		String str1=heap[a];
+		String str2=heap[b];
+		int times1=timesMap.get(str1);
+		int times2=timesMap.get(str2);
+		boolean directory= str1.compareTo(str2) > 0;//字典序大的让他上去（等着删除），小的留在下面
+		return times1==times2?directory:times1<times2;
+	}
+
+	private void swap(int a, int b) {
+		indexMap.put(heap[a], b);
+		indexMap.put(heap[b], a);
+		String tmp = heap[a];
+		heap[a] = heap[b];
+		heap[b] = tmp;
+	}
+
+	private void swim(int k) {
+		for (; k > 1 && less(k, k >> 1); k >>= 1) swap(k, k >> 1);
+	}
+
+	private void sink(int k) {
+		while (k << 1 <= size) {
+			int child=k<<1;
+			if (child+1<=size&&less(child+1,child)) child++;
+			if (less(k,child)) break;
+			swap(k,child);
+			k=child;
+		}
 	}
 
 	public void add(String str) {
-		if (heap.length == 0) {
-			return;
-		}
-		Node curNode = null;
-		int preIndex = -1;
-		if (!strNodeMap.containsKey(str)) {
-			curNode = new Node(str, 1);
-			strNodeMap.put(str, curNode);
-			nodeIndexMap.put(curNode, -1);
-		} else {
-			curNode = strNodeMap.get(str);
-			// 要在time++之前，先在treeSet中删掉
-			// 原因是因为一但times++，curNode在treeSet中的排序就失效了
-			// 这种失效会导致整棵treeSet出现问题
-			if (treeSet.contains(curNode)) {
-				treeSet.remove(curNode);
-			}
-			curNode.times++;
-			preIndex = nodeIndexMap.get(curNode);
-		}
-		if (preIndex == -1) {
-			if (heapSize == heap.length) {
-				if (comp.compare(heap[0], curNode) < 0) {
-					treeSet.remove(heap[0]);
-					treeSet.add(curNode);
-					nodeIndexMap.put(heap[0], -1);
-					nodeIndexMap.put(curNode, 0);
-					heap[0] = curNode;
-					heapify(0, heapSize);
+		if (timesMap.containsKey(str)){
+			Integer times = timesMap.get(str);
+			timesMap.put(str,times+1);
+			if (indexMap.get(str)!=-1){
+				sink(indexMap.get(str));
+			}else {
+				indexMap.put(str,size+1);
+				heap[++size]=str;
+				swim(size);
+				if (size> topk){
+					swap(1,size--);
+					sink(1);
+					indexMap.put(heap[size+1],-1);//只能放在不影响swap的地方
 				}
-			} else {
-				treeSet.add(curNode);
-				nodeIndexMap.put(curNode, heapSize);
-				heap[heapSize] = curNode;
-				heapInsert(heapSize++);
 			}
-		} else {
-			treeSet.add(curNode);
-			heapify(preIndex, heapSize);
+		}else {
+			timesMap.put(str,1);
+			indexMap.put(str,size+1);
+			heap[++size]=str;
+			swim(size);
+			if (size> topk){
+				swap(1,size--);
+				sink(1);
+				indexMap.put(heap[size+1],-1);
+			}
 		}
 	}
 
+
+	/*
+	 * @return: the current top k frequent words.
+	 */
 	public List<String> topk() {
-		ArrayList<String> ans = new ArrayList<>();
-		for (Node node : treeSet) {
-			ans.add(node.str);
-		}
-		return ans;
+		List<String> list = new ArrayList<>();
+		for (int i=1;i<=size;i++) list.add(heap[i]);
+		list.sort((String a,String b)-> timesMap.get(b)!=timesMap.get(a)?timesMap.get(b)-timesMap.get(a):b.compareTo(a));
+		return list;
 	}
 
-	private void heapInsert(int index) {
-		while (index != 0) {
-			int parent = (index - 1) / 2;
-			if (comp.compare(heap[index], heap[parent]) < 0) {
-				swap(parent, index);
-				index = parent;
-			} else {
-				break;
-			}
-		}
-	}
-
-	private void heapify(int index, int heapSize) {
-		int l = index * 2 + 1;
-		int r = index * 2 + 2;
-		int smallest = index;
-		while (l < heapSize) {
-			if (comp.compare(heap[l], heap[index]) < 0) {
-				smallest = l;
-			}
-			if (r < heapSize && comp.compare(heap[r], heap[smallest]) < 0) {
-				smallest = r;
-			}
-			if (smallest != index) {
-				swap(smallest, index);
-			} else {
-				break;
-			}
-			index = smallest;
-			l = index * 2 + 1;
-			r = index * 2 + 2;
+	public static void main(String[] args) {
+		TopK topK=new TopK(1);
+//        topK.add("lint");
+//        topK.add("code");
+//        topK.add("code");
+		topK.add("aa");
+		topK.add("ab");
+		List<String> topk1 = topK.topk();
+		for (String s : topk1) {
+			System.out.println(s);
 		}
 	}
-
-	private void swap(int index1, int index2) {
-		nodeIndexMap.put(heap[index1], index2);
-		nodeIndexMap.put(heap[index2], index1);
-		Node tmp = heap[index1];
-		heap[index1] = heap[index2];
-		heap[index2] = tmp;
-	}
-
 }
