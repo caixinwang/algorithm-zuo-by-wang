@@ -16,7 +16,7 @@ public class Code02_SmallSum {
         return mergeSort(arr, l, mid) + mergeSort(arr, mid + 1, r) + merge(arr, l, mid, r);
     }
 
-    private static int merge(int[] arr, int l, int mid, int r) {
+    private static int merge(int[] arr, int l, int mid, int r) {//和之前的区别在于arr[p1] < arr[p2]而不是 <=
         int[] help = new int[r - l + 1];
         int p1 = l,p2 = mid + 1,i = 0,res = 0;
         while (p1 <= mid && p2 <= r) {
