@@ -6,7 +6,7 @@ public class Code01_GetFolderTree {
 
 	public static class Node {
 		// 上一个节点是通过哪条路，到我的
-		public String path;
+		public String path;//深度优先遍历到这个结点的时候通过这个来辅助打印
 		// key : node下级的路   value：node在key这条路上对应的节点是什么
 		public TreeMap<String, Node> nextMap;
 		
