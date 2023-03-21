@@ -3,79 +3,66 @@ package class18_InterviewCodings.InterviewCoding04;
 import java.util.TreeMap;
 
 public class Code01_GetFolderTree {
+	static class Node{
+		public TreeMap<String,Node> nexts=new TreeMap<>();//指路
+		public String value;//走哪条路下来这个结点的就记录一下
 
-	public static class Node {
-		// 上一个节点是通过哪条路，到我的
-		public String path;//深度优先遍历到这个结点的时候通过这个来辅助打印
-		// key : node下级的路   value：node在key这条路上对应的节点是什么
-		public TreeMap<String, Node> nextMap;
-		
-		public Node(String p) {
-			this.path = p;
-			nextMap = new TreeMap<>();
+		public Node(String value) {
+			this.value = value;
 		}
 	}
 
-	// folderPaths ->  [   "a\b\c","a\b\s" , "a\d\e" ,"e\f\sty"     ]
-	public static void print(String[] folderPaths) {
-		if (folderPaths == null || folderPaths.length == 0) {
-			return;
-		}
-		// 根据所有字符串，把前缀树建立好，头节点为head
-		Node head = generateFolderTree(folderPaths);
-		
-		// 打印
-		printProcess(head, 0);
-	}
+	static class TriTree{
+		public Node head;
 
-	public static Node generateFolderTree(String[] folderPaths) {
-		Node head = new Node(""); // 系统根目录, 前缀树头节点
-		for (String foldPath : folderPaths) { // 拿出每一个绝对路径
-			String[] paths = foldPath.split("\\\\"); // java 特性，用一个"\"做分割的意思
-			Node cur = head;
-			for (int i = 0; i < paths.length; i++) { // "a"  , "b"   ,"c"
-				if (!cur.nextMap.containsKey(paths[i])) {
-					cur.nextMap.put(paths[i], new Node(paths[i]));
+		public TriTree(Node head) {
+			this.head = head;
+		}
+
+		public void add(String s){//s:"a\b\cd"
+			if (s==null||s.length()==0) return;
+			String[] split = s.split("\\\\");
+			add(split);
+		}
+		private void add(String[] s){//s:["a","b","cd"]
+			Node cur=head;
+			for (int i = 0; i < s.length; i++) {
+				if (cur.nexts.containsKey(s[i])){//有路
+					cur=cur.nexts.get(s[i]);//往下走
+				}else {//没有就新建,然后继续往下走
+					cur.nexts.put(s[i],new Node(s[i]));
+					cur=cur.nexts.get(s[i]);//往下走
 				}
-				cur = cur.nextMap.get(paths[i]);
 			}
 		}
-		return head;
-	}
 
-	// head节点，当前在level层
-	public static void printProcess(Node node, int level) {
-		if (level != 0) {
-			// 2 * (level - 1)
-			System.out.println(get4nSpace(level) + node.path);
+		public void print(){
+			print(head,0);
 		}
-		for (Node next : node.nextMap.values()) {
-			printProcess(next, level + 1);
-		}
-	}
 
-	public static String get4nSpace(int n) {
-		String res = "";
-		for (int i = 1; i < n; i++) {
-			res += "    ";
+		private void print(Node head,int level){//打印以head为头的子树，子树的深度在level
+			if (level!=0){//根节点不参与
+				printSpace(level);
+				System.out.println(head.value);
+			}
+			for (Node value : head.nexts.values()) {
+				print(value,level+1);
+			}
 		}
-		return res;
+
+		private void printSpace(int level){
+			for (int i = 0; i < level-1; i++) {//注意这个-1，只有2层及以上才会打印空格
+				System.out.print("  ");
+			}
+		}
 	}
 
 	public static void main(String[] args) {
-		
-		//    "a\b\c" '\'  a,b,c
-		String test = "a\\b\\cd";
-		
-		
-		
-		
-
-		//  "a\b\c"    "\"    a,b,c
-		String[] arr = test.split("\\\\"); //    \\\\    \\   \
-		for(String str : arr) {
-			System.out.println(str);
+		TriTree triTree=new TriTree(new Node(""));
+		String[] strings=new String[]{"a\\b\\dbv","a\\c\\de","a\\c\\da\\a","bcx\\a\\b\\edf","bax\\a"};
+		for (int i = 0; i < strings.length; i++) {
+			triTree.add(strings[i]);
 		}
+		triTree.print();
 	}
-
 }

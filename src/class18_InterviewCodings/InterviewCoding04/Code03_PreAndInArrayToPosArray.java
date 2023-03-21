@@ -30,24 +30,23 @@ public class Code03_PreAndInArrayToPosArray {
 	public static void process1(
 			int[] pre, int L1, int R1, 
 			int[] in, int L2, int R2, 
-			int[] pos, int L3, int R3) {
+			int[] pos, int L3, int R3) {//将pos[L3...R3]填好
 		if (L1 > R1) {
 			return;
 		}
-		if (L1 == R1) {
-			pos[L3] = pre[L1];
+		if (L1==R1) {
+			pos[R3] = pre[L1];
 			return;
 		}
 		pos[R3] = pre[L1];
-		int mid = L2;
-		for (; mid <= R2; mid++) {
-			if (in[mid] == pre[L1]) {
-				break;
-			}
+		int i=L2;//找到pre[L1]在in中的下标
+		for (; i <= R2; i++) {
+			if (in[i]==pre[L1]) break;
 		}
-		int leftSize = mid - L2;
-		process1(pre, L1 + 1, L1 + leftSize, in, L2, mid - 1, pos, L3, L3 + leftSize - 1);
-		process1(pre, L1 + leftSize + 1, R1, in, mid + 1, R2, pos, L3 + leftSize, R3 - 1);
+		int leftLen=i-L2,rightLen=R2-i;
+		process1(pre,L1+1,L1+leftLen,in,L2,i-1,pos,L3,L3+leftLen-1);
+		process1(pre,R1-rightLen+1,R1,in,i+1,R2,pos,R3-rightLen,R3-1);
+
 	}
 
 	public static int[] preInToPos2(int[] pre, int[] in) {

@@ -2,6 +2,7 @@ package class18_InterviewCodings.InterviewCoding04;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 public class Code02_BSTtoDoubleLinkedList {
 
@@ -13,6 +14,32 @@ public class Code02_BSTtoDoubleLinkedList {
 		public Node(int data) {
 			this.value = data;
 		}
+	}
+
+	public static Node convert(Node head) {//中序非递归
+		if (head==null) return null;
+		Stack<Node> stack=new Stack<>();
+		Node pre=null,res=null;
+		while(!stack.isEmpty()||head!=null){
+			while(head!=null){
+				stack.add(head);
+				head=head.left;
+			}
+			head=stack.pop();
+			Node right=head.right;
+//			head.left=null;//不会形成环，第一个和最后一个，所以不用担心。
+//			head.right=null;
+			if (pre==null){
+				pre=head;
+				res=head;
+			}else {
+				pre.right=head;
+				head.left=pre;
+				pre=head;
+			}
+			head= right;
+		}
+		return res;
 	}
 
 	public static Node convert1(Node head) {

@@ -33,6 +33,7 @@ public class Code01_CordCoverMaxPoint {
         }
         return r < L ? -1 : r;
     }
+
     /**
      * @param arr :arr[i]代表一个具体的点
      * @param L 代表绳子的长度
