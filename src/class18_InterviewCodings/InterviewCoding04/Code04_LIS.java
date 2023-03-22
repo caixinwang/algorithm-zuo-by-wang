@@ -3,44 +3,41 @@ package class18_InterviewCodings.InterviewCoding04;
 public class Code04_LIS {
 
 	public static int[] lis1(int[] arr) {
-		if (arr == null || arr.length == 0) {
-			return null;
-		}
+		if (arr == null || arr.length == 0) return null;
 		int[] dp = getdp1(arr);
-		return generateLIS(arr, dp);
+		int[] res = generateLIS(arr,dp);
+		return res;
 	}
 
 	public static int[] getdp1(int[] arr) {
-		int[] dp = new int[arr.length];
-		for (int i = 0; i < arr.length; i++) {
-			dp[i] = 1;
-			for (int j = 0; j < i; j++) {
-				if (arr[i] > arr[j]) {
-					dp[i] = Math.max(dp[i], dp[j] + 1);
-				}
+		int N = arr.length;
+		int[] dp = new int[N];//dp[i]：以i结尾的最长递增子序列的长度
+		dp[0] = 1;//以0位置结尾的最长递增子序列显然长度为1
+		for (int i = 1; i < N; i++) {//找到arr[k]小于arr[i]的下标k1,...kn,dp[i]=max{dp[k1]+1,...,dp[kn]+1}
+			for (int k = i - 1; k >= 0; k--) {
+				if (arr[k] < arr[i]) dp[i] = Math.max(dp[i], dp[k] + 1);
 			}
 		}
 		return dp;
 	}
 
-	public static int[] generateLIS(int[] arr, int[] dp) {
-		int len = 0;
-		int index = 0;
+	public static int[] generateLIS(int[] arr, int[] dp) {//利用dp进行加工得到LIS序列具体是什么
+		//先找到dp中最大值max以及其下标index，然后顺着dp的index往前找max-1,max-2...直到1，假设dp[k]=max-1，那么res[i]=arr[k]
+		int max = 0, index = 0;
 		for (int i = 0; i < dp.length; i++) {
-			if (dp[i] > len) {
-				len = dp[i];
+			if (dp[i] > max) {
+				max = dp[i];
 				index = i;
 			}
 		}
-		int[] lis = new int[len];
-		lis[--len] = arr[index];
-		for (int i = index; i >= 0; i--) {
-			if (arr[i] < arr[index] && dp[i] == dp[index] - 1) {
-				lis[--len] = arr[i];
-				index = i;
+		int[] res = new int[max];
+		for (int k = index,i=max-1; k >= 0; k--) {
+			if (max == dp[k]) {
+				res[i--] = arr[k];
+				max--;
 			}
 		}
-		return lis;
+		return res;
 	}
 
 	public static int[] lis2(int[] arr) {

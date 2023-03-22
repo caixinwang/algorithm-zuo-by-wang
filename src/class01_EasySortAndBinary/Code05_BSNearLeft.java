@@ -30,7 +30,7 @@ public class Code05_BSNearLeft {//大于num的最小数字
         while (l <= r) {
             mid = (r - l) / 2 + l;
             if (arr[mid] > num) {
-                r = mid - 1;
+                r = mid - 1;//右边界往左边移动，说明后面mid也是往左移动
             } else {
                 l = mid + 1;//如果数组中没有大于num的数，最终l会走到len
             }
