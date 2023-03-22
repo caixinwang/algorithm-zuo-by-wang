@@ -22,14 +22,13 @@ public class Code03_CompleteTreeNodeNumber {
 
 	// node在第level层，h是总的深度（h永远不变，全局变量
 	// 以node为头的完全二叉树，节点个数是多少
-	public static int bs(Node node, int Level, int h) {
-		if (Level == h) {
-			return 1;
-		}
-		if (mostLeftLevel(node.right, Level + 1) == h) {
-			return (1 << (h - Level)) + bs(node.right, Level + 1, h);
-		} else {
-			return (1 << (h - Level - 1)) + bs(node.left, Level + 1, h);
+	public static int bs(Node node, int level, int h) {
+		if (level==h) return 1;//在最后一层，说明是叶子结点
+		int p = mostLeftLevel(node.right, level+1);
+		if (p==h){//右子树如果到了h，说明左子树一定满了，左子树是h-level层的满二叉树
+			return (1<<h-level)+bs(node.right,level+1,h);
+		}else {//右子树如果是h-1，那么说明右子树满了
+			return (1<<h-level-1)+bs(node.left,level+1,h);
 		}
 	}
 
@@ -37,6 +36,11 @@ public class Code03_CompleteTreeNodeNumber {
 	// 求以node为头的子树，最大深度是多少
 	// node为头的子树，一定是完全二叉树
 	public static int mostLeftLevel(Node node, int level) {
+//		while(node!=null&&node.left!=null){ //这种不行，因为node为空的时候需要返回level-1，因为不能给空节点算高度
+//			node=node.left;
+//			level++;
+//		}
+//		return level;
 		while (node != null) {
 			level++;
 			node = node.left;
