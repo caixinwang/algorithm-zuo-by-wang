@@ -71,39 +71,70 @@ public class Code01_DeleteMinCost {
 
 	// 求str2到s1sub的编辑距离
 	// 假设编辑距离只有删除动作且删除一个字符的代价为1
-	public static int distance(char[] str2, char[] s1sub) {
-		int row = str2.length;
-		int col = s1sub.length;
-		int[][] dp = new int[row][col];
-		// dp[i][j]的含义：
-		// str2[0..i]仅通过删除行为变成s1sub[0..j]的最小代价
-		// 可能性一：
-		// str2[0..i]变的过程中，不保留最后一个字符(str2[i])，
-		// 那么就是通过str2[0..i-1]变成s1sub[0..j]之后，再最后删掉str2[i]即可 -> dp[i][j] = dp[i-1][j] + 1
-		// 可能性二：
-		// str2[0..i]变的过程中，想保留最后一个字符(str2[i])，然后变成s1sub[0..j]，
-		// 这要求str2[i] == s1sub[j]才有这种可能, 然后str2[0..i-1]变成s1sub[0..j-1]即可
-		// 也就是str2[i] == s1sub[j] 的条件下，dp[i][j] = dp[i-1][j-1]
-		dp[0][0] = str2[0] == s1sub[0] ? 0 : Integer.MAX_VALUE;
-		for (int j = 1; j < col; j++) {
-			dp[0][j] = Integer.MAX_VALUE;
+//	public static int distance(char[] str2, char[] s1sub) {
+//		int row = str2.length;
+//		int col = s1sub.length;
+//		int[][] dp = new int[row][col];
+//		// dp[i][j]的含义：
+//		// str2[0..i]仅通过删除行为变成s1sub[0..j]的最小代价
+//		// 可能性一：
+//		// str2[0..i]变的过程中，不保留最后一个字符(str2[i])，
+//		// 那么就是通过str2[0..i-1]变成s1sub[0..j]之后，再最后删掉str2[i]即可 -> dp[i][j] = dp[i-1][j] + 1
+//		// 可能性二：
+//		// str2[0..i]变的过程中，想保留最后一个字符(str2[i])，然后变成s1sub[0..j]，
+//		// 这要求str2[i] == s1sub[j]才有这种可能, 然后str2[0..i-1]变成s1sub[0..j-1]即可
+//		// 也就是str2[i] == s1sub[j] 的条件下，dp[i][j] = dp[i-1][j-1]
+//		dp[0][0] = str2[0] == s1sub[0] ? 0 : Integer.MAX_VALUE;
+//		for (int j = 1; j < col; j++) {
+//			dp[0][j] = Integer.MAX_VALUE;
+//		}
+//		for (int i = 1; i < row; i++) {
+//			dp[i][0] = (dp[i - 1][0] != Integer.MAX_VALUE || str2[i] == s1sub[0]) ? i : Integer.MAX_VALUE;
+//		}
+//		for (int i = 1; i < row; i++) {
+//			for (int j = 1; j < col; j++) {
+//				dp[i][j] = Integer.MAX_VALUE;
+//				if (dp[i - 1][j] != Integer.MAX_VALUE) {
+//					dp[i][j] = dp[i - 1][j] + 1;
+//				}
+//				if (str2[i] == s1sub[j] && dp[i - 1][j - 1] != Integer.MAX_VALUE) {
+//					dp[i][j] = Math.min(dp[i][j], dp[i - 1][j - 1]);
+//				}
+//
+//			}
+//		}
+//		return dp[row - 1][col - 1];
+//	}
+
+	/**
+	 * dp[i][j]：str1[0...i]与str2[0...j],后者要删除多少字符才能变成前者。原问题答案就是dp[N-1][M-1]
+	 * dp[0][k],如果str2[0...k]中有str1[0]，那么dp[0][k]=k。否则dp[0][k]=-1
+	 * dp[0][0],str1[0]==str2[0]那么就等于0，否则就是-1。在上面的过程中初始化了
+	 * dp[k][0]，k==0时，上面填了。k>0时，都为-1，因为1个字符不可能删成2个字符
+	 * dp[i][j]: 1.从dp[i-1][j-1]来，这种情况下如果str1[i]==str2[j]，那么dp[i][j]=dp[i-1][j-1]。
+	 * 如果str1[i]!=str2[j]，那么str2就变不成str1了，dp[i][j]=-1
+	 * 2.从dp[i-1][j]来，来不了一点，dp[i][j]=-1
+	 * 3.从dp[i][j-1]来，把str2[j]删了就行，dp[i][j]=dp[i][j-1]+1
+	 * 综上：dp[i][j]的来源只有两个，其它的来源都是-1
+	 * @return str2删除多少个字符才能变成str1.也就是编辑距离问题，并且只有删除。如果通过删除str2变不成str1那么就返回-1
+	 */
+	public static int distance(char[] str1, char[] str2) {
+		int N=str1.length,M=str2.length;
+		int[][] dp=new int[N][M];
+		boolean t=false;//str2[0...k]中是否有str1[0]
+		for (int i = 0; i < dp[0].length; i++) {
+			if (str2[i]==str1[0]) t=true;
+			dp[0][i]=t?i:-1;
 		}
-		for (int i = 1; i < row; i++) {
-			dp[i][0] = (dp[i - 1][0] != Integer.MAX_VALUE || str2[i] == s1sub[0]) ? i : Integer.MAX_VALUE;
+		for (int i = 1; i < dp.length; i++) {
+			dp[i][0]=-1;
 		}
-		for (int i = 1; i < row; i++) {
-			for (int j = 1; j < col; j++) {
-				dp[i][j] = Integer.MAX_VALUE;
-				if (dp[i - 1][j] != Integer.MAX_VALUE) {
-					dp[i][j] = dp[i - 1][j] + 1;
-				}
-				if (str2[i] == s1sub[j] && dp[i - 1][j - 1] != Integer.MAX_VALUE) {
-					dp[i][j] = Math.min(dp[i][j], dp[i - 1][j - 1]);
-				}
+		for (int i = 1; i < N; i++) {
+			for (int j = 1; j < M; j++) {
+
 
 			}
 		}
-		return dp[row - 1][col - 1];
 	}
 
 	// 解法二的优化

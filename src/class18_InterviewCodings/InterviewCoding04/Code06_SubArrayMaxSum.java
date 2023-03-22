@@ -2,16 +2,17 @@ package class18_InterviewCodings.InterviewCoding04;
 
 public class Code06_SubArrayMaxSum {
 
+	/**
+	 * 用一个sum一路累加，一路更新max。sum<0了就重置为0
+	 * @param arr 返回arr的子数组最大累加和
+	 */
 	public static int maxSum(int[] arr) {
-		if (arr == null || arr.length == 0) {
-			return 0;
-		}
-		int max = Integer.MIN_VALUE;
-		int cur = 0;
+		if (arr==null||arr.length==0) return Integer.MIN_VALUE;
+		int max=Integer.MIN_VALUE,sum=0;
 		for (int i = 0; i < arr.length; i++) {
-			cur += arr[i];
-			max = Math.max(max, cur);
-			cur = cur < 0 ? 0 : cur;
+			sum+=arr[i];
+			max=Math.max(max,sum);
+			if (sum<0) sum=0;
 		}
 		return max;
 	}

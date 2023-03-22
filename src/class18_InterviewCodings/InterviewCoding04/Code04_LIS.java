@@ -48,30 +48,32 @@ public class Code04_LIS {
 		return generateLIS(arr, dp);
 	}
 
-	public static int[] getdp2(int[] arr) {
-		int[] dp = new int[arr.length];
-		int[] ends = new int[arr.length];
-		ends[0] = arr[0];
-		dp[0] = 1;
-		int right = 0; // 0....right   right往右无效
-		int l = 0;
-		int r = 0;
-		int m = 0;
-		for (int i = 1; i < arr.length; i++) {
-			l = 0;
-			r = right;
-			while (l <= r) {
-				m = (l + r) / 2;
-				if (arr[i] > ends[m]) {
-					l = m + 1;
-				} else {
-					r = m - 1;
+	/**
+	 * dp[i]怎么求？更新dp[i]的每一个，都要同步更新ends数组。在ends数组中找大于等于arr[i]的最左位置k，
+	 * 然后更新ends[k]=arr[i]，然后dp[i]=k+1。
+	 * @param arr 找arr的最长递增子序列
+	 * @return 返回dp数组
+	 */
+	public static int[] getdp2(int[] arr) {//在方法一中做了加速
+		int N=arr.length,l=0,r=0,mid=0,endIndex=0;
+		int[] dp=new int[N];//含义与方法1的含义相同
+		int[] ends=new int[N];//ends[i]代表长度为i+1的最长递增子序列的结尾的大小
+		dp[0]=1;
+		ends[0]=arr[0];
+		for (int i=1;i<N;i++){
+			l=0;
+			r=endIndex;
+			while(l<=r){
+				mid=l+(r-l>>1);
+				if (ends[mid]>=arr[i]){
+					r=mid-1;//找最左，所以r动。最终l会是答案
+				}else {
+					l=mid+1;
 				}
 			}
-			// l -> right+1
-			right = Math.max(right, l);
-			ends[l] = arr[i];
-			dp[i] = l + 1;
+			endIndex=Math.max(endIndex,l);//看看是否ends中不存在大于等于arr[i]的数，是的话就扩招有效区
+			ends[l]=arr[i];//扩招和覆盖都包含在这一句语句中
+			dp[i]=l+1;
 		}
 		return dp;
 	}
