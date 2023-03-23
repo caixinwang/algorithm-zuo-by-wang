@@ -6,17 +6,17 @@ package class18_InterviewCodings.InterviewCoding02;
  */
 public class Code03_MaxABSBetweenLeftAndRight {
 
-	public static int maxABS1(int[] arr) {
+	public static int maxABS1(int[] arr) {//暴力O(N²)
 		int res = Integer.MIN_VALUE;
 		int maxLeft = 0;
 		int maxRight = 0;
-		for (int i = 0; i != arr.length - 1; i++) {
+		for (int i = 0; i<arr.length-1; i++) {//0~i划分出来做左部分,不能一整个数组作为左部分
 			maxLeft = Integer.MIN_VALUE;
-			for (int j = 0; j != i + 1; j++) {
+			for (int j = 0; j <= i; j++) {//找出左部分的最大值
 				maxLeft = Math.max(arr[j], maxLeft);
 			}
 			maxRight = Integer.MIN_VALUE;
-			for (int j = i + 1; j != arr.length; j++) {
+			for (int j = i + 1; j<arr.length; j++) {//找出右部分的最大值
 				maxRight = Math.max(arr[j], maxRight);
 			}
 			res = Math.max(Math.abs(maxLeft - maxRight), res);
@@ -24,7 +24,12 @@ public class Code03_MaxABSBetweenLeftAndRight {
 		return res;
 	}
 
-	public static int maxABS2(int[] arr) {
+	/**
+	 * 对暴力做法做了加速，使用预处理数组快速找出左部分和右部分的最大值。
+	 * larr[i]代表arr[0...i]中的最大值
+	 * rarr[i]代表arr[i...N-1]的最大值
+	 */
+	public static int maxABS2(int[] arr) {//O(N)
 		int[] lArr = new int[arr.length];
 		int[] rArr = new int[arr.length];
 		lArr[0] = arr[0];
@@ -42,7 +47,7 @@ public class Code03_MaxABSBetweenLeftAndRight {
 		return max;
 	}
 
-	public static int maxABS3(int[] arr) {
+	public static int maxABS3(int[] arr) {//最快速的方法 -- O(N)
 		int max = Integer.MIN_VALUE;
 		for (int i = 0; i < arr.length; i++) {
 			max = Math.max(arr[i], max);//找到全局最大值
@@ -64,4 +69,5 @@ public class Code03_MaxABSBetweenLeftAndRight {
 		System.out.println(maxABS2(arr));
 		System.out.println(maxABS3(arr));
 	}
+
 }
