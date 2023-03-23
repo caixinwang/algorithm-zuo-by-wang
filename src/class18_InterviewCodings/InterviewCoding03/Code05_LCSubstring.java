@@ -2,7 +2,7 @@ package class18_InterviewCodings.InterviewCoding03;
 
 public class Code05_LCSubstring {
 
-	public static String lcst1(String str1, String str2) {
+	public static String lcst1(String str1, String str2) {//暴力
 		if (str1 == null || str2 == null || str1.equals("") || str2.equals("")) {
 			return "";
 		}
@@ -52,7 +52,7 @@ public class Code05_LCSubstring {
 				} else {
 					if (len > max) {
 						max = len;
-						end = i;//停在了str1的i处，空心（不包含）
+						end = i;//停在了str1的i处，空心（不包含），这样可以直接利用subString函数
 					}
 					len = 0;
 				}

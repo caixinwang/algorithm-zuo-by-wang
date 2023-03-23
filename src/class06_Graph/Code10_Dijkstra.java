@@ -3,7 +3,9 @@ package class06_Graph;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
+//堆结构实现Dijkstra
+//注意额外的结构会影响swap和less中的哪一个。只有less函数会用到dmap，所以在swim和sink之前要注意dmap是否合理更新
+//xmap不影响任何swap和less的任意一个，所以放在哪里更新都可以
 public class Code10_Dijkstra {//邻接矩阵表示
     static final int MAX = 999999;
 

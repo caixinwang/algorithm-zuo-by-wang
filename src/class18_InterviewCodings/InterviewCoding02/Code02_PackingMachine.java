@@ -17,20 +17,20 @@ package class18_InterviewCodings.InterviewCoding02;
  */
 public class Code02_PackingMachine {
 
-	public static int minOps(int[] arr) {
+	public static int minOps(int[] arr) {//左老师版本
 		if (arr == null || arr.length == 0) {
 			return 0;
 		}
 		int size = arr.length;
 		int sum = 0;
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {//求出衣服总量
 			sum += arr[i];
 		}
-		if (sum % size != 0) {
+		if (sum % size != 0) {//不可能配平
 			return -1;
 		}
-		int avg = sum / size;
-		int leftSum = 0;
+		int avg = sum / size;//最终配平每台机器有这么avg多的衣服
+		int leftSum = 0;//利用一个变量知道左边的衣服总量是多少，一直迭代保证它的含义
 		int ans = 0;
 		// 每个位置都求各自的
 		for (int i = 0; i < arr.length; i++) {
@@ -50,18 +50,18 @@ public class Code02_PackingMachine {
 		return ans;
 	}
 
-	public static int minOps2(int[] arr) {
+	public static int minOps2(int[] arr) {// cx's version
 		if (arr==null||arr.length==0) return -1;
 		int sum=0,N=arr.length,average=0,leftSum=0,leftRest=0,rightRest=0,ans=0;
 		for (int i = 0; i < arr.length; i++) {
 			sum+=arr[i];//sum用来配合求出平均个数、以及用于求出rightSum
 		}
-		if (sum%N!=0) return -1;
-		average=sum/N;
+		if (sum%N!=0) return -1;//不可能配平，返回-1
+		average=sum/N;//算出每台机器最后应该是average个衣服
 		for (int i = 0; i < arr.length; i++) {//对于每一个位置求出它的指标,leftSum为arr(0...i-1),rightSum为arr(i+1...N-1)
 			//进来的时候leftSum为0~i-1 的sum,leftRest=leftSum-(i-1-0+1)*average
 			leftRest=leftSum-i*average;
-			//leftSum+arr[i]+rightSum=sum,可知rightSum(i+1...N-1),进而求出rightRest=rightSum-(N-1-i-1+1)
+			//leftSum+arr[i]+rightSum=sum,可知rightSum(i+1...N-1),进而求出rightRest=rightSum-( N-1 - (i+1) + 1 )*average
 			rightRest=sum-arr[i]-leftSum-(N-1-i)*average;
 			if (leftRest<0&&rightRest<0) ans = Math.max(ans, Math.abs(leftRest)+Math.abs(rightRest));
 			else ans = Math.max(ans, Math.max(Math.abs(leftRest),Math.abs(rightRest)));

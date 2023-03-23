@@ -7,7 +7,7 @@ public class Code01_FindNumInSortedMatrix {
 	 * @param K 要查找的数
 	 * @return 如果matrix中有K，返回true
 	 */
-	public static boolean isContains(int[][] matrix, int K) {
+	public static boolean isContains(int[][] matrix, int K) {//O(m+n)
 		int row = 0,col = matrix[0].length - 1;//从右上角开始走
 		while (row < matrix.length && col > -1) {
 			if (matrix[row][col] == K) {
@@ -21,8 +21,10 @@ public class Code01_FindNumInSortedMatrix {
 		return false;
 	}
 
-	public static boolean isContains2(int[][] matrix, int K) {
-		int l=1,r= matrix.length*matrix[0].length,mid;
+
+	//利用二分的原理
+	public static boolean isContains2(int[][] matrix, int K) {//logn+logm 的复杂度
+		int l=0,r= matrix.length*matrix[0].length-1,mid;
 		while(l<=r){
 			mid=(r+l)>>1;
 			int value=get(matrix,mid);
@@ -33,16 +35,18 @@ public class Code01_FindNumInSortedMatrix {
 		return false;
 	}
 
-	private static int get(int[][] matrix , int index){//这里的index从1开始记
-		int a= matrix.length;//行
-		int b=matrix[0].length;//列
-		if (index>=a*b) throw new RuntimeException();
-		int row=index/b;
-		int col=index%b;
-		if (index%b==0){
-			row--;
-			col=matrix[0].length;
-		}
+	/**
+	 *
+	 * @param matrix 矩阵
+	 * @param index 把矩阵打扁平之后对应的index
+	 * @return 把打扁平的index对应到矩阵中的某个值
+	 */
+	private static int get(int[][] matrix , int index){//这里的index从0开始记
+		int N= matrix.length;//行
+		int M=matrix[0].length;//列
+		if (index>=N*M-1) throw new RuntimeException();
+		int row=index/M;
+		int col=index%M;
 		return matrix[row][col-1];
 	}
 
@@ -56,9 +60,8 @@ public class Code01_FindNumInSortedMatrix {
 				{ 166, 176, 186, 187, 190, 195, 200 },// 6
 				{ 233, 243, 321, 341, 356, 370, 380 } // 7
 		};
-		int K = 233;
+		int K = 120;
 		System.out.println(isContains(matrix, K));
-		System.out.println(isContains2(matrix, K));
-	}
+		System.out.println(isContains2(matrix, K));}
 
 }

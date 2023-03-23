@@ -31,7 +31,7 @@ public class Code06_TopKTimes {
 			return;
 		}
 		HashMap<String, Integer> map = new HashMap<>();
-		for (String str : arr) {
+		for (String str : arr) {//统计词频
 			if (!map.containsKey(str)) {
 				map.put(str, 1);
 			} else {
@@ -40,12 +40,12 @@ public class Code06_TopKTimes {
 		}
 		topK = Math.min(arr.length, topK);
 		PriorityQueue<Node> heap = new PriorityQueue<>(new NodeComparator());
-		for (Entry<String, Integer> entry : map.entrySet()) {
+		for (Entry<String, Integer> entry : map.entrySet()) {//一个entry相当于一个结点
 			Node cur = new Node(entry.getKey(), entry.getValue());
 			if (heap.size() < topK) {
 				heap.add(cur);
 			} else {
-				if (heap.peek().times < cur.times) {
+				if (heap.peek().times < cur.times) {//只要比小根堆的堆顶大就可以把它踢出
 					heap.poll();
 					heap.add(cur);
 				}

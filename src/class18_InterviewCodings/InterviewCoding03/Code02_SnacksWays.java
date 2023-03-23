@@ -32,7 +32,7 @@ public class Code02_SnacksWays {
 	}
 
 
-	public static int ways2(int[] arr, int w) {//将上面改成动态规划
+	public static int ways2(int[] arr, int w) {//将上面递归改成动态规划，这是通过递归改的，dp没有定义含义
 		int N = arr.length;
 		int[][] dp = new int[N + 1][w + 1];
 		for (int j = 0; j <= w; j++) {
@@ -47,7 +47,7 @@ public class Code02_SnacksWays {
 	}
 
 	/**
-	 * dp [ i ] [ j ] 代表0~i自由选择，凑成 j 的的方法数。最终结果就是sum{dp [n-1] [0...j]}
+	 * dp [ i ] [ j ] 代表0~i自由选择，刚好凑成 j 的的方法数。最终结果就是sum{dp [N-1] [0...j]}
 	 * @param arr 零食
 	 * @param w 背包大小
 	 * @return 方法总数
@@ -55,10 +55,10 @@ public class Code02_SnacksWays {
 	public static int ways3(int[] arr, int w) {
 		int N = arr.length;
 		int[][] dp = new int[N][w + 1];
-		for (int i = 0; i < N; i++) {
+		for (int i = 0; i < N; i++) {//刚好凑成0，都全不选 为一种凑法
 			dp[i][0] = 1;
 		}
-		if (arr[0] <= w) {
+		if (arr[0] <= w) {//只有一个物品要凑成，背包要刚好等于物品的大小。只有在arr[0]<=w才有一个等于1，否则都是0
 			dp[0][arr[0]] = 1;
 		}
 		for (int i = 1; i < N; i++) {
@@ -74,8 +74,8 @@ public class Code02_SnacksWays {
 	}
 
 	public static void main(String[] args) {
-		int[] arr = { 4, 3, 2, 9 };
-		int w = 8;
+		int[] arr = { 4, 3, 2, 9 ,7,12,4,6,7 };
+		int w = 20;
 		System.out.println(ways1(arr, w));
 		System.out.println(ways2(arr, w));
 		System.out.println(ways3(arr, w));

@@ -20,8 +20,8 @@ public class Code07_TopKTimesRealTime {
 
 		private int topk;
 		//在不影响swap的情况下去更新额外的结构
-		private HashMap<String, Integer> timesMap;//string ---> times
-		private HashMap<String, Integer> indexMap;//快速找到string所在的位置
+		private HashMap<String, Integer> timesMap;//string ---> times , 比较的依据
+		private HashMap<String, Integer> indexMap;//快速找到string所在的位置 ， 更新位置要放在合理的位置
 
 		public TopK(int K) {
 			heap = new String[K + 2];//k+1 +1 ,多一个位置是因为add的过程需要多一个空间
@@ -64,7 +64,7 @@ public class Code07_TopKTimesRealTime {
 				if (indexMap.get(str)!=-1){
 					sink(indexMap.get(str));
 				}else {
-					indexMap.put(str,size+1);
+					indexMap.put(str,size+1);//插放前，删放后
 					heap[++size]=str;
 					swim(size);
 					if (size> topk){
