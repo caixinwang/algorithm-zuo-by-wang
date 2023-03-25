@@ -7,62 +7,62 @@ public class Code04_TrappingRainWater {
 	 * 比如，r={3,1,2,5,2,4}根据值画出的直方图就是容器形状，该容器可以装下5格水
 	 */
 
-	public static int water1(int[] arr) {//不用辅助数组
-		if (arr == null || arr.length < 2) {
-			return 0;
-		}
-		int N = arr.length;
-		int water = 0;
-		for (int i = 1; i < N - 1; i++) {
-			int leftMax = Integer.MIN_VALUE;
-			for (int j = 0; j < i; j++) {
-				leftMax = Math.max(leftMax, arr[j]);
+	/**
+	 * 求出中间格子(1...N-2)中任意一个格子上可以存多少水。
+	 * 1. i格子存水。求出arr[0...i-1]中最高的柱子和arr[i+1...N-1]中最高的柱子，其中最小的柱子高度min作为瓶颈
+	 * 2. i格子可以存 max(min-arr[i],0)，套一个max函数是为了存的水一定大于等于0，不能为负数
+	 * @param arr arr中每一个数组代表每个格子上的柱子有多高
+	 * @return 返回arr这个地势可以存多少水
+	 */
+	public static int water1(int[] arr) {//暴力，不使用预处理数组
+		if (arr==null||arr.length<=2)return 0;
+		int res=0;
+		for (int i = 1; i < arr.length-1; i++) {//第一格和最后一格不存水
+			int lm=0,rm=0,min=0;//分别代表左边的最高和右边的最高
+			for (int j = 0; j < i; j++) {//求左边的最高
+				lm = Math.max(lm, arr[j]);
 			}
-			int rightMax = Integer.MIN_VALUE;
-			for (int j = i + 1; j < N; j++) {
-				rightMax = Math.max(rightMax, arr[j]);
+			for (int j=i+1;j<arr.length;j++){//求右边的最高
+				rm = Math.max(rm, arr[j]);
 			}
-			water += Math.max(Math.min(leftMax, rightMax) - arr[i], 0);
+			min=Math.min(lm,rm);//瓶颈
+			res+=Math.max(0,min-arr[i]);
 		}
-		return water;
+		return res;
 	}
 
-	public static int water2(int[] arr) {//用两个辅助数组
-		if (arr == null || arr.length <= 2) return 0;
-		int res=0,N=arr.length,tl=Integer.MIN_VALUE,tr=Integer.MIN_VALUE;
-		int[] lm=new int[N],rm=new int[N];
-		for (int i = 0; i < N; i++) {
-			tl = Math.max(tl, arr[i]);
-			tr = Math.max(tr, arr[N-1-i]);
-			lm[i]=tl;
-			rm[N-1-i]=tr;
+	public static int water2(int[] arr) {//使用两个预处理数组
+		if (arr==null||arr.length<=2)return 0;
+		int res=0,N=arr.length;
+		int[] lm=new int[N],rm=new int[N];//lm[i]代表arr[0...i]的最大值。rm[i]代表arr[i...N-1]的最大值
+		lm[0]=arr[0];
+		rm[N-1]=arr[N-1];
+		for (int i = 1; i < N; i++) {
+			lm[i]=Math.max(lm[i-1],arr[i]);//lm[0+i]
+			rm[N-1-i]=Math.max(rm[N-i],arr[N-1-i]);//rm[N-i]=rm[N-1-(i-1)]
 		}
-		for (int i = 1; i < N-1; i++) {
+		for (int i=1;i<N-1;i++){
 			res+=Math.max(0,Math.min(lm[i-1],rm[i+1])-arr[i]);
 		}
 		return res;
 	}
 
-	public static int water3(int[] arr) {//用一个辅助数组
-		if (arr == null || arr.length < 2) {
-			return 0;
+	public static int water3(int[] arr) {
+		if (arr==null||arr.length<=2)return 0;
+		int res=0,N=arr.length,lm=0;
+		int[] rm=new int[N];//lm[i]代表arr[0...i]的最大值。rm[i]代表arr[i...N-1]的最大值
+		rm[N-1]=arr[N-1];//留rm（数组）是因为我们习惯从左到右累加res，在这个过程中我们可以顺路求lm（变量）
+		for (int i = 1; i < N; i++) {
+			rm[N-1-i]=Math.max(rm[N-i],arr[N-1-i]);//rm[N-i]=rm[N-1-(i-1)]
 		}
-		int N = arr.length;
-		int[] rightMaxs = new int[N];
-		rightMaxs[N - 1] = arr[N - 1];
-		for (int i = N - 2; i >= 0; i--) {
-			rightMaxs[i] = Math.max(rightMaxs[i + 1], arr[i]);
+		for (int i=1;i<N-1;i++){
+			lm = Math.max(lm, arr[i-1]);
+			res+=Math.max(0,Math.min(lm,rm[i+1])-arr[i]);
 		}
-		int water = 0;
-		int leftMax = arr[0];
-		for (int i = 1; i < N - 1; i++) {
-			water += Math.max(Math.min(leftMax, rightMaxs[i + 1]) - arr[i], 0);
-			leftMax = Math.max(leftMax, arr[i]);
-		}
-		return water;
+		return res;
 	}
 
-	public static int water4(int[] arr) {//不用辅助数组
+	public static int water4(int[] arr) {
 		if (arr==null||arr.length<=2)return 0;
 		int res=0,l=1,r=arr.length-2,lm=arr[0],rm=arr[arr.length-1];
 		while(l<=r){
@@ -86,10 +86,22 @@ public class Code04_TrappingRainWater {
 		return ans;
 	}
 
+	public static void test(){
+		int[] arr = generateRandomArray(20, 30);
+		int ans1 = water1(arr);
+		int ans2 = water2(arr);
+		int ans3 = water3(arr);
+		int ans4 = water4(arr);
+		System.out.println(ans1);
+		System.out.println(ans2);
+		System.out.println(ans3);
+		System.out.println(ans4);
+	}
+
 	public static void main(String[] args) {
 		int len = 100;
 		int value = 200;
-		int testTimes = 10;
+		int testTimes = 100;
 		System.out.println("test begin");
 		for (int i = 0; i < testTimes; i++) {
 			int[] arr = generateRandomArray(len, value);
@@ -102,6 +114,7 @@ public class Code04_TrappingRainWater {
 			}
 		}
 		System.out.println("test finish");
+//		test();
 	}
 
 }

@@ -71,15 +71,15 @@ public class Code01_DeleteMinCost {
 
 	/**
 	 * dp[i][j]：str1[0...i]与str2[0...j],后者要删除多少字符才能变成前者。原问题答案就是dp[N-1][M-1]
-	 * dp[0][k],如果str2[0...k]中有str1[0]，那么dp[0][k]=k。否则dp[0][k]=-1
-	 * dp[0][0],str1[0]==str2[0]那么就等于0，否则就是-1。在上面的过程中初始化了
+	 * dp[0][k],如果str2[0...k]中有str1[0]，那么dp[0][k]=k。否则dp[0][k]=MAX
+	 * dp[0][0],str1[0]==str2[0]那么就等于0，否则就是MAX。在上面的过程中初始化了
 	 * dp[k][0]，k==0时，上面填了。k>0时，都为-1，因为1个字符不可能删成2个字符
 	 * dp[i][j]: 1.从dp[i-1][j-1]来，这种情况下如果str1[i]==str2[j]，那么dp[i][j]=dp[i-1][j-1]。
 	 * 如果str1[i]!=str2[j]，那么str2就变不成str1了，dp[i][j]=-1
 	 * 2.从dp[i-1][j]来，来不了一点，dp[i][j]=-1
 	 * 3.从dp[i][j-1]来，把str2[j]删了就行，dp[i][j]=dp[i][j-1]+1
-	 * 综上：dp[i][j]的来源只有两个，其它的来源都是-1。并且要看看另外几个来源是不是-1
-	 * @return str2删除多少个字符才能变成str1.也就是编辑距离问题，并且只有删除。如果通过删除str2变不成str1那么就返回-1
+	 * 综上：dp[i][j]的来源只有两个，其它的来源都是MAX。并且要看看另外几个来源是不是MAX
+	 * @return str2删除多少个字符才能变成str1.也就是编辑距离问题，并且只有删除。如果通过删除str2变不成str1那么就返回MAX
 	 */
 	public static int distance(char[] str1, char[] str2) {
 		int N=str1.length,M=str2.length;
@@ -102,8 +102,8 @@ public class Code01_DeleteMinCost {
 		return dp[N-1][M-1];
 	}
 
-	// 解法二的优化
-	public static int minCost3(String s1, String s2) {
+	// 解法二的优化。
+	public static int minCost3(String s1, String s2) {//优化！减一阶的复杂度
 		if (s1.length() == 0 || s2.length() == 0) {
 			return s2.length();
 		}

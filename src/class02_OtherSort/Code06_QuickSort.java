@@ -85,16 +85,22 @@ public class Code06_QuickSort {
     private static int partition2(int[] arr,int l,int r){//由于是在快排中调用，所以r>l，即至少两个元素
         int num=arr[l];//切分元素
         int p1=l;//从while出来的时候都是小于等于num的，同时p1指向的是>=num的元素。
-        int p2=r+1;//从while出来的时候p2+1~r都是大于等于num的，同时p2指向的是<=num的元.素。
-        while(true){
-            while(arr[++p1]<num) if (p1==r) break;//防止越界。如果if条件成立，说明数组中所有的数都比num小
-            while(arr[--p2]>num) if (p2==l) break;//这里的if冗余，因为arr[l]!>arr[l]
-            if (p1>=p2){//此时arr[p2+1...r]>=num,arr[l,p2-1]<=num，因为[l,p2-1]范围比[l,p1-1]小，后者满足<=num
-                swap(arr,l,p2);//进行了尾部的定制，使用while(true),当p1>=p2的时候是p1和p2交换了。
-                break;
-            }else {
-                swap(arr,p1,p2);
-            }
+        int p2=r+1;//从while出来的时候p2+1~r都是大于等于num的，同时p2指向的是<=num的元素。
+//        while(true){
+//            while(arr[++p1]<num) if (p1==r) break;//防止越界。如果if条件成立，说明数组中所有的数都比num小
+//            while(arr[--p2]>num) if (p2==l) break;//这里的if冗余，因为arr[l]!>arr[l]
+//            if (p1>=p2){//此时arr[p2+1...r]>=num,arr[l,p2-1]<=num，因为[l,p2-1]范围比[l,p1-1]小，后者满足<=num
+//                swap(arr,l,p2);//进行了尾部的定制，使用while(true),当p1>=p2的时候是p1和p2交换了。
+//                break;
+//            }else {
+//                swap(arr,p1,p2);
+//            }
+//        }
+        while(p1<p2){//上面那段代码和下面这段代码都ok
+            while(p1<r&&arr[++p1]<num);
+            while(p2>l&&arr[--p2]>num);
+            if (p1<p2)swap(arr,p1,p2);
+            else swap(arr,l,p2);//在while里面的最后一次循环进这个分支
         }
         return p2;
     }
@@ -190,7 +196,7 @@ public class Code06_QuickSort {
 
     // for test
     public static void main(String[] args) {
-        int testTime = 500000;
+        int testTime = 1000;
         int maxSize = 100;
         int maxValue = 100;
         boolean succeed = true;

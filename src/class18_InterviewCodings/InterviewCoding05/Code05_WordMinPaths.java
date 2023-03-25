@@ -48,6 +48,7 @@ public class Code05_WordMinPaths {
 		return res;
 	}
 
+	//所有的string到start的距离记在一张hash表，返回
 	public static HashMap<String, Integer> getDistances(String start,
 			HashMap<String, ArrayList<String>> nexts) {
 		HashMap<String, Integer> distances = new HashMap<>();

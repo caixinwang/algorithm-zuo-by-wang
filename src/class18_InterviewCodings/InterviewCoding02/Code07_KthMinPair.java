@@ -85,7 +85,7 @@ public class Code07_KthMinPair {
 		}
 		// 在无序数组中，找到第K小的数，返回值
 		// 第K小，以1作为开始
-		int fristNum = getMinKth(arr, (k - 1) / N);//找数字，定粗略位置
+		int fristNum = getMinKth2(arr, (k - 1) / N);//找数字，定粗略位置
 		int lessFristNumSize = 0;
 		int fristNumSize = 0;
 		for (int i = 0; i < N; i++) {
@@ -97,19 +97,19 @@ public class Code07_KthMinPair {
 			}
 		}
 		int rest = k - (lessFristNumSize * N);//定精细位置
-		return new int[] { fristNum, getMinKth(arr, (rest - 1) / fristNumSize) };
+		return new int[] { fristNum, getMinKth2(arr, (rest - 1) / fristNumSize) };
 	}
 
 	// 改写快排，时间复杂度O(N)
-	// 在无序数组arr中，找到，如果排序的话，arr[index]的数是什么？
-	public static int getMinKth(int[] arr, int index) {
+	// 在无序数组arr中，找到，如果排序的话，arr[index]的数是什么？index从0开始记
+	public static int getMinKth2(int[] arr, int index) {
 		int L = 0;
 		int R = arr.length - 1;
 		int pivot = 0;
 		int[] range = null;
 		while (L < R) {
 			pivot = arr[L + (int) (Math.random() * (R - L + 1))];
-			range = partition(arr, L, R, pivot);
+			range = partition2(arr, L, R, pivot);
 			if (index < range[0]) {
 				R = range[0] - 1;
 			} else if (index > range[1]) {
@@ -121,7 +121,7 @@ public class Code07_KthMinPair {
 		return arr[L];
 	}
 
-	public static int[] partition(int[] arr, int L, int R, int pivot) {
+	public static int[] partition2(int[] arr, int L, int R, int pivot) {
 		int less = L - 1;
 		int more = R + 1;
 		int cur = L;
