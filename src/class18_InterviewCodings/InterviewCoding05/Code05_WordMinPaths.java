@@ -3,115 +3,47 @@ package class18_InterviewCodings.InterviewCoding05;
 import java.util.*;
 
 public class Code05_WordMinPaths {
+	/**
+	 *
+	 * 思路：首先把给出的list，变成一张图，里面的每个结点代表string，边代表两个字符串之间差一个字符可以变到
+	 * 这个图其实就是一个list的list。图做出来之后，通过一个宽度优先遍历把start到其它结点的最短距离都求出来
+	 * 然后用深度优先遍历收集start到end的答案。
+	 */
 
-	public static List<List<String>> findMinPaths(
-			String start, 
-			String end,
-			List<String> list) {
-		list.add(start);
-		HashMap<String, ArrayList<String>> nexts = getNexts(list);
-		HashMap<String, Integer> distances = getDistances(start, nexts);
-		
-		
-		
-		
-		LinkedList<String> pathList = new LinkedList<>();
-		List<List<String>> res = new ArrayList<>();
-		getShortestPaths(start, end, nexts, distances, pathList, res);
+	/**
+	 * 1.生成图---List的List
+	 * 2.宽度优先遍历把start到图中任何一个结点的距离记到一个HashMap中
+	 * 3.广度优先遍历，把所有符合要求的答案收集起来
+	 * @param start 开始的字符串
+	 * @param end 结束的字符串
+	 * @param list 所有的字符串都在list里面，start和end也包括在内。start到end途经的string也在list中
+	 * @return 返回start到end的所有最短的路径，是一个List的List
+	 */
+	public static List<List<String>> getPaths(String start,String end,List<String> list){
+		List<List<String>> res=new LinkedList<>();
+
 		return res;
 	}
 
-	public static HashMap<String, ArrayList<String>> getNexts(List<String> words) {
-		Set<String> dict = new HashSet<>(words); // List 所有东西放入 set
-		HashMap<String, ArrayList<String>> nexts = new HashMap<>();
-		for (int i = 0; i < words.size(); i++) {
-			nexts.put(words.get(i), getNext(words.get(i), dict));
-		}
-		return nexts;
-	}
+	/**
+	 * 生成每个string对应的边的List的方法：先把list中所有的string放到一个set中。假设现在要生成s对应的边的list
+	 * 那么就把s[0...N-1]位置上的字符依次改成'a~z'，然后和set里面的比对，如果有那么就加入list中。可以把这个过程
+	 * 写在一个方法里面getlist(String s,Set<String> set).
+	 * @param list 字符串集
+	 * @return 把list中的字符串当成一个一个的结点，只相差一个字符的字符串之间有边。我们把一个字符串能到达的所有的字符串
+	 * 	也就是有之间有边的，都放到一个List中，例如abc这个字符串，就对应[abd,abe]等等
+	 */
+	public static List<List<String>> getMap(List<String> list){
+		List<List<String>>	res=new LinkedList<>();//
+		Set<String> set=new HashSet<>();//
+		for (String s : list) {//生成s对应的边的list，放入res
+			char[] str = s.toCharArray();
 
-	private static ArrayList<String> getNext(String word, Set<String> dict) {
-		ArrayList<String> res = new ArrayList<String>();
-		char[] chs = word.toCharArray();
-		for (char cur = 'a'; cur <= 'z'; cur++) {
-			for (int i = 0; i < chs.length; i++) {
-				if (chs[i] != cur) {
-					char tmp = chs[i];
-					chs[i] = cur;
-					if (dict.contains(String.valueOf(chs))) {
-						res.add(String.valueOf(chs));
-					}
-					chs[i] = tmp;
-				}
-			}
 		}
 		return res;
 	}
 
-	//所有的string到start的距离记在一张hash表，返回
-	public static HashMap<String, Integer> getDistances(String start,
-			HashMap<String, ArrayList<String>> nexts) {
-		HashMap<String, Integer> distances = new HashMap<>();
-		distances.put(start, 0);
-		Queue<String> queue = new LinkedList<String>();
-		queue.add(start);
-		HashSet<String> set = new HashSet<String>();
-		set.add(start);
-		while (!queue.isEmpty()) {
-			String cur = queue.poll();
-			for (String next : nexts.get(cur)) {
-				if (!set.contains(next)) {
-					distances.put(next, distances.get(cur) + 1);
-					queue.add(next);
-					set.add(next);
-				}
-			}
-		}
-		return distances;
-	}
-
-	// 现在来到了什么：cur
-	// 目的地：end
-	// 邻居表：nexts
-	// 最短距离表：distances
-	// 沿途走过的路径：path上{....}
-	// 答案往res里放，收集所有的最短路径
-	private static void getShortestPaths(
-			String cur, String to,
-			HashMap<String, ArrayList<String>> nexts,
-			HashMap<String, Integer> distances,
-			LinkedList<String> path,
-			List<List<String>> res) {
-		path.add(cur);
-		if (to.equals(cur)) {
-			res.add(new LinkedList<String>(path));
-		} else {
-			for (String next : nexts.get(cur)) {
-				if (distances.get(next) == distances.get(cur) + 1) {
-					getShortestPaths(next, to, nexts, distances, path, res);
-				}
-			}
-		}
-		path.pollLast();
-	}
-
-	public static void main(String[] args) {
-		String start = "abc";
-		String end = "cab";
-		String[] test = { "abc", "cab", "acc", "cbc", "ccc", "cac", "cbb",
-				"aab", "abb" };
-		ArrayList<String> list = new ArrayList<>();
-		for (int i = 0; i < test.length; i++) {
-			list.add(test[i]);
-		}
-		List<List<String>> res = findMinPaths(start, end, list);
-		for (List<String> obj : res) {
-			for (String str : obj) {
-				System.out.print(str + " -> ");
-			}
-			System.out.println();
-		}
+	public static List<String> getList(String s,Set<String> set){
 
 	}
-
 }

@@ -1,6 +1,7 @@
 package class18_InterviewCodings.InterviewCoding05;
 
 public class Code03_CompleteTreeNodeNumber {
+	//满二叉树计算公式，如果高度为n（单个结点高度为1），(1<<n)-1
 
 	public static class Node {
 		public int value;
@@ -48,6 +49,39 @@ public class Code03_CompleteTreeNodeNumber {
 		return level - 1;
 	}
 
+	public static int nodeNum2(Node head) {
+		if (head == null) {
+			return 0;
+		}
+		int left= leftHeight(head);
+		int right= rightHeight(head);
+		if (left==right){//一直往左走的高度等于一直往右走的高度，说明整棵树是满二叉树
+			return (1<<left)-1;
+		}else {//left>right,左子树的满二叉树，总的结点数为左子树(1<<left-1)-1加上根结点1加上右侧子树的个数递归
+			return (1<<left-1)+nodeNum2(head.right);
+		}
+	}
+
+	public static int leftHeight(Node head){//得到一直往左走的最大高度
+		if (head==null) return 0;
+		int height=0;
+		while(head!=null){//如果head是空，空树高度为0
+			height++;
+			head=head.left;
+		}
+		return height;
+	}
+
+	public static int rightHeight(Node head){//得到一直往右走的最大高度
+		if (head==null) return 0;
+		int height=0;
+		while(head!=null){//如果head是空，空树高度为0
+			height++;
+			head=head.right;
+		}
+		return height;
+	}
+
 	public static void main(String[] args) {
 		Node head = new Node(1);
 		head.left = new Node(2);
@@ -56,6 +90,7 @@ public class Code03_CompleteTreeNodeNumber {
 		head.left.right = new Node(5);
 		head.right.left = new Node(6);
 		System.out.println(nodeNum(head));
+		System.out.println(nodeNum2(head));
 
 	}
 
