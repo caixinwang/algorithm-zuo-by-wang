@@ -27,6 +27,40 @@ public class Code02_MostEOR {
 		return dp[dp.length - 1];
 	}
 
+
+
+	/**
+	 * 这种方法和上面的方法，区别在于初始化结点有没有把0这个key放到map里面。
+	 * 如果不放，那么将导致第一次出现sum等于0的时候，dp[i]=0，这是不对的，因为至少等于1.
+	 * 不提前放0，你的sum就算等于0了，那么也会因为在map中找不到0而跳过第一个for循环，然后最后dp[i-1]可能刚好是0，最后被赋值为0.
+	 *
+	 */
+	public static int mostEOR2(int[] arr) {
+		if (arr == null || arr.length == 0) {
+			return 0;
+		}
+		int N = arr.length;
+		int[] dp = new int[N]; // dp[i] = 0
+		dp[0]=arr[0]==0?1:0;
+		HashMap<Integer, Integer> map = new HashMap<>();
+		int sum = arr[0];
+		map.put(sum,0);
+		for (int i = 1; i < arr.length; i++) {
+			sum ^= arr[i];
+//			if (sum==0&&!map.containsKey(sum)){
+//				map.put(0,i);
+//			}
+			if (sum==0) dp[i]=1;//这一句可以替代上面一句
+			if (map.containsKey(sum)) {
+				int pre = map.get(sum);
+				dp[i] = dp[pre] + 1;
+			}
+			dp[i] = Math.max(dp[i - 1], dp[i]);
+			map.put(sum, i);
+		}
+		return dp[dp.length - 1];
+	}
+
 	// for test
 	public static int comparator(int[] arr) {
 		if (arr == null || arr.length == 0) {
@@ -42,12 +76,12 @@ public class Code02_MostEOR {
 		mosts[0] = arr[0] == 0 ? 1 : 0;
 		for (int i = 1; i < arr.length; i++) {
 			mosts[i] = eors[i] == 0 ? 1 : 0;
-			for (int j = 0; j < i; j++) {
-				if ((eors[i] ^ eors[j]) == 0) {
-					mosts[i] = Math.max(mosts[i], mosts[j] + 1);
+				for (int j = 0; j < i; j++) {
+					if ((eors[i] ^ eors[j]) == 0) {
+						mosts[i] = Math.max(mosts[i], mosts[j] + 1);
+					}
 				}
-			}
-			mosts[i] = Math.max(mosts[i], mosts[i - 1]);
+				mosts[i] = Math.max(mosts[i], mosts[i - 1]);
 		}
 		return mosts[mosts.length - 1];
 	}
@@ -72,15 +106,14 @@ public class Code02_MostEOR {
 		System.out.println();
 	}
 
-	// for test
-	public static void main(String[] args) {
-		int testTime = 500000;
-		int maxSize = 300;
+	public static void test1(){
+		int testTime = 5000;
+		int maxSize = 100;
 		int maxValue = 100;
 		boolean succeed = true;
 		for (int i = 0; i < testTime; i++) {
 			int[] arr = generateRandomArray(maxSize, maxValue);
-			int res = mostEOR(arr);
+			int res = mostEOR2(arr);
 			int comp = comparator(arr);
 			if (res != comp) {
 				succeed = false;
@@ -92,5 +125,18 @@ public class Code02_MostEOR {
 		}
 		System.out.println(succeed ? "Nice!" : "Fucking fucked!");
 	}
+
+	public static void test2(){
+		int[] arr={1,1};
+		int res = mostEOR2(arr);
+		int comp = comparator(arr);
+	}
+
+	// for test
+	public static void main(String[] args) {
+//		test2();
+		test1();
+	}
+
 
 }

@@ -3,10 +3,8 @@ package class06_Graph;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-//堆结构实现Dijkstra
-//注意额外的结构会影响swap和less中的哪一个。只有less函数会用到dmap，所以在swim和sink之前要注意dmap是否合理更新
-//xmap不影响任何swap和less的任意一个，所以放在哪里更新都可以
-public class Code10_Dijkstra {//邻接矩阵表示
+
+public class Code06_Dijkstra2 {//邻接矩阵表示
     static final int MAX = 999999;
 
     static class Node {//邻接点
@@ -39,8 +37,8 @@ public class Code10_Dijkstra {//邻接矩阵表示
 
     }
 
-    static class TNode {//邻接表
-        public Node firstNode;
+    static class TNode {//邻接表，本质就是一个装着链表的数组
+        public Node firstNode;//这就是一个链表的头节点
         //Data
 
         public TNode(Node firstNode) {
@@ -69,11 +67,16 @@ public class Code10_Dijkstra {//邻接矩阵表示
         }
     }
 
+    /**
+     * 堆结构实现Dijkstra
+     * 注意额外的结构会影响swap和less中的哪一个。只有less函数会用到dmap，所以在swim和sink之前要注意dmap是否合理更新
+     * xmap不影响任何swap和less的任意一个，所以放在哪里更新都可以
+     */
     static class Heap {//定制的小根堆
         private int[] nodes;//用下标来代表那个结点
         private int size;
         private HashMap<Integer, Integer> dmap;//<idx,distance>  distance map : 表示从源结点到当前结点的最短路径
-        private HashMap<Integer, Boolean> xmap;//<idx,isXSet> 表示结点有没有被收入到x集合中,true为已经收入到集合中
+        private HashMap<Integer, Boolean> xmap;//有两种左右，一是判断结点是否解锁--contain，二是判断结点是否加入X集合--true
 
         public Heap(int size) {
             this.size = 0;
@@ -115,11 +118,11 @@ public class Code10_Dijkstra {//邻接矩阵表示
             return res;
         }
 
-        private void addAndUpdate(int to, int d) {//d是否小于dmap.get(to)
+        public void addAndUpdate(int to, int d) {//d是否小于dmap.get(to)
             if (!xmap.containsKey(to)) {//如果to结点从来没有解锁过，就加入堆中，并且放入xmap中代表这个结点解锁了
                 nodes[++size] = to;
                 dmap.put(to,d);//一定一定要在swim函数的上面！！否则距离没有更新，less函数无法运作！
-                xmap.put(to,false);//为false代表结点解锁了，但是还没有被加入到x集合中。
+                xmap.put(to,false);//为false代表结点还没有被加入到x集合中，但是这个结点已经解锁了，因为在xmap中能找到这个结点
                 swim(size);
             } else if (!xmap.get(to)&&d < dmap.get(to)) {//to结点不在x集合中才进行update,在x集合中就略过
                 dmap.put(to, d);
@@ -139,19 +142,20 @@ public class Code10_Dijkstra {//邻接矩阵表示
         }
     }
 
+    //每次从已解锁的结点中拿出一个距离最短的node到X集合中，那么start到这个node的最短距离就确定了
     public static int[] dijkstra(Graph graph,int start){//O(NlogN)
         Heap heap=new Heap(graph.nodeNum);
         int[] res=new int[graph.nodeNum+1];
         heap.addAndUpdate(start,0);
         while(!heap.isEmpty()){
-            int dis= heap.getDistance(heap.peek());
-            int pop = heap.pop();
-            Node head=graph.tNodeList.get(pop).firstNode;
-            while(head!=null){
+            int dis= heap.getDistance(heap.peek());//不能先pop，先pop的话dmap就把距离删了，拿不到了
+            int pop = heap.pop();//栈顶加入X集合，设置为true
+            Node head=graph.tNodeList.get(pop).firstNode;//拿到邻居链表的头结点
+            while(head!=null){//一个一个往里面加，要么解锁，要么更新，都在addAndUpdate方法里面完成
                 heap.addAndUpdate(head.idx,dis+head.weight);
                 head=head.next;
             }
-            res[pop]=dis;
+            res[pop]=dis;//加入X集合的这个结点，start到它距离已经是最小了，放入答案
         }
         return res;
     }
@@ -163,20 +167,20 @@ public class Code10_Dijkstra {//邻接矩阵表示
         boolean[] xset=new boolean[N];//判断一个结点属不属于x集合，结点x只有unlock[x]==true && xset[x]==true才是x集合中的点
         int[] darr=new int[N];
 
-        unlock[start]=true;
-        darr[start]=0;
+        unlock[start]=true;//先把出发点解锁了
+        darr[start]=0;//出发点到自己的距离是0
         for (int i = 1; i <res.length; i++) {
             int minIndex=MAX;
             int minDistance=MAX;
             for (int j = 0; j < darr.length; j++) {//从已经解锁的并且未加入x集合的结点中选一个距离最小的出来
-                if (unlock[j]&&!xset[j]&&darr[j]<minDistance){//只有已经解锁的结点我才看
+                if (unlock[j]&&!xset[j]&&darr[j]<minDistance){//只有已经解锁的结点并且没有加入X集合我才看
                     minDistance=darr[j];
                     minIndex=j;
                 }
             }
             res[minIndex]=minDistance;
             xset[minIndex]=true;//每次收录一个距离最小的结点
-            Node head=graph.tNodeList.get(minIndex).firstNode;
+            Node head=graph.tNodeList.get(minIndex).firstNode;//获取收录结点的邻接链表的头节点
             while(head!=null){//继续去解锁它的邻接结点，或看看能够更新最小值
                 if (!unlock[head.idx]){//从未解锁就将结点解锁
                     unlock[head.idx]=true;

@@ -11,9 +11,9 @@ public class Code05_WordMinPaths {
      */
 
     /**
-     * 1.生成图---是一个邻接链表
-     * 2.宽度优先遍历把start到图中任何一个结点的距离记到一个HashMap中.getDistanceMap()
-     * 3.广度优先遍历，把所有符合要求的答案收集起来
+     * 1.生成图---是一个邻接链表，用一个HashMap表示
+     * 2.宽度优先遍历把start到图中任何一个结点的距离记到一个HashMap中---getDistanceMap()
+     * 3.广度优先遍历，把所有符合要求的答案收集起来，利用distanceMap进行剪支
      *
      * @param start 开始的字符串
      * @param end   结束的字符串
@@ -31,7 +31,7 @@ public class Code05_WordMinPaths {
     /**
      * 生成每个string对应的边的List的方法：先把list中所有的string放到一个set中。假设现在要生成s对应的边的list
      * 那么就把s[0...N-1]位置上的字符依次改成'a~z'，然后和set里面的比对，如果有那么就加入list中。可以把这个过程
-     * 写在一个方法里面getlist(String s,Set<String> set).
+     * 写在一个方法里面getList(String s,Set<String> set).
      * 图的表示方法就是邻接表，每个String对应一个List--里面是它的邻居
      *
      * @param list 字符串集
