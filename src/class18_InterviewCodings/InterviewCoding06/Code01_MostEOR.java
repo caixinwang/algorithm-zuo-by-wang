@@ -2,7 +2,7 @@ package class18_InterviewCodings.InterviewCoding06;
 
 import java.util.HashMap;
 
-public class Code02_MostEOR {
+public class Code01_MostEOR {//加题
 
 	public static int mostEOR(int[] arr) {
 		if (arr == null || arr.length == 0) {
@@ -33,7 +33,7 @@ public class Code02_MostEOR {
 	 * 这种方法和上面的方法，区别在于初始化结点有没有把0这个key放到map里面。
 	 * 如果不放，那么将导致第一次出现sum等于0的时候，dp[i]=0，这是不对的，因为至少等于1.
 	 * 不提前放0，你的sum就算等于0了，那么也会因为在map中找不到0而跳过第一个for循环，然后最后dp[i-1]可能刚好是0，最后被赋值为0.
-	 *
+	 * 要注意特殊情况，sum为0时就是一种特殊情况，如果之前没有记录过0，就可能产生错误。sum为0，dp[i]至少是1.
 	 */
 	public static int mostEOR2(int[] arr) {
 		if (arr == null || arr.length == 0) {

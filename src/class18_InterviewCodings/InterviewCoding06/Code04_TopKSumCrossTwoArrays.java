@@ -6,58 +6,43 @@ import java.util.PriorityQueue;
 
 public class Code04_TopKSumCrossTwoArrays {
 
-	// 放入大根堆中的结构
-	public static class Node {
-		public int index1;// arr1中的位置
-		public int index2;// arr2中的位置
-		public int sum;// arr1[index1] + arr2[index2]的值
+	public static class Node{
+		public int index1;//arr1的下标
+		public int index2;//arr2的下标
+		public int sum;//arr1[index1]+arr2[index2]
 
-		public Node(int i1, int i2, int s) {
-			index1 = i1;
-			index2 = i2;
-			sum = s;
+		public Node(int index1, int index2, int sum) {
+			this.index1 = index1;
+			this.index2 = index2;
+			this.sum = sum;
 		}
 	}
 
-	// 生成大根堆的比较器
-	public static class MaxHeapComp implements Comparator<Node> {
+	public static class NodeComparator implements Comparator<Node>{//从大到小---由于构造大根堆
 		@Override
 		public int compare(Node o1, Node o2) {
-			return o2.sum - o1.sum;
+			return o2.sum-o1.sum;
 		}
 	}
 
-	public static int[] topKSum(int[] arr1, int[] arr2, int topK) {
-		if (arr1 == null || arr2 == null || topK < 1) {
-			return null;
-		}
-		// arr1 50  arr2 20   1000   topk 100万
-		topK = Math.min(topK, arr1.length * arr2.length);
-
-		int[] res = new int[topK];
-		int resIndex = 0;
-
-		PriorityQueue<Node> maxHeap = new PriorityQueue<>(new MaxHeapComp());
-
-		// set[i][j] == false, arr1[i]  arr2[j] 之前，没进过
-		// set[i][j] == true;  arr1[i]  arr2[j] 之前，进过
-		boolean[][] set = new boolean[arr1.length][arr2.length];
-		int i1 = arr1.length - 1;
-		int i2 = arr2.length - 1;
-		maxHeap.add(new Node(i1, i2, arr1[i1] + arr2[i2]));
-		set[i1][i2] = true;
-		while (resIndex != topK) {
-			Node curNode = maxHeap.poll();
-			res[resIndex++] = curNode.sum;
-			i1 = curNode.index1;
-			i2 = curNode.index2;
-			if (i1 - 1 >= 0 && !set[i1 - 1][i2]) {
-				set[i1 - 1][i2] = true;
-				maxHeap.add(new Node(i1 - 1, i2, arr1[i1 - 1] + arr2[i2]));
+	public static int[] topKSum(int[] arr1, int[] arr2, int topK){
+		if (arr1==null||arr2==null|| arr1.length==0||arr2.length==0||topK<1||topK> arr1.length*arr2.length) return null;
+		PriorityQueue<Node> heap=new PriorityQueue<>(new NodeComparator());//大根堆
+		int[] res=new int[topK];
+		int index=0;//和数组搭配使用
+		int N=arr1.length,M=arr2.length;
+		boolean[][] isEnter=new boolean[N][M];
+		heap.add(new Node(N-1,M-1,arr1[N-1]+arr2[M-1]));
+		while(index<res.length){//一直填写，直到res满
+			Node cur = heap.poll();//弹出最大，加入答案
+			res[index++]=cur.sum;
+			if (cur.index1-1>=0&&!isEnter[cur.index1 - 1][cur.index2]) {
+				isEnter[cur.index1 - 1][cur.index2]=true;
+				heap.add(new Node(cur.index1 - 1, cur.index2, arr1[cur.index1 - 1] + arr2[cur.index2]));
 			}
-			if (i2 - 1 >= 0 && !set[i1][i2 - 1]) {
-				set[i1][i2 - 1] = true;
-				maxHeap.add(new Node(i1, i2 - 1, arr1[i1] + arr2[i2 - 1]));
+			if (cur.index2-1>=0&&!isEnter[cur.index1][cur.index2-1]) {
+				isEnter[cur.index1][cur.index2-1]=true;
+				heap.add(new Node(cur.index1, cur.index2 - 1, arr1[cur.index1] + arr2[cur.index2 - 1]));
 			}
 		}
 		return res;
