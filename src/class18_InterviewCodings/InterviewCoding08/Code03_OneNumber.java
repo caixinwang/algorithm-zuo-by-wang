@@ -25,30 +25,18 @@ public class Code03_OneNumber {
 	}
 
 	public static int solution2(int num) {
-		if (num < 1) {
-			return 0;
-		}
-		// num -> 13625
-		// len = 5位数
+		if (num<1) return 0;
+		if (num<10) return 1;
+		//618943  -> len=5
 		int len = getLenOfNum(num);
-		if (len == 1) {
-			return 1;
-		}
-		// num 13625
-		// tmp1 10000
-		// num 7872328738273
-		// tmp1 1000000000000
-		int tmp1 = powerBaseOf10(len - 1);
-		// num最高位 num / tmp1
-		int first = num / tmp1;
-		// 最高1 N % tmp1 + 1
-		// 最高位first tmp1
-		int firstOneNum = first == 1 ? num % tmp1 + 1 : tmp1;
-		// 除去最高位之外，剩下1的数量
-		// 最高位1 10(k-2次方) * (k-1) * 1
-		// 最高位first 10(k-2次方) * (k-1) * first
-		int otherOneNum = first * (len - 1) * (tmp1 / 10);
-		return firstOneNum + otherOneNum + solution2(num % tmp1);
+		//6
+		int high=getKDigit(num,len);//获取最高位数字
+		int partHigh=high==1?num/10+1:powerBaseOf10(len-1);
+		//去掉最高位再固定一位，总的只有10^len-2，并且由除了最高位都可以固定，所以乘以len-1
+		int partOther=high*powerBaseOf10(len-2)*(len-1);
+		//num/10是拿掉第一位，num%powerBaseOf10(len-1)是拿掉最高位
+		return partOther+partHigh+solution2(num%powerBaseOf10(len-1));
+
 	}
 
 	public static int getLenOfNum(int num) {
@@ -58,6 +46,16 @@ public class Code03_OneNumber {
 			num /= 10;
 		}
 		return len;
+	}
+
+	public static int getKDigit(int num,int k){//得到num的第k位，k从1开始记，个位是1
+		if (k<1) return -1;
+		if (k==1) return num%10;
+		while(k!=1) {
+			num /= 10;
+			k--;
+		}
+		return num%10;
 	}
 
 	public static int powerBaseOf10(int base) {
@@ -76,5 +74,6 @@ public class Code03_OneNumber {
 		long end2 = System.currentTimeMillis();
 		System.out.println("cost time: " + (end2 - start2) + " ms");
 
+		System.out.println(getKDigit(587697,6));
 	}
 }

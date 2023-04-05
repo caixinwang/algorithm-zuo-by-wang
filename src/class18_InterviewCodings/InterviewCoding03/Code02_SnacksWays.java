@@ -49,29 +49,30 @@ public class Code02_SnacksWays {
 	/**
 	 * dp [ i ] [ j ] 代表0~i自由选择，刚好凑成 j 的的方法数。最终结果就是sum{dp [N-1] [0...j]}
 	 * @param arr 零食
-	 * @param w 背包大小
-	 * @return 方法总数
+	 * @param bag 背包大小
+	 * @return bag大小的背包，背包里面不一定装满，有多少种选零食的方案
 	 */
-	public static int ways3(int[] arr, int w) {
+	public static int ways3(int[] arr, int bag) {
 		int N = arr.length;
-		int[][] dp = new int[N][w + 1];
+		int[][] dp = new int[N][bag + 1];
 		for (int i = 0; i < N; i++) {//刚好凑成0，都全不选 为一种凑法
 			dp[i][0] = 1;
 		}
-		if (arr[0] <= w) {//只有一个物品要凑成，背包要刚好等于物品的大小。只有在arr[0]<=w才有一个等于1，否则都是0
+		if (arr[0] <= bag) {//只有一个物品要凑成，背包要刚好等于物品的大小。只有在arr[0]<=w才有一个等于1，否则都是0
 			dp[0][arr[0]] = 1;
 		}
 		for (int i = 1; i < N; i++) {
-			for (int j = 1; j <= w; j++) {
+			for (int j = 1; j <= bag; j++) {
 				dp[i][j] = dp[i - 1][j] + ((j - arr[i]) >= 0 ? dp[i - 1][j - arr[i]] : 0);
 			}
 		}
 		int ans = 0;
-		for (int j = 0; j <= w; j++) {
+		for (int j = 0; j <= bag; j++) {
 			ans += dp[N - 1][j];
 		}
 		return ans;
 	}
+
 
 	public static void main(String[] args) {
 		int[] arr = { 4, 3, 2, 9 ,7,12,4,6,7 };
