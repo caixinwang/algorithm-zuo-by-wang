@@ -2,7 +2,7 @@ package class04_Tree;
 
 import java.util.ArrayList;
 
-public class Code14_MaxSubBSTSize {//最大二插搜索子树
+public class Code14_MaxSubBSTSize {//最大二叉搜索子树
 
     public static class Node {
         public int value;

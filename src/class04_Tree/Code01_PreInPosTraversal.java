@@ -15,6 +15,7 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
         }
     }
 
+
     public static void preOrderRecur(Node head) {
         if (head==null) return;
         System.out.print(head.value+" ");
@@ -37,8 +38,10 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
     }
 
     /**
-     * 思路：和下面这种实现不同，这种实现一个结点，特别是head的左节点，刚进栈就要出来了，也就是说只来到每个结点一次。没有打印时机的选择问题，只能
-     * 弹出的时候打印.栈的作用只是维持弹出结点的顺序。保证是按左边界分解的弹出顺序。
+     * 观察一下系统递归如何压栈，先进到左边递归，再进到右边递归。在左边里面又先进到左边递归再进到右边递归
+     * 所以整体来说就是右结点先进栈，左节点后进栈然后弹出可以模拟上面的递归行为
+     * 思路：和下面这种实现不同，这种实现一个结点，特别是head的左节点，刚进栈就要出来了，也就是说只来到每个结点一次。
+     * 没有打印时机的选择问题，只能弹出的时候打印.栈的作用只是维持弹出结点的顺序。保证是按左边界分解的弹出顺序。
      * @param head:先序打印二叉树，非递归实现
      */
     public static void preOrderUnRecur(Node head){
@@ -99,8 +102,7 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
     }
 
     /**
-     *
-     * @param head:利用先序遍历的根左右，我们可以把中序遍历改成根右左。然后逆序一下就变成了左右根
+     * @param head:利用先序遍历的根左右，我们可以把先序遍历改成根右左。然后逆序一下就变成了左右根
      */
     public static void posOrderUnRecur1(Node head){
         System.out.print("postorder unrecur:");
@@ -123,7 +125,7 @@ public class Code01_PreInPosTraversal {//先序后序中序遍历二叉树
 
     /**
      *
-     * @param head
+     * @param head 头节点
      */
     public static void posOrderUnRecur2(Node head) {
         if (head==null) return;
