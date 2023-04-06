@@ -29,15 +29,19 @@ public class Code06_PalindromeMinAdd {
 	}
 
 	public static int[][] getDP(char[] str) {
-		int[][] dp = new int[str.length][str.length];
-		for (int j = 1; j < str.length; j++) {
-			dp[j - 1][j] = str[j - 1] == str[j] ? 0 : 1;
-			for (int i = j - 2; i > -1; i--) {
-				if (str[i] == str[j]) {
-					dp[i][j] = dp[i + 1][j - 1];
-				} else {
-					dp[i][j] = Math.min(dp[i + 1][j], dp[i][j - 1]) + 1;
-				}
+		if (str==null||str.length==0) return null;
+		int N=str.length;
+		int[][]dp=new int[N][N];
+		for (int i = 0; i < str.length; i++) {//第一条对角线
+			dp[i][i]=1;
+		}
+		for (int i = 0; i+1 < str.length; i++) {//第二条对角线
+			dp[i][i+1]=str[i]==str[i+1]?1:0;
+		}
+		for (int j = 2; j < N; j++) {//从第二条对角线开始填写
+			for (int i = 0; i+j < N; i++) {//对角线元素(i,i+j)
+				dp[i][i+j]=Math.min(dp[i+1][i+j],dp[i][i+j-1])+1;
+				if (str[i+1]==str[i+j-1]) dp[i][i + j] = Math.min(dp[i][i + j],dp[i+1][i+j-1]);
 			}
 		}
 		return dp;

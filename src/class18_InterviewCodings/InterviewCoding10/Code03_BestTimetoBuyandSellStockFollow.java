@@ -2,6 +2,16 @@ package class18_InterviewCodings.InterviewCoding10;
 
 public class Code03_BestTimetoBuyandSellStockFollow {
 
+	/**
+	 * dp[i][j]代表0~i的时间点上交易不超过j次的最大收益,对一个普遍的点(i,j)进行讨论，分为i参与交易和不参与交易两种
+	 * dp[i] [j] = max{max{dp[i-k][j-1]-arr[i-k]}+arr[i] , dp[i-1][j]}
+	 * max{dp[i-k][j-1]-arr[i-k]}+arr[i]为参与交易的最大值，dp[i-1][j]为不参与交易的最大值，两个中再取大的
+	 * 参与交易的最大值有枚举行为max{dp[i-k][j-1]-arr[i-k]}，
+	 * 我们用一个变量抓住最大值max{dp[i-k][j-1]-arr[i-k]}，需要从上往下更新
+	 * @param K 最多交易k次
+	 * @param prices 代表股票价格变化的数组
+	 * @return 如果最多交易k次，你最多能赚多少
+	 */
 	public static int dp(int K, int[] prices) {
 		if (prices == null || prices.length == 0) {
 			return 0;
@@ -11,16 +21,15 @@ public class Code03_BestTimetoBuyandSellStockFollow {
 			return allTrans(prices);
 		}
 		int[][] dp = new int[N][K + 1];
-		int ans = 0;
-		for (int j = 1; j <= K; j++) {
-			int t = dp[0][j - 1] - prices[0];
+		for (int j = 1; j <= K; j++) {//从左往右，从上往下
+			int t=dp[0][j-1]-prices[0];//(i,j)=>max{dp[i-k][j-1]-arr[i-k]},初始化位置是(0,j),令k=0代进去
 			for (int i = 1; i < N; i++) {
-				t = Math.max(t, dp[i][j - 1] - prices[i]);
-				dp[i][j] = Math.max(dp[i - 1][j], t + prices[i]);
-				ans = Math.max(ans, dp[i][j]);
+				dp[i][j] = dp[i-1][j];
+				t=Math.max(t,dp[i][j-1]-prices[i]);
+				dp[i][j] = Math.max(dp[i][j], t+prices[i]);
 			}
 		}
-		return ans;
+		return dp[N-1][K];
 	}
 
 	public static int maxProfit(int K, int[] prices) {
@@ -47,7 +56,7 @@ public class Code03_BestTimetoBuyandSellStockFollow {
 		return ans;
 	}
 
-	public static int allTrans(int[] prices) {
+	public static int allTrans(int[] prices) {//Code02的情况，无限次数交易，作为过滤器的使用
 		int ans = 0;
 		for (int i = 1; i < prices.length; i++) {
 			ans += Math.max(prices[i] - prices[i - 1], 0);

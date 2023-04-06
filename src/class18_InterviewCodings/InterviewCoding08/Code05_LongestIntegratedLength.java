@@ -35,35 +35,24 @@ public class Code05_LongestIntegratedLength {
 	}
 
 	public static int getLIL2(int[] arr) {
-		if (arr == null || arr.length == 0) {
-			return 0;
-		}
-		int len = 0;
-		int max = 0;
-		int min = 0;
-		HashSet<Integer> set = new HashSet<Integer>();
-		for (int L = 0; L < arr.length; L++) { // L 左边界
-			// L .......
-			set.clear();
-			max = Integer.MIN_VALUE;
-			min = Integer.MAX_VALUE;
-			for (int R = L; R < arr.length; R++) { // R 右边界
-				// arr[L..R]这个子数组在验证   l...R L...r+1  l...r+2  
-				if (set.contains(arr[R])) {
-					// arr[L..R]上开始 出现重复值了，arr[L..R往后]不需要验证了，
-					// 一定不是可整合的
+		if (arr==null||arr.length==0) return 0;
+		int max=Integer.MIN_VALUE,min=Integer.MAX_VALUE,res=0;
+		HashSet<Integer> set=new HashSet<>();
+		for (int l = 0; l < arr.length; l++) {
+			for (int r = l; r < arr.length; r++) {//验证每一个开头的子数组
+				if (set.contains(arr[r])){
+					set.clear();
 					break;
 				}
-				// arr[L..R]上无重复值
-				set.add(arr[R]);
-				max = Math.max(max, arr[R]);
-				min = Math.min(min, arr[R]);
-				if (max - min == R - L) { // L..R 是可整合的
-					len = Math.max(len, R - L + 1);
+				set.add(arr[r]);
+				max = Math.max(max, arr[r]);
+				min = Math.min(min, arr[r]);
+				if (max-min==r-l){
+					res=r-l+1;
 				}
 			}
 		}
-		return len;
+		return res;
 	}
 
 	public static void main(String[] args) {
