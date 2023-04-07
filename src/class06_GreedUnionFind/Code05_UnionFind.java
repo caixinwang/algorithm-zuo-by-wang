@@ -168,7 +168,7 @@ public class Code05_UnionFind {//链表实现
     }
 
     //test
-    public static ArrayList<String> generateRandomStringList(int size){//生成一个规模为size的装着随机String的List
+    public static ArrayList<String> generateRandomStringList(int size){//生成一个规模为size的，装着随机String的List
         ArrayList<String> res=new ArrayList<>();
         HashSet<String> set=new HashSet<>();
         int len=20;//随机的字符串的长度在[0,20]
