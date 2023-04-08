@@ -2,22 +2,22 @@ package TestUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class StringUtil {
 
 
     /**
      *
-     * @param size 生成一个规模为size的，装着随机String的List
+     * @param listSize 生成一个规模为size的，装着随机String的List
      * @return 返回一个规模为size的，装着随机String的List,且里面的String不重复
      */
-    public ArrayList<String> generateRandomStringList(int size){
+    public ArrayList<String> generateRandomStringListNoRepeat(int listSize,int stringSize){
         ArrayList<String> res=new ArrayList<>();
         HashSet<String> set=new HashSet<>();
-        int len=20;//随机的字符串的长度在[0,20]
         int i=0;
-        while (i < size) {//每次进while，生成一个长度随机的String
-            int realLen=(int) (Math.random()*(len+1));//该随机字符串的长度
+        while (i < listSize) {//每次进while，生成一个长度随机的String
+            int realLen=(int) (Math.random()*(stringSize+1));//该随机字符串的长度
             String str = generateRandom_a_z_String(realLen);//字符串的字符在a~z随机
 //            String str = generateRandom_all_String(realLen);//字符串的字符在a~z随机
             if (!set.contains(str)){
@@ -25,6 +25,42 @@ public class StringUtil {
                 res.add(str);
                 i++;//只有生成的字符串不一样的时候才i才++,才把str添加到res
             }
+        }
+        return res;
+    }
+
+    /**
+     *
+     * @param listSize 生成一个规模为size的，装着随机String的List
+     * @return 返回一个规模为size的，装着随机String的List,且里面的String不重复
+     */
+    public ArrayList<String> generateRandomStringList(int listSize,int stringSize){
+        ArrayList<String> res=new ArrayList<>();
+        int i=0;
+        while (i < listSize) {//每次进while，生成一个长度随机的String
+            int realLen=(int) (Math.random()*(stringSize+1));//该随机字符串的长度
+            String str = generateRandom_a_z_String(realLen);//字符串的字符在a~z随机
+//            String str = generateRandom_all_String(realLen);//字符串的字符在a~z随机
+                res.add(str);
+                i++;//只有生成的字符串不一样的时候才i才++,才把str添加到res
+        }
+        return res;
+    }
+
+    public String[] generateRandomStringArr(int arrSize,int stringSize){
+        String[] res=new String[arrSize];
+        for (int i = 0; i < res.length; i++) {
+            res[i]=generateRandom_a_z_String(stringSize);
+        }
+        return res;
+    }
+
+    public String[] generateRandomStringArrNoRepeat(int arrSize,int stringSize){
+        String[] res=new String[arrSize];
+        ArrayList<String> strings = generateRandomStringListNoRepeat(arrSize,stringSize);
+        int i=0;
+        for (String string : strings) {
+            res[i++]=string;
         }
         return res;
     }
@@ -59,6 +95,22 @@ public class StringUtil {
             builder.append(c);
         }
         return builder.toString();
+    }
+
+    public void printList(List<String> list){
+        if (list==null||list.size()==0) return;
+        for (String s : list) {
+            System.out.print(s+ " ");
+        }
+        System.out.println();
+    }
+
+    public void printArr(String[] list){
+        if (list==null||list.length==0) return;
+        for (String s : list) {
+            System.out.print(s+ " ");
+        }
+        System.out.println();
     }
 
     public int ran(int max){//[0,max]

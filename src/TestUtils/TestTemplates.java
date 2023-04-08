@@ -40,7 +40,7 @@ public class TestTemplates {
         System.out.println(isok ? "success" : "fail");
     }
 
-    public static void testForMatrix() {//参数为arr
+    public static void testForIntMatrix() {//参数为int[][]
         ArrayUtil arrayUtil = new ArrayUtil();
         int times = 10_0000;//测试次数
         boolean isok = true;
@@ -73,6 +73,42 @@ public class TestTemplates {
         System.out.println(res2);//针对返回值的操作
         System.out.println(isok ? "success" : "fail");
     }
+
+    public static void testForCharMatrix() {//参数为char[][]
+        ArrayUtil arrayUtil = new ArrayUtil();
+        int times = 10_0000;//测试次数
+        boolean isok = true;
+        int maxN = 20;//matrix大小在[0~maxN][0~maxM]随机
+        int maxM = 20;//matrix大小在[0~maxN][0~maxM]随机
+//        int parameter1=0;//测试函数的参数
+//        int maxParameter1=1000;//参数1在[0,maxParameter1]随机
+        char[][] t1 = null;
+//        char[][] t2 = null;
+        int res1 = 0, res2 = 0;
+        for (int i = 0; i < times; i++) {
+//            parameter1=arrayUtil.ran(maxParameter1);
+
+            t1 = arrayUtil.generateRandomChar_a_z_Matrix(arrayUtil.ran(maxN), arrayUtil.ran(maxM));
+//            t2 = arrayUtil.generateRandomChar_a_z_Matrix(arrayUtil.ran(maxN), arrayUtil.ran(maxM));
+
+//            t1 = arrayUtil.generateRandomChar_all_Matrix(arrayUtil.ran(maxN), arrayUtil.ran(maxM));
+//            t2 = arrayUtil.generateRandomChar_all_Matrix(arrayUtil.ran(maxN), arrayUtil.ran(maxM));
+
+            res1 = m1(t1);
+            res2 = m2(t1);
+            if (res1 != res2) {
+                isok = false;
+                break;
+            }
+        }
+        arrayUtil.printMatrix(t1);//打印参数
+//        System.out.println("parameter:"+parameter1);//打印参数
+        System.out.println(res1);//针对返回值的操作
+        System.out.println(res2);//针对返回值的操作
+        System.out.println(isok ? "success" : "fail");
+    }
+
+
 
     public static void testForString() {//参数为String
         StringUtil stringUtil = new StringUtil();
@@ -170,5 +206,18 @@ public class TestTemplates {
         return 0;
     }
 
+    private static int m1(char[][] t1) {
+        return 0;
+    }
+    private static int m1(char[][] t1,char[][] t2) {
+        return 0;
+    }
+
+    private static int m2(char[][] t1) {
+        return 0;
+    }
+    private static int m2(char[][] t1,char[][] t2) {
+        return 0;
+    }
 
 }

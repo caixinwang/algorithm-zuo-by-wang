@@ -129,12 +129,46 @@ public class ArrayUtil {
         return res;
     }
 
+    public char[][] generateRandomChar_a_z_Matrix(int N, int M) {//a~z
+        if (N < 0 || M < 0) return null;
+        char[][] res = new char[N][M];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                res[i][j] = (char)ran('a','z');
+            }
+        }
+        return res;
+    }
+
+    public char[][] generateRandomChar_all_Matrix(int N, int M) {//所有字符
+        if (N < 0 || M < 0) return null;
+        char[][] res = new char[N][M];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                res[i][j] = (char)ran(127);//[0,127]
+            }
+        }
+        return res;
+    }
+
     public void printMatrix(int[][] matrix) {
         if (matrix == null || matrix.length == 0 || matrix[0] == null || matrix[0].length == 0) return;
         int N = matrix.length, M = matrix[0].length;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
                 System.out.printf("%4d ", matrix[i][j]);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public void printMatrix(char[][] matrix) {
+        if (matrix == null || matrix.length == 0 || matrix[0] == null || matrix[0].length == 0) return;
+        int N = matrix.length, M = matrix[0].length;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                System.out.print(matrix[i][j]+" ");
             }
             System.out.println();
         }
@@ -159,9 +193,16 @@ public class ArrayUtil {
         au.printArr(arr);
     }
 
+    public static void test2(){
+        ArrayUtil au = new ArrayUtil();
+        char[][] m = au.generateRandomChar_a_z_Matrix(30, 30);
+        au.printMatrix(m);
+    }
+
     public static void main(String[] args) {
         ArrayUtil au = new ArrayUtil();
-        test1();
+//        test1();
+        test2();
     }
 
 }
