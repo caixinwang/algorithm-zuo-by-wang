@@ -90,9 +90,9 @@ public class Code04_RectangleCoverMax {//最大覆盖矩形问题
 	}
 
 	/**
-	 *
-	 * @param rightOrdered 有用的矩形的右边界按照
-	 * @param curLeft
+	 * 清除rightOrdered中右边界小于等于curLeft的矩形，剩下的都还是有用的矩阵，并且cur矩形可以加进来了
+	 * @param rightOrdered 有用的矩形的按照右边界排序
+	 * @param curLeft 当前来了一个矩形，左边界是curLeft
 	 */
 	public static void removeLeftOnCurLeft(TreeSet<Rectangle> rightOrdered, int curLeft) {
 		List<Rectangle> removes = new ArrayList<>();

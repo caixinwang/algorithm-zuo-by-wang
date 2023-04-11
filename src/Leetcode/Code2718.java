@@ -1,7 +1,7 @@
 package Leetcode;
 
 public class Code2718 {
-    public static int lengthOfLongestSubstring(String s) {//滑动窗口
+    public static int lengthOfLongestSubstring(String s) {//滑动窗口、动态规划也能解
         char[] chars = s.toCharArray();
         int l=0;
         int r=-1;//[l,r]

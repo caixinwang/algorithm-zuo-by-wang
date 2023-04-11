@@ -17,7 +17,7 @@ public class StringUtil {
         HashSet<String> set=new HashSet<>();
         int i=0;
         while (i < listSize) {//每次进while，生成一个长度随机的String
-            int realLen=(int) (Math.random()*(stringSize+1));//该随机字符串的长度
+            int realLen=ran(stringSize);//该随机字符串的长度
             String str = generateRandom_a_z_String(realLen);//字符串的字符在a~z随机
 //            String str = generateRandom_all_String(realLen);//字符串的字符在a~z随机
             if (!set.contains(str)){
@@ -38,7 +38,7 @@ public class StringUtil {
         ArrayList<String> res=new ArrayList<>();
         int i=0;
         while (i < listSize) {//每次进while，生成一个长度随机的String
-            int realLen=(int) (Math.random()*(stringSize+1));//该随机字符串的长度
+            int realLen=ran(stringSize);//该随机字符串的长度
             String str = generateRandom_a_z_String(realLen);//字符串的字符在a~z随机
 //            String str = generateRandom_all_String(realLen);//字符串的字符在a~z随机
                 res.add(str);
@@ -49,8 +49,10 @@ public class StringUtil {
 
     public String[] generateRandomStringArr(int arrSize,int stringSize){
         String[] res=new String[arrSize];
-        for (int i = 0; i < res.length; i++) {
-            res[i]=generateRandom_a_z_String(stringSize);
+        ArrayList<String> strings = generateRandomStringList(arrSize,stringSize);
+        int i=0;
+        for (String string : strings) {
+            res[i++]=string;
         }
         return res;
     }

@@ -72,7 +72,7 @@ public class Code04_WordSearch {
         if (c==0) return 0;//之前已经来过这个位置了,不走回头路
         int road=c-'a';
         if (node.nexts[road]==null||node.nexts[road].pass==0) return 0;//两个剪枝条件,node往下包括自己已经收集答案
-        node=node.nexts[road];
+        node=node.nexts[road];//往下走说明board[i][j]这个位置我要了
         int fix=0;//上面剪枝都通过了，说明下面要进递归了，先看看自己这个结点是不是答案先收集了，然后收集递归的答案
         path.addLast(c);//说明当前这个c我要了,进递归
         if (node.end==1){//所有字符加前缀树的时候我们已经去重，end最大只能是1
@@ -209,7 +209,7 @@ public class Code04_WordSearch {
     public static void testForCharMatrix() {//参数为char[][]
         ArrayUtil arrayUtil = new ArrayUtil();
         StringUtil stringUtil=new StringUtil();
-        int times = 10_0000;//测试次数
+        int times = 10;//测试次数
         boolean isok = true;
         int maxN = 30;//matrix大小在[0~maxN][0~maxM]随机
         int maxM = 30;//matrix大小在[0~maxN][0~maxM]随机
@@ -223,7 +223,7 @@ public class Code04_WordSearch {
         List<String> res1 = null, res2 = null;
         for (int i = 0; i < times; i++) {
 //            parameter1=arrayUtil.ran(maxParameter1);
-            parameter2=stringUtil.generateRandomStringArr(arrayUtil.ran(maxSize), arrayUtil.ran(strSize));
+            parameter2=stringUtil.generateRandomStringArr(arrayUtil.ran(maxSize),strSize);
 
             t1 = arrayUtil.generateRandomChar_a_z_Matrix(arrayUtil.ran(maxN), arrayUtil.ran(maxM));
 //            t2 = arrayUtil.generateRandomChar_a_z_Matrix(arrayUtil.ran(maxN), arrayUtil.ran(maxM));

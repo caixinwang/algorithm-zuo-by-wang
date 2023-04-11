@@ -55,6 +55,7 @@ public class ArrayUtil {
      * @return 返回一个大小为size，值在[l,r]上随机的数组
      */
     public int[] generateRandomArr(int size, int l, int r) {
+        if (l>r) return null;
         int[] res = new int[size];
         for (int i = 0; i < res.length; i++) {
             res[i] = ran(l, r);
@@ -119,7 +120,7 @@ public class ArrayUtil {
     }
 
     public int[][] generateRandomMatrix(int N, int M, int l, int r) {
-        if (N < 0 || M < 0 || l > r || l < 0) return null;
+        if (N < 0 || M < 0 || l > r) return null;
         int[][] res = new int[N][M];
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
@@ -155,10 +156,14 @@ public class ArrayUtil {
         if (matrix == null || matrix.length == 0 || matrix[0] == null || matrix[0].length == 0) return;
         int N = matrix.length, M = matrix[0].length;
         for (int i = 0; i < N; i++) {
+            System.out.print("{");
             for (int j = 0; j < M; j++) {
-                System.out.printf("%4d ", matrix[i][j]);
+                if (j==M-1)System.out.printf("%4d ", matrix[i][j]);
+                else System.out.printf("%4d, ", matrix[i][j]);
             }
-            System.out.println();
+            System.out.print("}");
+            if (i==N-1) System.out.println();
+            else System.out.println(",");
         }
         System.out.println();
     }
@@ -199,10 +204,16 @@ public class ArrayUtil {
         au.printMatrix(m);
     }
 
+    public static void test3(){
+        ArrayUtil au = new ArrayUtil();
+        au.printMatrix(au.generateRandomMatrix(20,20,-20,20));
+    }
+
     public static void main(String[] args) {
         ArrayUtil au = new ArrayUtil();
 //        test1();
-        test2();
+//        test2();
+        test3();
     }
 
 }

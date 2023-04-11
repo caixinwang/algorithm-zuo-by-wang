@@ -59,22 +59,23 @@ public class Code02_WorldBreak {
 		return ways;
 	}
 
-	public static int ways2(String str, String[] arr) {
+	public static int ways2(String str, String[] arr) {//动态规划
 		if (str == null || str.length() == 0 || arr == null || arr.length == 0) {
 			return 0;
 		}
-		HashSet<String> map = new HashSet<>();
-		for (String s : arr) {
-			map.add(s);
+		char[] s = str.toCharArray();
+		HashSet<String> set=new HashSet<>();
+		for (int i = 0; i < arr.length; i++) {
+			set.add(arr[i]);
 		}
-		int N = str.length();
-		int[] dp = new int[N + 1];
-		dp[N] = 1;
-		for (int i = N - 1; i >= 0; i--) {
-			for (int end = i; end < N; end++) {
-				if (map.contains(str.substring(i, end + 1))) {
-					dp[i] += dp[end + 1];
-				}
+		int N=s.length;
+		int[] dp=new int[N+1];
+		dp[N]=1;//这样就不用单独初始化N-1位置了，这样i~N-1如果也在arr中就不用担心i-1会行不通
+		for (int i=N-1;i>=0;i--){
+			String t="";
+			for (int end=i;end<N;end++){//<N而不是<=N,这样i~N-1在arr的话dp[i]+1，符合
+				t+=s[end];
+				if (set.contains(t)) dp[i]+=dp[end+1];
 			}
 		}
 		return dp[0];
@@ -137,38 +138,33 @@ public class Code02_WorldBreak {
 		if (s == null || s.length() == 0 || arr == null || arr.length == 0) {
 			return 0;
 		}
-		Node root = new Node();
-		for (String str : arr) {
-			char[] chs = str.toCharArray();
-			Node node = root;
-			int index = 0;
-			for (int i = 0; i < chs.length; i++) {
-				index = chs[i] - 'a';
-				if (node.nexts[index] == null) {
-					node.nexts[index] = new Node();
-				}
-				node = node.nexts[index];
+		Node head=new Node();
+		for (int i = 0; i < arr.length; i++) {//把arr里面的string全部加前缀树
+			Node cur=head;
+			char[] chars = arr[i].toCharArray();
+			int road=0;
+			for (int j = 0; j < chars.length; j++) {
+				road=chars[j]-'a';
+				if (cur.nexts[road]==null) cur.nexts[road]=new Node();
+				cur=cur.nexts[road];
 			}
-			node.end = true;
+			cur.end=true;
 		}
+		int N=s.length();
 		char[] str = s.toCharArray();
-		int N = str.length;
-		int[] dp = new int[N + 1];
-		dp[N] = 1;
-		for (int i = N - 1; i >= 0; i--) {
-			Node cur = root;
-			for (int end = i; end < N; end++) {
-				int path = str[end] - 'a';
-				if (cur.nexts[path] == null) {
-					break;
-				}
-				cur = cur.nexts[path];
-				if (cur.end) {
-					dp[i] += dp[end + 1];
-				}
+		int[] dp=new int[N+1];
+		dp[N]=1;
+		for (int i=N-1;i>=0;i--){
+			Node cur=head;
+			for (int end=i;end<N;end++){
+				int road=str[end]-'a';
+				if (cur.nexts[road]==null) break;
+				cur=cur.nexts[road];
+				if (cur.end)dp[i]+=dp[end+1];
 			}
 		}
 		return dp[0];
+
 	}
 
 	// 以下的逻辑都是为了测试

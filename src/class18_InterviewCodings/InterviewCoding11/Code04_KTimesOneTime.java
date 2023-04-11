@@ -6,42 +6,35 @@ package class18_InterviewCodings.InterviewCoding11;
 // 一个数组中，只有一个数出现k次，其他所有数出现m次，怎么找到这个出现了k次的数，已知k<m，要求时间复杂度O(N)
 // 可以看到，本题就是更猛问题的一个特例，而且都是O(N)就很好了
 // 讲解在“体系学习班第2节”
-public class Code04_KTimesOneTime {
+public class Code04_KTimesOneTime {//k进制异或
 
 	public static int onceNum(int[] arr, int k) {
-		int[] eO = new int[32];
-		for (int i = 0; i != arr.length; i++) {
-			// 当前数是arr[i], 请把arr[i]变成K进制的形式，每一位累加到eO
-			setExclusiveOr(eO, arr[i], k);
+		if (arr==null||arr.length==0) return -1;
+		int[] digit=new int[32];//用k进制异或，把arr中的数全部k进制异或了，最后把digit用k进制转为十进制答案
+		for (int i = 0; i < arr.length; i++) {
+			eor(arr[i],digit,k);//把arr[i]这个数k进制异或进digit中
 		}
-		int res = getNumFromKSysNum(eO, k);
+		return convert(digit,k);
+	}
+
+	private static void eor(int num, int[] digit, int k) {//把num，k进制异或到digit中
+		int index=0;
+		while(num!=0){
+			int t=num%k;
+			digit[index]=(digit[index]+t)%k;
+			num/=k;
+			index++;
+		}
+	}
+
+	private static int convert(int[] digit, int k) {
+		int res=0;
+		for (int i = digit.length-1; i >=0; i--) {//从高位开始
+			res=res*k+digit[i];//乘法次数最少
+		}
 		return res;
 	}
 
-	public static void setExclusiveOr(int[] eO, int value, int k) {
-		int[] curKSysNum = getKSysNumFromNum(value, k);
-		for (int i = 0; i != eO.length; i++) {
-			eO[i] = (eO[i] + curKSysNum[i]) % k;
-		}
-	}
-
-	public static int[] getKSysNumFromNum(int value, int k) {
-		int[] res = new int[32];
-		int index = 0;
-		while (value != 0) {
-			res[index++] = value % k;
-			value = value / k;
-		}
-		return res;
-	}
-
-	public static int getNumFromKSysNum(int[] eO, int k) {
-		int res = 0;
-		for (int i = eO.length - 1; i != -1; i--) {
-			res = res * k + eO[i];
-		}
-		return res;
-	}
 
 	public static void main(String[] args) {
 		int[] test1 = { 1, 1, 1, 2, 6, 6, 2, 2, 10, 10, 10, 12, 12, 12, 6, 9 };

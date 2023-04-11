@@ -3,7 +3,8 @@ package Leetcode;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class Code0952 {
+public class Code0952 {//并查集
+
     public int largestComponentSize(int[] arr) {//N * 根号v
         int N = arr.length;
         UnionFind unionFind = new UnionFind(N);

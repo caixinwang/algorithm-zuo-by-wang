@@ -1,88 +1,78 @@
 package class18_InterviewCodings.InterviewCoding13;
 
-import java.util.LinkedList;
+import java.util.Stack;
 
 public class Code03_ExpressionCompute {
+    public static int getValue(String str) {
+        return value(str.toCharArray(),0)[0];
+    }
 
-	public static int getValue(String str) {
-		return value(str.toCharArray(), 0)[0];
-	}
 
-	// 请从str[i...]往下算，遇到字符串终止位置或者右括号，就停止
-	// 返回两个值，长度为2的数组
-	// 0) 负责的这一段的结果是多少
-	// 1) 负责的这一段计算到了哪个位置
-	public static int[] value(char[] str, int i) {
-		LinkedList<String> que = new LinkedList<String>();
-		int cur = 0;
-		int[] bra = null;
-		// 从i出发，开始撸串
-		while (i < str.length && str[i] != ')') {
-			if (str[i] >= '0' && str[i] <= '9') {
-				cur = cur * 10 + str[i++] - '0';
-			} else if (str[i] != '(') { // 遇到的是运算符号
-				addNum(que, cur);
-				que.addLast(String.valueOf(str[i++]));
-				cur = 0;
-			} else { // 遇到左括号了
-				bra = value(str, i + 1);
-				cur = bra[0];
-				i = bra[1] + 1;
-			}
-		}
-		addNum(que, cur);
-		return new int[] { getNum(que), i };
-	}
+    /**
+     * 这个递归不用写明显的base case，因为在传入的时候会保证表达式是合法的，因为递归在while里面，是在从左往右
+     * 遍历的过程中进入递归的，总有进入最后一次递归的时候，进入递归是为了消去所有的左括号，所以不可能你进入到递归
+     * 以后立马面对右括号这种极端情况。因为这种递归不是那种无脑枚举的递归，能进入到递归的条件本身就是苛刻的，所以
+     * 不用担心边界条件
+     *
+     * @param str 表达式
+     * @param i   从i往后算到一个合适的位置
+     * @return 返回算到了哪一个位置停了，返回算到那个位置答案是多少[ans,index]
+     */
+    public static int[] value(char[] str, int i) {
+        int cur = 0;//利用cur=10*cur+(str[i]-'1')，从高位到低位累加出数字
+        int N = str.length;
+        Stack<Integer> stack = new Stack<>();
+        while (i < N && str[i] != ')') {
+            if ('0' <= str[i] && str[i] <= '9') {
+                cur = 10 * cur + str[i++] - '0';
+            } else if (str[i] == '/' || str[i] == '*' || str[i] == '+' || str[i] == '-') {
+                if (!stack.isEmpty()&&stack.peek() == '/') {
+                    stack.pop();//除号先弹出来
+                    stack.push(stack.pop() / cur);
+                } else if (!stack.isEmpty()&&stack.peek() == '*') {
+                    stack.pop();//乘号先弹出来
+                    stack.push(stack.pop() * cur);
+                } else {
+                    stack.push(cur);
+                }
+                cur=0;
+                stack.push((int) str[i++]);
+            } else {
+                int[] value = value(str, i + 1);
+                cur = value[0];
+                i=value[1]+1;
+            }
+        }
+        stack.push(cur);
+        while(stack.size()>1){//a op b
+            int b=stack.pop();
+            int op=stack.pop();
+            int a=stack.pop();
+            if (op=='+'){
+                stack.push(a+b);
+            }else {//'-'
+                stack.push(a-b);
+            }
+        }
+        return new int[]{stack.pop(),i};
+    }
 
-	public static void addNum(LinkedList<String> que, int num) {
-		if (!que.isEmpty()) {
-			int cur = 0;
-			String top = que.pollLast();
-			if (top.equals("+") || top.equals("-")) {
-				que.addLast(top);
-			} else {
-				cur = Integer.valueOf(que.pollLast());
-				num = top.equals("*") ? (cur * num) : (cur / num);
-			}
-		}
-		que.addLast(String.valueOf(num));
-	}
+    public static void main(String[] args) {
+        String exp = "48*((70-65)-43)+8*1";
+        System.out.println(getValue(exp));
 
-	public static int getNum(LinkedList<String> que) {
-		int res = 0;
-		boolean add = true;
-		String cur = null;
-		int num = 0;
-		while (!que.isEmpty()) {
-			cur = que.pollFirst();
-			if (cur.equals("+")) {
-				add = true;
-			} else if (cur.equals("-")) {
-				add = false;
-			} else {
-				num = Integer.valueOf(cur);
-				res += add ? num : (-num);
-			}
-		}
-		return res;
-	}
+        exp = "4*(6+78)+53-9/2+45*8";
+        System.out.println(getValue(exp));
 
-	public static void main(String[] args) {
-		String exp = "48*((70-65)-43)+8*1";
-		System.out.println(getValue(exp));
+        exp = "10-5*3";
+        System.out.println(getValue(exp));
 
-		exp = "4*(6+78)+53-9/2+45*8";
-		System.out.println(getValue(exp));
+        exp = "-3*4";
+        System.out.println(getValue(exp));
 
-		exp = "10-5*3";
-		System.out.println(getValue(exp));
+        exp = "3+1*4";
+        System.out.println(getValue(exp));
 
-		exp = "-3*4";
-		System.out.println(getValue(exp));
-
-		exp = "3+1*4";
-		System.out.println(getValue(exp));
-
-	}
+    }
 
 }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Code06_Dijkstra2 {//邻接矩阵表示
+public class Code06_Dijkstra2 {//邻接矩阵表示--手写堆
     static final int MAX = 999999;
 
     static class Node {//邻接点
@@ -75,7 +75,7 @@ public class Code06_Dijkstra2 {//邻接矩阵表示
     static class Heap {//定制的小根堆
         private int[] nodes;//用下标来代表那个结点
         private int size;
-        private HashMap<Integer, Integer> dmap;//<idx,distance>  distance map : 表示从源结点到当前结点的最短路径
+        private HashMap<Integer, Integer> dmap;//<idx,distance>  distance map : 表示从源结点到当前结点的最短路径. less
         private HashMap<Integer, Boolean> xmap;//有两种左右，一是判断结点是否解锁--contain，二是判断结点是否加入X集合--true
 
         public Heap(int size) {
@@ -111,10 +111,10 @@ public class Code06_Dijkstra2 {//邻接矩阵表示
 
         private int pop() {//把最小的结点弹出，加入x集合中
             int res = nodes[1];
-            xmap.put(res, true);//xmap中设置为true，方便以后确定一个结点是不是已经加入x集合了
-            dmap.remove(res);//dmap的作用就是用来查询距离的，现在这个结点进入了x集合，用不到它的距离信息了。
             swap(1, size--);
             sink(1);
+            xmap.put(res, true);//xmap中设置为true，方便以后确定一个结点是不是已经加入x集合了
+            dmap.remove(res);//dmap的作用就是用来查询距离的，现在这个结点进入了x集合，用不到它的距离信息了。
             return res;
         }
 

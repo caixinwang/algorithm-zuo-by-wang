@@ -5,9 +5,9 @@ import java.util.Stack;
 public class Code04_AllTimesMinToMax {
 
     /**
-     * 从数组的每一个数作为最小值，找出扩展出来的最大子数组，因为这个数要作为最小值，所以数组里面的数都是要<=它。所以我们找出离它最近的
-     * 大于它的左右两边的数L和R，(L,R)即是我们要找的最大子数组。我们要找出最近的大于index的数，while的判断条件就是
-     * arr[i]<=arr[stack.peek()],注意观察<=是>的相反面。
+     * 从数组的每一个数作为最小值，找出扩展出来的最大子数组，因为这个数要作为最小值，所以数组里面的数都是要>=它。所以我们找出离它最近的
+     * 小于它的左右两边的数L和R，(L,R)即是我们要找的最大子数组。我们要找出最近的大于index的数
+     * while的判断条件就是只有arr[i]小于栈顶的时候才弹出，因为我们其实是设置栈顶，既然arr[i]<栈顶，那么栈顶就可以设置了
      * @param arr:
      * @return :
      */
@@ -21,7 +21,7 @@ public class Code04_AllTimesMinToMax {
             sum[i]=sum[i-1]+arr[i];
         }
         for (int i=0;i<arr.length;i++){
-            while(!stack.isEmpty()&&arr[i]<=arr[stack.peek()]){//这里是小于等于就行，不需要严格小于
+            while(!stack.isEmpty()&&arr[i]<arr[stack.peek()]){
                 int index =stack.pop();
                 //栈为空说明左边没有比arr[index]大的数，换言之左边的全部范围都属于我们的最大子数组
                 max=Math.max(max,arr[index]*(stack.isEmpty()?sum[i-1]:sum[i-1]-sum[stack.peek()]));
