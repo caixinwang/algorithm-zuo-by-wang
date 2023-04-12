@@ -137,6 +137,7 @@ public class Code03_ExpressionCompute {
        if (op=='/'||op=='*'){
            list.addLast(op=='/'?list.pollLast()/num: list.pollLast()*num);
        }else {
+           list.addLast(op);
            list.addLast(num);
        }
     }
