@@ -52,10 +52,6 @@ public class Code01_SplitNumer2 {
 	}
 	
 	
-	
-	
-	
-	
 
 	public static int ways2(int n) {
 		if (n < 1) {

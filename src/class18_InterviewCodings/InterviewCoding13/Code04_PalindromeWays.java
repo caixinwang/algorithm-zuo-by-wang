@@ -41,8 +41,8 @@ public class Code04_PalindromeWays {
 		for (int j = 2; j < N; j++) {
 			for (int i = 0; i+j <N ; i++) {
 				int l=i,r=i+j;
-				dp[l][r]=dp[l+1][r]+dp[l][r-1]+dp[l+1][r-1];
-				if (s[l]==s[r]) dp[l][r]+=(1+dp[l+1][r-1]);
+				dp[l][r]=dp[l+1][r]+dp[l][r-1]-dp[l+1][r-1];//a+b+c
+				if (s[l]==s[r]) dp[l][r]+=(1+dp[l+1][r-1]);//d
 			}
 		}
 		return dp[0][N-1];

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 问题1：给出平面上n个点(X1,y1) , (x2,y2) ... (Xn,yn),求这n个点中距离最近的两个点和其距离
+ */
 public class Code01_FindMinDistance {
     static class Point{
         public double x;
