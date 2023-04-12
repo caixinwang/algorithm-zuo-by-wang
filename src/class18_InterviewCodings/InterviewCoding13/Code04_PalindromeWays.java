@@ -28,32 +28,31 @@ public class Code04_PalindromeWays {
 		return dp[1][len];
 	}
 
-	public static int way2(String str) {
+	public static int way2(String str){
 		char[] s = str.toCharArray();
-		int n = s.length;
-		int[][] dp = new int[n][n];
-		for (int i = 0; i < n; i++) {
-			dp[i][i] = 1;
+		int N=s.length;
+		int[][] dp=new int[N][N];
+		for (int i = 0; i < N; i++) {
+			dp[i][i]=1;
 		}
-		for (int i = 0; i < n - 1; i++) {
-			dp[i][i + 1] = s[i] == s[i + 1] ? 3 : 2;
+		for (int i = 0; i+1 <N ; i++) {
+			dp[i][i+1]=s[i]==s[i+1]?3:2;
 		}
-		for (int L = n - 3; L >= 0; L--) {
-			for (int R = L + 2; R < n; R++) {
-				dp[L][R] = dp[L + 1][R] + dp[L][R - 1] - dp[L + 1][R - 1];
-				if (s[L] == s[R]) {
-					dp[L][R] += dp[L + 1][R - 1] + 1;
-				}
+		for (int j = 2; j < N; j++) {
+			for (int i = 0; i+j <N ; i++) {
+				int l=i,r=i+j;
+				dp[l][r]=dp[l+1][r]+dp[l][r-1]+dp[l+1][r-1];
+				if (s[l]==s[r]) dp[l][r]+=(1+dp[l+1][r-1]);
 			}
 		}
-		return dp[0][n - 1];
+		return dp[0][N-1];
 	}
 
 	public static void main(String[] args) {
 		System.out.println(way1("ABA"));
-		System.out.println(way1("XXY"));
-
 		System.out.println(way2("ABA"));
+
+		System.out.println(way1("XXY"));
 		System.out.println(way2("XXY"));
 	}
 
