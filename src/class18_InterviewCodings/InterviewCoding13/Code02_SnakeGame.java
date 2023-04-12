@@ -5,54 +5,33 @@ import java.util.Arrays;
 public class Code02_SnakeGame {
 
 	public static int walk1(int[][] matrix) {
-		if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
-			return 0;
-		}
-		int res = Integer.MIN_VALUE;
+		int res=0;//最短都是0
 		for (int i = 0; i < matrix.length; i++) {
 			for (int j = 0; j < matrix[0].length; j++) {
-				int[] ans = process(matrix, i, j);
-				res = Math.max(res, Math.max(ans[0], ans[1]));
+				int[] process = process(matrix,i,j);
+				res = Math.max(res,Math.max(process[0],process[1]));//最开始超能力肯定都还没有被使用
 			}
 		}
 		return res;
 	}
 
-	// 从假想的最优左侧到达(i,j)的旅程中
-	// 0) 在没有使用过能力的情况下，返回路径最大和，没有可能到达的话，返回负
-	// 1) 在使用过能力的情况下，返回路径最大和，没有可能到达的话，返回负
-	public static int[] process(int[][] m, int i, int j) {
-		if (j == 0) { // (i,j)就是最左侧的位置
-			return new int[] { m[i][j], -m[i][j] };
+	/**
+	 * 如果到达不了，就返回-1
+	 * 递归含义：从第一列的假想位置以0血出发到达(i,j)位置所能达到的最大长度，注意这里的含义是到达（i，j）位置能到达的最大长度，
+	 * 而不是到达（i，j）的途中能达到的最大值。所以主函数调用的时候需要把matrix所有的地方都调用一遍。
+	 * 最终游戏过程中能达到的最大长度不一定要通关，可能他为了一个很大的数去吃了，让蛇的长度最大，但是后面是陷阱，
+	 * 蛇死了，这种情况比他正常通关完达到的长度还大，这才是游戏过程达到的最长，游戏不一定要通过
+	 * 可能性分析：一个普遍的位置分为两种情况，一种是使用超能力，第二种是不使用超能力。如果使用了超能力，
+	 * 就需要前面的子问题提供不使用超能力时候达到的最长长度。如果不使用超能力，那么就要子问题返回他们能用超能力
+	 * 能到达的最大值。所以返回值需要两个信息，一个是能使用超能力所能达到的最大值，一个是不能使用超能力达到的最大值
+	 * @return 返回：[不使用，使用]
+	 */
+	public static int[] process(int[][] matrix ,int i,int j){
+		if (j==0){//base case ，从第一列出发，到第一列，出生就在罗马
+			return new int[]{matrix[i][j],-matrix[i][j]};
 		}
-		int[] preAns = process(m, i, j - 1);
-		// 所有的路中，完全不使用能力的情况下，能够到达的最好长度是多大
-		int preUnuse = preAns[0];
-		// 所有的路中，使用过一次能力的情况下，能够到达的最好长度是多大
-		int preUse = preAns[1];
-		if (i - 1 >= 0) {
-			preAns = process(m, i - 1, j - 1);
-			preUnuse = Math.max(preUnuse, preAns[0]);
-			preUse = Math.max(preUse, preAns[1]);
-		}
-		if (i + 1 < m.length) {
-			preAns = process(m, i + 1, j - 1);
-			preUnuse = Math.max(preUnuse, preAns[0]);
-			preUse = Math.max(preUse, preAns[1]);
-		}
-		// preUnuse 之前旅程，没用过能力
-		// preUse 之前旅程，已经使用过能力了
-		int no = -1; // 之前没使用过能力，当前位置也不使用能力，的最优解
-		int yes = -1; // 不管是之前使用能力，还是当前使用了能力，请保证能力只使用一次，最优解
-		if (preUnuse >= 0) {
-			no = m[i][j] + preUnuse;
-			yes = -m[i][j] + preUnuse;
-		}
-		if (preUse >= 0) {
-			yes = Math.max(yes, m[i][j] + preUse);
-		}
-		return new int[] { no, yes };
 	}
+
 
 	public static int walk2(int[][] matrix) {
 		if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {

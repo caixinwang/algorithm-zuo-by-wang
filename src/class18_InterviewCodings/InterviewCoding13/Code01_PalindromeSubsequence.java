@@ -39,27 +39,31 @@ public class Code01_PalindromeSubsequence {
 		return dp[str1.length - 1][str2.length - 1];
 	}
 
+	//范围上的尝试
 	public static int maxLen2(String s) {
-		if (s == null || s.length() == 0) {
-			return 0;
-		}
 		char[] str = s.toCharArray();
-		int[][] dp = new int[str.length][str.length];
-		for (int i = 0; i < str.length; i++) {
-			dp[i][i] = 1;
+		int N=str.length;
+		int[][] dp=new int[N][N];//[L,R]
+		for (int i = 0; i < N; i++) {
+			dp[i][i]=1;
 		}
-		for (int i = 0; i < str.length - 1; i++) {
-			dp[i][i + 1] = str[i] == str[i + 1] ? 2 : 1;
+		for (int i = 0; 1+i < N; i++) {
+			dp[i][1+i]=str[i]==str[1+i]?2:1;
 		}
-		for (int i = str.length - 2; i >= 0; i--) {
-			for (int j = i + 2; j < str.length; j++) {
-				dp[i][j] = Math.max(dp[i][j - 1], dp[i + 1][j]);
-				if (str[i] == str[j]) {
-					dp[i][j] = Math.max(dp[i + 1][j - 1] + 2, dp[i][j]);
-				}
+		for (int j = 2; j < N; j++) {//填对角线
+			for (int i = 0; i+j <N ; i++) {//dp[i][i+j]
+				int l=i,r=i+j;
+				dp[l][r]=str[l]==str[r]?dp[l+1][r-1]+2:dp[l+1][r-1];
+				dp[l][r] = Math.max(dp[l][r],Math.max(dp[l+1][r],dp[l][r-1]));
 			}
 		}
-		return dp[0][str.length - 1];
+//		for (int l=N-3;l>=0;l--){//从下往上，从左往右
+//			for (int r =l+2; r < N; r++) {
+//				dp[l][r]=str[l]==str[r]?dp[l+1][r-1]+2:dp[l+1][r-1];
+//				dp[l][r] = Math.max(dp[l][r],Math.max(dp[l+1][r],dp[l][r-1]));
+//			}
+//		}
+		return dp[0][N-1];
 	}
 
 	public static void main(String[] args) {
