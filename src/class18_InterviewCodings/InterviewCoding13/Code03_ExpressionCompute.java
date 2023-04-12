@@ -3,10 +3,10 @@ package class18_InterviewCodings.InterviewCoding13;
 import java.util.Stack;
 
 public class Code03_ExpressionCompute {
+
     public static int getValue(String str) {
         return value(str.toCharArray(),0)[0];
     }
-
 
     /**
      * 这个递归不用写明显的base case，因为在传入的时候会保证表达式是合法的，因为递归在while里面，是在从左往右
@@ -21,40 +21,53 @@ public class Code03_ExpressionCompute {
     public static int[] value(char[] str, int i) {
         int cur = 0;//利用cur=10*cur+(str[i]-'1')，从高位到低位累加出数字
         int N = str.length;
-        Stack<Integer> stack = new Stack<>();
+        Stack<String> stack = new Stack<>();
         while (i < N && str[i] != ')') {
             if ('0' <= str[i] && str[i] <= '9') {
-                cur = 10 * cur + str[i++] - '0';
-            } else if (str[i] == '/' || str[i] == '*' || str[i] == '+' || str[i] == '-') {
-                if (!stack.isEmpty()&&stack.peek() == '/') {
-                    stack.pop();//除号先弹出来
-                    stack.push(stack.pop() / cur);
-                } else if (!stack.isEmpty()&&stack.peek() == '*') {
-                    stack.pop();//乘号先弹出来
-                    stack.push(stack.pop() * cur);
-                } else {
-                    stack.push(cur);
-                }
+                cur = 10 * cur + (str[i++] - '0');
+            } else if (str[i] != '(') {
+                add(stack,cur);
                 cur=0;
-                stack.push((int) str[i++]);
+                stack.push(""+str[i++]);
             } else {
                 int[] value = value(str, i + 1);
                 cur = value[0];
                 i=value[1]+1;
             }
         }
-        stack.push(cur);
-        while(stack.size()>1){//a op b
-            int b=stack.pop();
-            int op=stack.pop();
-            int a=stack.pop();
-            if (op=='+'){
-                stack.push(a+b);
-            }else {//'-'
-                stack.push(a-b);
+        add(stack,cur);
+        return new int[]{compute(stack),i};
+    }
+
+    public static int compute (Stack<String> stack){
+        if (stack.isEmpty()) return 0;
+        while(stack.size()>1){
+            int b=Integer.parseInt(stack.pop());
+            String op=stack.pop();
+            int a=Integer.parseInt(stack.pop());
+            if (op.equals("+")){
+                stack.push(String.valueOf(a+b));
+            }else {
+                stack.push(String.valueOf(a-b));
             }
         }
-        return new int[]{stack.pop(),i};
+        return Integer.parseInt(stack.peek());
+    }
+
+    public static void add (Stack<String> stack,int num){
+        if (stack.isEmpty()){
+            stack.push(String.valueOf(num));
+            return;
+        }
+        String op = stack.pop();
+        if (op.equals("/")||op.equals("*")){
+            int cur = Integer.parseInt(stack.pop());
+            int ans = op.equals("/")?cur/num:cur*num;
+            stack.push(String.valueOf(ans));
+        }else {
+            stack.push(op);
+            stack.push(String.valueOf(num));
+        }
     }
 
     public static void main(String[] args) {
