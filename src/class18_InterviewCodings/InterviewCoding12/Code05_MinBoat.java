@@ -32,17 +32,18 @@ public class Code05_MinBoat {
 		int R = lessR + 1;
 		int noUsed = 0; // 画X的数量统计，画对号的量(加工出来的)
 		int solved = 0; // 此时的[L]，让R画过了几个数
-		while (R>=arr.length) {
-			while(L>=0&&arr[L]+arr[R]>limit) {//出循环L来到了第一个可以凑的位置或者L直接越界了
+		while (R<arr.length&&L>=0) {
+			while(L>=0&&arr[L]+arr[R]>limit) {//保证出循环L位置能和R凑
 				L--;
 				noUsed++;
 			}
-			while(L>=0&&R<arr.length&&arr[L]+arr[R]<=limit) {//出while代表L来到了第一个不能解决的位置或者越界了
+			if (L>=0&&arr[L]+arr[R]<=limit){
 				L--;
 				R++;
 				solved++;
 			}
 		}
+		noUsed+=L+1;//包括了L越界和没越界的情况
 		int fat=arr.length-R;//[r,arr.len-1]都是没配对的胖子，R越界的情况也包括了，刚好是0
 		int thin=noUsed+1>>1;//没配对的瘦子两人一条船
 		return fat+thin+solved;
