@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import static class01_EasySortAndBinary.Code01_SelectSort.generateArray;
 
-public class Code05_BSNearLeft {//大于num的最小数字
+public class Code05_BSNearLeft {//有序数组中找大于num的最左数字
 
     private static int nearestIndex(int[] sortedArray, int num) {
         if (sortedArray == null || sortedArray.length == 0)
@@ -23,7 +23,7 @@ public class Code05_BSNearLeft {//大于num的最小数字
 
     //可能某次mid刚好命中了大于num的最左的数，这个时候r赋值mid-1意味着后面已经不可能再命中这个最左的数了，
     // 只能l通过最后一次右移（在l==r的情况下）找到
-    //1.r如果有动，说明一定有解；2.r最后一次跳跃的之后[l,r]中都没有解；3.l==r时，l右跳找到r右边的那个解
+    //1.r如果有动，说明一定有解  2.r最后一次跳跃的之后[l,r]中都没有解  3.l==r时，l右跳找到r右边的那个解
     private static int nearestIndex2(int[] arr, int num) {
         if (arr == null || arr.length == 0) return -1;
         int l = 0, r = arr.length - 1, mid = 0;

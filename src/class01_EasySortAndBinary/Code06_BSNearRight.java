@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import static class01_EasySortAndBinary.Code01_SelectSort.generateArray;
 
-public class Code06_BSNearRight {//小于num的最大数
+public class Code06_BSNearRight {//找有序数组中小于num的最大数
 
     private static int nearestIndex(int[] sortedArray,int num){
         if (sortedArray==null||sortedArray.length==0)
