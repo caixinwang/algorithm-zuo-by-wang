@@ -8,11 +8,11 @@ import java.util.PriorityQueue;
 public class Code01_SDEandPM {
 
 	public static class Program {
-		public int index;
-		public int pm;
-		public int start;
-		public int rank;
-		public int cost;
+		public int index;//方便填答案
+		public int pm;//
+		public int start;//润色出来的时间
+		public int rank;//优先级
+		public int cost;//花费
 
 		public Program(int index, int pmNum, int begin, int rank, int cost) {
 			this.index = index;
@@ -26,7 +26,7 @@ public class Code01_SDEandPM {
 	public static class PmLoveRule implements Comparator<Program> {
 
 		@Override
-		public int compare(Program o1, Program o2) {
+		public int compare(Program o1, Program o2) {//计划书的排序喜好
 			if (o1.rank != o2.rank) {
 				return o1.rank - o2.rank;
 			} else if (o1.cost != o2.cost) {
@@ -48,7 +48,7 @@ public class Code01_SDEandPM {
 		// 程序员堆（一个，程序员共享池）
 		private Program[] sdeHeap;
 		// indexes[i] -> i号pm的堆顶项目，在sde堆中处在啥位置
-		private int[] indexes; 
+		private int[] indexes; //indexes[i]代表i号项目经理最喜欢的项目在sdeHeap的啥位置
 		private int heapsize; // 程序员堆的大小
 
 		public BigQueues(int pmNum) {
@@ -78,7 +78,7 @@ public class Code01_SDEandPM {
 			Program head = pmHeap.peek(); // 现在的堆顶
 			// 之前pm在sde堆中的自己的堆顶，sde？
 			int heapindex = indexes[head.pm];
-			if (heapindex == -1) { // 之前没堆顶, 
+			if (heapindex == -1) { // 之前没堆顶, 也就是这个经理还没有项目润色出来到程序员堆里面
 				sdeHeap[heapsize] = head;
 				indexes[head.pm] = heapsize;
 				heapInsert(heapsize++);
@@ -179,7 +179,7 @@ public class Code01_SDEandPM {
 		//
 		PriorityQueue<Integer> wakeQueue = new PriorityQueue<Integer>();
 		for (int i = 0; i < sdes; i++) {
-			wakeQueue.add(1);
+			wakeQueue.add(1);//世界初始的时间点为1，有几个员工就加几次。
 		}
 		// add   pop   isEmpty
 		BigQueues bigQueues = new BigQueues(pms);
