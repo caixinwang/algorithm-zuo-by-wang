@@ -4,6 +4,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
 
+/**
+ * 		private Dot[][] dots; // 位置到点的对应关系
+ * 		private int N; // 行数
+ * 		private int M; // 列数
+ * 	这三个是干嘛用的？得搞一件事，在两行七列上这个一、在五行三列上这个一，我怎么表示这两个一的不同？它明明是两个不同的意义。
+ *  我是不能单独用一这个值来表示不同的。那就这样来。这样来，我建立一个小的Dot这么一个类。我搞一个跟这个等规模的表dots。
+ *  我在二行七列申请一个新的对象。我在五行三列上也申请一个新的对象，我利用这两个对象的内存地址不同。标记这两个一不同。
+ * 我只想要它的内存地址，所以这个类Dot里面什么都不放
+ *
+ */
 public class Code02_BricksFallingWhenHit1 {
 
 	// 每一个1，都有一个专属于自己的Dot
@@ -13,26 +23,31 @@ public class Code02_BricksFallingWhenHit1 {
 
 	public static class UnionFind {
 		// 原始数组，经过炮弹的影响之后，所得到的grid
-		private int[][] grid; // 主函数处理后的原始矩
+		private int[][] grid; // 主函数处理（炮弹变2的处理）后的原始矩阵
 		// 如果gird[i][j] == 1, dots[i][j] = new 的点
 		private Dot[][] dots; // 位置到点的对应关系
-		private int N; // 行数
-		private int M; // 列数
+		private int N; // 原始矩阵行数
+		private int M; // 原始矩阵列数
 		private int cellingAll; // 有多少个1能连接到天花板
 
 		// 某个集合，是不是整体接到天花版上去了，如果是，假设这个集合代表点是X,cellingSet包含x
 		// 如果不是，假设这个集合代表点是X,cellingSet不包含X
-		private HashSet<Dot> cellingSet; // 集合能够连到天花板，它的代表点才在里面
+		private HashSet<Dot> cellingSet; // 集合能够连到天花板，它的代表点才在里面。只放代表点
 		private HashMap<Dot, Dot> fatherMap; // 任何一个dot都有记录，value就是父节点
 		private HashMap<Dot, Integer> sizeMap;
 		// 只有一个dot是代表点，才有记录，value表示这个集合的大小
 
-		// matrix，炮弹会让某些位置的1变成2，2和0一样，表示不连通；只有1是联通的，上下左右
+		// matrix是加上炮弹影响之后的matrix，炮弹会让某些位置的1变成2，2和0一样，表示不连通；只有1是连通的，上下左右
 		public UnionFind(int[][] matrix) {
 			initSpace(matrix);
 			initConnect();
 		}
 
+		/**
+		 * 如果之前set里面已经有father 1了。那么father 1跟father 2可能都在set中，
+		 * 但是以后father 1的数据再也用不着了。因为之后所有的点它都以father 2作为代表。
+		 * 所以set中有可能会有脏数据，脏了就脏了，无所谓。
+		 */
 		private void initSpace(int[][] matrix) {
 			grid = matrix;
 			N = grid.length;
