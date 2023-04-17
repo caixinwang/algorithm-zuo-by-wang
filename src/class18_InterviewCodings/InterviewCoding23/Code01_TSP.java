@@ -11,16 +11,17 @@ public class Code01_TSP {
 		// set.get(i) != null i这座城市在集合里
 		// set.get(i) == null i这座城市不在集合里
 		List<Integer> set = new ArrayList<>();
-		for (int i = 0; i < N; i++) {
+		for (int i = 0; i < N; i++) {//一开始肯定所有城市都在集合里，我就加n个1进去，加什么无所谓，拿出来不空就行了
 			set.add(1);
 		}
-		return func1(matrix, set, 0);
+		return func1(matrix, set, 0);//这里start放多少，就意味着func函数最终都是回到start的，是独立于func之外的隐含信息
 	}
 
 	// 任何两座城市之间的距离，可以在matrix里面拿到
 	// set中表示着哪些城市的集合，
 	// start这座城一定在set里，
 	// 从start出发，要把set中所有的城市过一遍，最终回到0这座城市，最小距离是多少
+	// 0这座城市是独立于func1这个函数的，不管发生什么，潜台词都是回到0这座城市
 	public static int func1(int[][] matrix, List<Integer> set, int start) {
 		int cityNum = 0;
 		for (int i = 0; i < set.size(); i++) {
@@ -28,20 +29,20 @@ public class Code01_TSP {
 				cityNum++;
 			}
 		}
-		if (cityNum == 1) {
-			return matrix[start][0];
+		if (cityNum == 1) {//base case就是只有一座城了，说明只剩下start这一座城，因为我们知道start一定在set中
+			return matrix[start][0];//你现在在start，你要回到0，那么距离直接就是start到0的距离。
 		}
 		// 不只start这一座城
-		set.set(start, null);
+		set.set(start, null);//调用子过程，子过程一定会把0去掉，去掉就是null
 		int min = Integer.MAX_VALUE;
 		for (int i = 0; i < set.size(); i++) {
-			if (set.get(i) != null && i != start) {
+			if (set.get(i) != null && i != start) {//我不调来到自己的子过程
 				// start -> i i... -> 0
 				int cur = matrix[start][i] + func1(matrix, set, i);
 				min = Math.min(min, cur);
 			}
 		}
-		set.set(start, 1);
+		set.set(start, 1);//还原现场
 		return min;
 	}
 

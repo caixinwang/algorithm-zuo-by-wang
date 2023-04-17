@@ -10,7 +10,7 @@ public class Code01_PalindromePairs {
 	public static List<List<Integer>> palindromePairs(String[] words) {
 		HashMap<String, Integer> wordset = new HashMap<>();
 		for (int i = 0; i < words.length; i++) {
-			wordset.put(words[i], i);
+			wordset.put(words[i], i);//有重复下标的时候value就放一个装着下标的List。这里我们认为无重复字符串
 		}
 		List<List<Integer>> res = new ArrayList<>();
 		for (int i = 0; i < words.length; i++) {

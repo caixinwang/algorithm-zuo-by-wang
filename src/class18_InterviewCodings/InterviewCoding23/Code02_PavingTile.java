@@ -36,8 +36,8 @@ public class Code02_PavingTile {
 		}
 		
 		// 没到终止行，可以选择在当前的level行摆瓷砖
-		int[] op = getOp(pre);
-		return dfs(op, 0, level, N);
+		int[] op = getOp(pre);//0的位置你可以自由发挥
+		return dfs(op, 0, level, N);//自由发挥的位置去深度优先遍历，每个位置都可以选择摆或不摆。
 	}
 
 	// op[i] == 0 可以考虑摆砖
