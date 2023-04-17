@@ -30,4 +30,27 @@ public class Code02_StrangePrinter {
 		return dp[0][N - 1];
 	}
 
+	public static int strangePrinte2(String s) {
+		if (s == null || s.length() == 0) {
+			return 0;
+		}
+		char[] chars = s.toCharArray();
+		return process(chars,0,s.length()-1);
+	}
+	
+	private static int process(char[] str,int L,int R) {
+		if (L==R) return 1;
+		int ans=Integer.MAX_VALUE;
+		for (int i=L;i<R;i++){
+			ans = Math.min(ans, process(str,L,i)+process(str,i+1,R)-(str[i+1]==str[L]?1:0));
+		}
+		return ans;
+	}
+
+	public static void main(String[] args) {
+		String s="aadasds";
+		System.out.println(strangePrinter(s));
+		System.out.println(strangePrinte2(s));
+	}
+
 }
