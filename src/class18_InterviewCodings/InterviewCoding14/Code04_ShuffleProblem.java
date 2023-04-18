@@ -1,92 +1,115 @@
 package class18_InterviewCodings.InterviewCoding14;
 
+import TestUtils.ArrayUtil;
+
 import java.util.Arrays;
 
 public class Code04_ShuffleProblem {
 
-	// 数组的长度为len，调整前的位置是i，返回调整之后的位置
-	// 下标不从0开始，从1开始
-	public static int modifyIndex1(int i, int len) {
-		if (i <= len / 2) {
-			return 2 * i;
-		} else {
-			return 2 * (i - (len / 2)) - 1;
-		}
-	}
-
-	// 数组的长度为len，调整前的位置是i，返回调整之后的位置
-	// 下标不从0开始，从1开始
-	public static int modifyIndex2(int i, int len) {
-		return (2 * i) % (len + 1);
-	}
-
-	// 主函数
-	// 数组必须不为空，且长度为偶数
 	public static void shuffle(int[] arr) {
 		if (arr != null && arr.length != 0 && (arr.length & 1) == 0) {
 			shuffle(arr, 0, arr.length - 1);
 		}
 	}
 
-	// 在arr[L..R]上做完美洗牌的调整（arr[L..R]范围上一定要是偶数个数字）
-	public static void shuffle(int[] arr, int L, int R) {
-		while (R - L + 1 > 0) { // 切成一块一块的解决，每一块的长度满足(3^k)-1
-			int len = R - L + 1;
-			int base = 3;
-			int k = 1;
-			// 计算小于等于len并且是离len最近的，满足(3^k)-1的数
-			// 也就是找到最大的k，满足3^k <= len+1
-			while (base <= (len + 1) / 3) { // base > (N+1)/3
-				base *= 3;
+	private static void shuffle(int[] arr, int l, int r) {
+		while(l<r){
+			int len=r-l+1;
+			int base=1;
+			int k=0;//base=3^k
+			while(3*base-1<=len){//找到最接近len的base-1,条件就是3*base-1，这样出while的时候base就是最近的状态，注意，这是<=
+				base*=3;
 				k++;
 			}
-			// 3^k -1
-			// 当前要解决长度为base-1的块，一半就是再除2
-			int half = (base - 1) / 2;
-			// [L..R]的中点位置
-			int mid = (L + R) / 2;
-			// 要旋转的左部分为[L+half...mid], 右部分为arr[mid+1..mid+half]
-			// 注意在这里，arr下标是从0开始的
-			rotate(arr, L + half, mid, mid + half);
-			// 旋转完成后，从L开始算起，长度为base-1的部分进行下标连续推
-			cycles(arr, L, base - 1, k);
-			// 解决了前base-1的部分，剩下的部分继续处理
-			L = L + base - 1; // L ->     [] [+1...R]
+			int mid=l+r>>1;
+			int half=base-1>>1;//base-1这个长度是要去下标循环怼的,搞出一半来
+			rotate(arr,l+half,mid+half,(mid)-(l+half)+1);//画图去观察
+			cycle(arr,l,l+base-1-1,k);
+			l=l+base-1;
 		}
 	}
 
-	// 从start位置开始，往右len的长度这一段，做下标连续推
-	// 出发位置依次为1,3,9...
-	public static void cycles(int[] arr, int start, int len, int k) {
-		// 找到每一个出发位置trigger，一共k个
-		// 每一个trigger都进行下标连续推
-		// 出发位置是从1开始算的，而数组下标是从0开始算的。
-		for (int i = 0, trigger = 1; i < k; i++, trigger *= 3) {
-			int preValue = arr[trigger + start - 1];
-			int cur = modifyIndex2(trigger, len);
-			while (cur != trigger) {
-				int tmp = arr[cur + start - 1];
-				arr[cur + start - 1] = preValue;
-				preValue = tmp;
-				cur = modifyIndex2(cur, len);
+	/**
+	 *
+	 * @param arr 在数组[l,r]范围上做下标循环怼，怼几轮呢，开始点从3^0到3^(k-1)---从1开始，注意转换关系
+	 * @param l -
+	 * @param r -
+	 * @param k 数组的长度告诉你为(3^k)-1，直接传进来的，省得重复计算，shuffle函数里面会有计算的步骤的
+	 */
+	private static void cycle(int[] arr,int l,int r,int k){//长度为(3^k)-1
+		for (int i = 0,base=1; i < k; i++,base*=3) {//循环怼k轮
+			int start=l+(base-1);
+			int preVal=arr[start];
+			int p=getIndex(l,r,start);//从第二个位置开始
+			while(p!=start){
+				int t=arr[p];
+				arr[p]=preVal;
+				preVal=t;
+				p=getIndex(l,r,p);
 			}
-			arr[cur + start - 1] = preValue;
+			arr[p]=preVal;//开头位置处理一下
 		}
 	}
 
-	// [L..M]为左部分，[M+1..R]为右部分，左右两部分互换
-	public static void rotate(int[] arr, int L, int M, int R) {
-		reverse(arr, L, M);
-		reverse(arr, M + 1, R);
-		reverse(arr, L, R);
+	//arr[l...r]范围上前k个和后面几个对换整体的顺序
+	//[1,2,3,4,5,6]调用k=2,==> [3,4,5,6,1,2]
+	private static void rotate(int[] arr,int l,int r,int k){
+		reverse(arr,l,l+k-1);
+		reverse(arr,l+k,r);
+		reverse(arr,l,r);
 	}
 
-	// [L..R]做逆序调整
-	public static void reverse(int[] arr, int L, int R) {
-		while (L < R) {
-			int tmp = arr[L];
-			arr[L++] = arr[R];
-			arr[R--] = tmp;
+	private static void reverse(int[] arr,int l,int r){
+		while(l<r){
+			int t=arr[l];
+			arr[l]=arr[r];
+			arr[r]=t;
+			l++;
+			r--;
+		}
+	}
+
+
+	/**
+	 * @param s|e  数组范围假设为[s,e],长度必须为偶数
+	 * @param i 计算出第i位置的数应该跳转到哪,i∈[s,e]
+	 * @return 返回如果在arr[s...e]做完美洗牌，下标在i位置的数应该跳转到哪
+	 */
+	public static int getIndex(int s,int e,int i){
+		int N=e-s+1>>1;
+		if (i>s+e>>1){//在右半区
+			return s+((i-s-N)<<1);
+		}else {//在左半区
+			return s+((i-s<<1)+1);
+		}
+	}
+
+
+	static ArrayUtil arrayUtil=new ArrayUtil();
+	public static void test1(){
+		int[] arr=new int[]{1,2,3,4,5,6,7,8};
+//		reverse(arr,1,5);
+		rotate(arr,1,7,3);
+		arrayUtil.printArr(arr);
+	}
+	public static void test2(){
+		int[] arr=new int[]{1,2,3,4,5,6,7,8};
+		cycle(arr,0,7,2);
+		arrayUtil.printArr(arr);
+	}
+	public static void test3(){
+		for (int i = 0; i < 50; i++) {
+			int[] arr = generateArray();
+			Arrays.sort(arr);
+			arrayUtil.printArr(arr);
+			wiggleSort(arr);
+			arrayUtil.printArr(arr);
+			System.out.println("==============================");
+			if (!isValidWiggle(arr)) {
+				System.out.println("ooops!");
+				printArray(arr);
+				break;
+			}
 		}
 	}
 
@@ -138,17 +161,10 @@ public class Code04_ShuffleProblem {
 		}
 		return arr;
 	}
-
 	public static void main(String[] args) {
-		for (int i = 0; i < 5000000; i++) {
-			int[] arr = generateArray();
-			wiggleSort(arr);
-			if (!isValidWiggle(arr)) {
-				System.out.println("ooops!");
-				printArray(arr);
-				break;
-			}
-		}
-	}
+//		test1();
+//		test2();
+		test3();
 
+	}
 }

@@ -1,15 +1,12 @@
 package class18_InterviewCodings.InterviewCoding15;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class Code01_SDEandPM {
 
 	public static class Program {
 		public int index;//方便填答案
-		public int pm;//
+		public int pm;//经理的编号
 		public int start;//润色出来的时间
 		public int rank;//优先级
 		public int cost;//花费
@@ -23,137 +20,110 @@ public class Code01_SDEandPM {
 		}
 	}
 
-	public static class PmLoveRule implements Comparator<Program> {
-
+	public static class ManagerRule implements Comparator<Program> {
 		@Override
-		public int compare(Program o1, Program o2) {//计划书的排序喜好
-			if (o1.rank != o2.rank) {
-				return o1.rank - o2.rank;
-			} else if (o1.cost != o2.cost) {
-				return o1.cost - o2.cost;
-			} else {
-				return o1.start - o2.start;
+		public int compare(Program o1, Program o2) {
+			if (o1.rank!=o2.rank){//优先级
+				return o1.rank-o2.rank;
+			}else if (o1.cost!=o2.cost){//花费时间
+				return o1.cost-o2.cost;
 			}
+			return o1.start-o2.start;//开始时间
 		}
-
 	}
 
-	// 大黑盒
-	// 每一个pm，有自己的堆(PmLoveRule)
-	// 每一个pm的堆里有堆顶，所有的堆顶会再组成一个，程序员堆(程序员喜好)
-	// void add(...)  项目  pop()
+	/**
+	 * 每一个经理有自己的设计池堆。所有的程序员共用一个程序员堆。设计池堆我们就用系统提供的，搞一个队列放进去
+	 * 程序员堆我们自己来实现，以应对设计池堆顶变化所产生的堆结构调整
+	 * 结构中有两个对外接口，一个是add(项目书),一个是pop弹出一个最受程序员喜爱的项目
+	 * 在这个结构中，我们要手动维持设计池堆的堆顶都要出现在程序员堆中。如果设计池堆顶换了，程序员堆中的项目也要相应更换
+	 */
 	public static class BigQueues {
-		//  PriorityQueue<Program> pmQ = pmQueues.get(i);
-		private List<PriorityQueue<Program>> pmQueues;
-		// 程序员堆（一个，程序员共享池）
-		private Program[] sdeHeap;
-		// indexes[i] -> i号pm的堆顶项目，在sde堆中处在啥位置
-		private int[] indexes; //indexes[i]代表i号项目经理最喜欢的项目在sdeHeap的啥位置
-		private int heapsize; // 程序员堆的大小
+		private ArrayList<PriorityQueue<Program>> managerHeapList;
+		private int size;//程序员堆的大小
+		private Program[] heap;//程序员堆
+		private int[] indexMap;//indexMap[i]代表i号经理最喜好的设计书在heap中的哪一个位置
 
-		public BigQueues(int pmNum) {
-			heapsize = 0;
-			sdeHeap = new Program[pmNum];
-			indexes = new int[pmNum + 1];
-			for (int i = 0; i <= pmNum; i++) {
-				indexes[i] = -1;
+		public BigQueues(int managerNum) {
+			managerHeapList=new ArrayList<>();
+			for (int i = 0; i <= managerNum ; i++) {
+				managerHeapList.add(new PriorityQueue<>(new ManagerRule()));
 			}
-			pmQueues = new ArrayList<>();
-			// i  pmQueues.get(i)
-			for (int i = 0; i <= pmNum; i++) {
-				pmQueues.add(new PriorityQueue<Program>(new PmLoveRule()));
-			}
+			size=0;
+			heap=new Program[managerNum+1];
+			indexMap=new int[managerNum+1];
+			Arrays.fill(indexMap, -1);
 		}
 
-		// 当前是否有项目可以弹出被程序员做
-		public boolean isEmpty() {
-			return heapsize == 0;
+		public boolean isEmpty(){
+			return size==0;
 		}
 
-		// 某一个项目加入了，黑盒里
-		public void add(Program program) {
-			PriorityQueue<Program> pmHeap = pmQueues.get(program.pm);
-			pmHeap.add(program);
-			// 有可能当前的项目，成了此时pm最喜欢的项目，换堆顶，调整sde堆中的项目
-			Program head = pmHeap.peek(); // 现在的堆顶
-			// 之前pm在sde堆中的自己的堆顶，sde？
-			int heapindex = indexes[head.pm];
-			if (heapindex == -1) { // 之前没堆顶, 也就是这个经理还没有项目润色出来到程序员堆里面
-				sdeHeap[heapsize] = head;
-				indexes[head.pm] = heapsize;
-				heapInsert(heapsize++);
-			} else { // 加此时的program之前，我有老堆顶
-				sdeHeap[heapindex] = head;
-				heapInsert(heapindex);
-				heapify(heapindex);
+		public void add(Program program){
+			PriorityQueue<Program> managerHeap = managerHeapList.get(program.pm);
+			managerHeap.add(program);
+			Program curLike = managerHeap.peek();//目前经理最喜欢的项目
+			int heapindex = indexMap[curLike.pm];
+			if (heapindex==-1){//这个经理之前没有项目在程序员堆里面
+				indexMap[curLike.pm]=size+1;
+				heap[++size]=curLike;
+				swim(size);
+			}else {//新的旧的是不是一样的，不好判断，直接替换了再说
+				heap[heapindex]=curLike;//不管旧的和新的一不一样，我在直接换了再调整
+				swim(heapindex);//swim和sink其中之一会发生，但不是同时发生
+				sink(heapindex);
 			}
 		}
 
-		// 程序员挑项目，返回挑选的项目
-		public Program pop() {
-			Program head = sdeHeap[0];
-			PriorityQueue<Program> queue = pmQueues.get(head.pm);
-			queue.poll();
-			if (queue.isEmpty()) { // 此时的pm手上没有项目了
-				swap(0, heapsize - 1);
-				sdeHeap[--heapsize] = null;
-				indexes[head.pm] = -1;
-			} else {
-				sdeHeap[0] = queue.peek();
+		public Program pop(){
+			Program program = heap[1];
+			PriorityQueue<Program> programs = managerHeapList.get(program.pm);
+			programs.poll();//这里注意，一定要和程序员堆的堆顶一起弹出了！程序员堆弹出了，对应的经理堆一定也要弹出
+			if (programs.isEmpty()){//这个经理已经没有别的项目了
+				swap(1,size--);
+				sink(1);
+				indexMap[program.pm]=-1;
+			}else {//如果经理还有项目
+				heap[1]=programs.peek();//换个项目，调整堆结构即可
+				sink(1);
 			}
-			heapify(0);
-			return head;
+			return program;
 		}
 
-		private void heapInsert(int index) {
-			while (index != 0) {
-				int parent = (index - 1) / 2;
-				if (sdeLoveRule(sdeHeap[parent], sdeHeap[index]) > 0) {
-					swap(parent, index);
-					index = parent;
-				} else {
-					break;
-				}
+		private boolean better(int a, int b){
+			Program p1 = heap[a];
+			Program p2 = heap[b];
+			if (p1.cost!=p2.cost){
+				return p1.cost<p2.cost;
 			}
+			return p1.pm<p2.pm;
 		}
 
-		private void heapify(int index) {
-			int left = index * 2 + 1;
-			int right = index * 2 + 2;
-			int best = index;
-			while (left < heapsize) {
-				if (sdeLoveRule(sdeHeap[left], sdeHeap[index]) < 0) {
-					best = left;
-				}
-				if (right < heapsize && sdeLoveRule(sdeHeap[right], sdeHeap[best]) < 0) {
-					best = right;
-				}
-				if (best == index) {
-					break;
-				}
-				swap(best, index);
-				index = best;
-				left = index * 2 + 1;
-				right = index * 2 + 2;
+		private void swap(int a,int b){
+			indexMap[heap[a].pm]=b;
+			indexMap[heap[b].pm]=a;
+			Program t = heap[a];
+			heap[a]=heap[b];
+			heap[b]=t;
+		}
+
+		private void swim(int k){
+			for (;k>1&&better(k,k>>1);k>>=1) swap(k,k>>1);
+		}
+
+		private void sink(int k){
+			while(k<<1<=size){//左孩子存在
+				int child=k<<1;
+				if (child+1<=size&&better(child+1,child)) child++;
+				if (better(k,child)) break;
+				swap(k,child);
+				k=child;
 			}
 		}
 
-		private void swap(int index1, int index2) {
-			Program p1 = sdeHeap[index1];
-			Program p2 = sdeHeap[index2];
-			sdeHeap[index1] = p2;
-			sdeHeap[index2] = p1;
-			indexes[p1.pm] = index2;
-			indexes[p2.pm] = index1;
-		}
 
-		private int sdeLoveRule(Program p1, Program p2) {
-			if (p1.cost != p2.cost) {
-				return p1.cost - p2.cost;
-			} else {
-				return p1.pm - p2.pm;
-			}
-		}
+
+
 
 	}
 

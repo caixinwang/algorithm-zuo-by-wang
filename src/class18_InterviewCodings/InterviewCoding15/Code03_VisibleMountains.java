@@ -6,7 +6,7 @@ import java.util.Stack;
 public class Code03_VisibleMountains {
 
 	// 栈中放的记录，
-	// value就是指，times是收集的个数
+	// value就是值，times是收集的个数
 	public static class Record {
 		public int value;
 		public int times;
@@ -18,70 +18,56 @@ public class Code03_VisibleMountains {
 	}
 
 	public static int getVisibleNum(int[] arr) {
-		if (arr == null || arr.length < 2) {
-			return 0;
+		if (arr==null||arr.length<2) return 0;
+		int N=arr.length;
+		int maxIndex=0;//最高山峰对应的下标
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[i]>arr[maxIndex]) maxIndex=i;
 		}
-		int N = arr.length;
-		int maxIndex = 0;
-		// 先在环中找到其中一个最大值的位置，哪一个都行
-		for (int i = 0; i < N; i++) {
-			maxIndex = arr[maxIndex] < arr[i] ? i : maxIndex;
-		}
-		Stack<Record> stack = new Stack<Record>();
-		// 先把(最大值,1)这个记录放入stack中
-		stack.push(new Record(arr[maxIndex]));
-		// 从最大值位置的下一个位置开始沿next方向遍历
-		int index = nextIndex(maxIndex, N);
-		// 用“小找大”的方式统计所有可见山峰对
-		int res = 0;
-		// 遍历阶段开始，当index再次回到maxIndex的时候，说明转了一圈，遍历阶段就结束
-		while (index != maxIndex) {
-			// 当前数要进入栈，判断会不会破坏第一维的数字从顶到底依次变大
-			// 如果破坏了，就依次弹出栈顶记录，并计算山峰对数量
-			while (stack.peek().value < arr[index]) {
-				int k = stack.pop().times;
-				// 弹出记录为(X,K)，如果K==1，产生2对; 如果K>1，产生2*K + C(2,K)对。
-				res += getInternalSum(k) + 2 * k;
+		Stack<Record> stack=new Stack<>();//由于是环形的，第一个山maxIndex开头位置先处理
+		stack.push(new Record(arr[maxIndex]));//默认初始化就是一次,用山的高度比较大小
+		int p=nextIndex(maxIndex,N);//第二个位置开始
+		int res=0;
+		for (;p!=maxIndex;p=nextIndex(p,N)){//回到开头就退出，开头位置已经单独处理了
+			while(!stack.isEmpty()&&arr[p]>stack.peek().value){
+				Record pop = stack.pop();
+				res+=pop.times*2+cn2(pop.times);//栈底是最大的，永远不会弹出，所以这个弹出来得的东西下面肯定还有东西
 			}
-			// 当前数字arr[index]要进入栈了，如果和当前栈顶数字一样就合并
-			// 不一样就把记录(arr[index],1)放入栈中
-			if (stack.peek().value == arr[index]) {
-				stack.peek().times++;
-			} else { // >
-				stack.push(new Record(arr[index]));
+			if (arr[p]==stack.peek().value){//相等
+				Record peek = stack.peek();
+				peek.times++;
+			}else {
+				stack.push(new Record(arr[p]));
 			}
-			index = nextIndex(index, N);
 		}
-		// 清算阶段开始了
-		// 清算阶段的第1小阶段
-		while (stack.size() > 2) {
-			int times = stack.pop().times;
-			res += getInternalSum(times) + 2 * times;
+		while(stack.size()>2){//三座山以上，弹出来的山一定可以看到两座。
+			Record pop = stack.pop();
+			res+=pop.times*2+cn2(pop.times);
 		}
-		// 清算阶段的第2小阶段
-		if (stack.size() == 2) {
-			int times = stack.pop().times;
-			res += getInternalSum(times)
-					+ (stack.peek().times == 1 ? times : 2 * times);
+		if (stack.size()==2){//最高的山如果只有1座，那么第二高的山对外就只能看到一个了，如果大于两座，那么对外就能看到两个
+			Record pop = stack.pop();
+			Record peek = stack.peek();//最高的山
+			res+=(peek.times>=2? pop.times*2: pop.times)+cn2(pop.times);
 		}
-		// 清算阶段的第3小阶段
-		res += getInternalSum(stack.pop().times);
+		if (stack.size()==1){//最高的山只能自己内部看，外部由于规定小看大，所以没有外部的
+			res+=cn2(stack.pop().times);
+		}
 		return res;
 	}
 
-	// 如果k==1返回0，如果k>1返回C(2,k)
-	public static int getInternalSum(int k) {
-		return k == 1 ? 0 : (k * (k - 1) / 2);
+	// 如果n==1返回0，如果n>1返回C(n,2)
+	public static int cn2(int n) {
+		return n==1?0:(n*(n-1))/2;
 	}
 
-	// 环形数组中当前位置为i，数组长度为size，返回i的下一个位置
-	public static int nextIndex(int i, int size) {
-		return i < (size - 1) ? (i + 1) : 0;
+	// 环形数组中当前位置为i，数组长度为N，返回i的下一个位置
+	public static int nextIndex(int i, int N) {
+		return i<N-1?i+1:0;
 	}
 
-	// 环形数组中当前位置为i，数组长度为size，返回i的上一个位置
-	public static int lastIndex(int i, int size) {
-		return i > 0 ? (i - 1) : (size - 1);
+	// 环形数组中当前位置为i，数组长度为N，返回i的上一个位置
+	public static int lastIndex(int i, int N) {
+		return i>0?i-1:N-1;
 	}
 
 	// for test, O(N^2)的解法，绝对正确
