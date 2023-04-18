@@ -121,10 +121,6 @@ public class Code01_SDEandPM {
 			}
 		}
 
-
-
-
-
 	}
 
 	public static class StartRule implements Comparator<Program> {
@@ -136,45 +132,41 @@ public class Code01_SDEandPM {
 
 	}
 
-	public static int[] workFinish(int pms, int sdes, int[][] programs) {
-		// 所有被锁住的项目（3，6，9）   time=0
-		PriorityQueue<Program> startQueue  = new PriorityQueue<Program>(new StartRule());
+	/**
+	 *
+	 * @param managerNum 经理的数量
+	 * @param coderNum 程序员的数量
+	 * @param programs 项目数组-二维的
+	 * @return 返回每个项目完成的时间
+	 */
+	public static int[] workFinish(int managerNum, int coderNum, int[][] programs) {
+		PriorityQueue<Program> lock=new PriorityQueue<>(new StartRule());//时间早的先解锁
 		for (int i = 0; i < programs.length; i++) {
-			Program program = new Program(
-					i, programs[i][0], programs[i][1], programs[i][2], programs[i][3]);
-			startQueue.add(program);
+			Program program=new Program(i,programs[i][0],programs[i][1],programs[i][2],programs[i][3]);
+			lock.add(program);
 		}
-		// 所有的项目，在最开始的时候，都在start堆中，被锁住
-		//
-		//
-		PriorityQueue<Integer> wakeQueue = new PriorityQueue<Integer>();
-		for (int i = 0; i < sdes; i++) {
-			wakeQueue.add(1);//世界初始的时间点为1，有几个员工就加几次。
+		PriorityQueue<Integer> wake=new PriorityQueue<>();//小根堆，模拟时间
+		for (int i = 0; i < coderNum; i++) {
+			wake.add(1);//默认的世界时间初始点是1
 		}
-		// add   pop   isEmpty
-		BigQueues bigQueues = new BigQueues(pms);
-		int finish = 0; // 目前完成项目的数量
-		int[] ans = new int[programs.length];	
-		while (finish != ans.length) { // 没有得到所有的答案就继续
-			// 最早醒来的程序员的时间, 也是总的推进时间点
-			int sdeWakeTime = wakeQueue.poll(); 
-			while (!startQueue.isEmpty()) {
-				if (startQueue.peek().start > sdeWakeTime) {
-					break;
-				}
-				bigQueues.add(startQueue.poll());
+		int[]res=new int[programs.length];
+		int finish=0;
+		BigQueues bigQueues=new BigQueues(managerNum);
+		while(finish!=programs.length){
+			Integer time = wake.poll();//醒来的时间点
+			while(!lock.isEmpty()&&lock.peek().start<=time){//把解锁的项目全部扔进我们的结构中
+				bigQueues.add(lock.poll());
 			}
-			// 
-			if (bigQueues.isEmpty()) { // 当前时间点并无项目可做
-				wakeQueue.add(startQueue.peek().start);
-			} else { // 当前时间点有项目可做
-				Program program = bigQueues.pop();
-				ans[program.index] = sdeWakeTime + program.cost;
-				wakeQueue.add(ans[program.index]);
+			if (bigQueues.isEmpty()){//没有能做的工作
+				wake.add(lock.peek().start);
+			}else {//有能做的工作
+				Program pop = bigQueues.pop();
+				wake.add(time+pop.cost);
 				finish++;
+				res[pop.index]=time+pop.cost;
 			}
 		}
-		return ans;
+		return res;
 	}
 
 	public static void printArray(int[] arr) {
