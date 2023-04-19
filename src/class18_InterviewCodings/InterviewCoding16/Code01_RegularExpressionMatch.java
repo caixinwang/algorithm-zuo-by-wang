@@ -30,27 +30,51 @@ public class Code01_RegularExpressionMatch {
 	// e[ei....]  能否变成  s[si...]
 	// 重要限制：e[ei]不能压中'*'
 	public static boolean process(char[] s, char[] e, int si, int ei) {
-		if (ei == e.length) { // base case   exp已经耗尽了  ""
-			return si == s.length;
-		}
-		// si == s.length  没有讨论
-		// exp[ei]有字符的   exp[ei] != "*"
-		// 可能性一，ei+1位置，不是*
-		if (ei + 1 == e.length || e[ei + 1] != '*') {
-			// s[si...]必须有东西  &&   s[si]  e[ei]   && 后续还得能对上
-			return si != s.length 
-					&& (e[ei] == s[si] || e[ei] == '.') 
-					&& process(s, e, si + 1, ei + 1);
-		}
-		// ei + 1 位置是*
-		// 尝试  [ei][ei+1]共同的部分，匹配str可能的前缀
-		while (si != s.length && (e[ei] == s[si] || e[ei] == '.')) {
-			if (process(s, e, si, ei + 2)) {
-				return true;
+		if (ei==e.length) return si==s.length;
+		if (ei==e.length-1||e[ei+1]!='*'){//ei位置后面不是*，e的最后位置也认为是后面不为*的情况
+			//si要有东西，并且要和ei匹配
+			return si!=s.length&&(e[ei]==s[si]||e[ei]=='.')&&process(s,e,si+1,ei+1);
+		}else {//ei后面是星
+			boolean res=false;
+			res|=process(s,e,si,ei+2);// x* 组合拳不解决任何东西
+			while(si!=s.length&&(e[ei]==s[si]||e[ei]=='.')){
+				res|=process(s,e,++si,ei+2);
 			}
-			si++;
+			return res;
 		}
-		return process(s, e, si, ei + 2);
+	}
+
+	public static boolean isMatch2(String str, String exp) {
+		if (str == null || exp == null) {
+			return false;
+		}
+		char[] s = str.toCharArray();
+		char[] e = exp.toCharArray();
+		Boolean[][] booleans=new Boolean[s.length+1][e.length+1];
+		return isValid(s, e) && process2(s, e, 0, 0,booleans);
+	}
+
+	// e[ei....]  能否变成  s[si...]
+	// 重要限制：e[ei]不能压中'*'
+	public static boolean process2(char[] s, char[] e, int si, int ei,Boolean[][] dp) {
+		if (dp[si][ei]!=null) return dp[si][ei];
+		if (ei==e.length) {
+			dp[si][ei]=si == s.length;
+			return dp[si][ei];
+		}
+		if (ei==e.length-1||e[ei+1]!='*'){//ei位置后面不是*，e的最后位置也认为是后面不为*的情况
+			//si要有东西，并且要和ei匹配
+			dp[si][ei]=si!=s.length&&(e[ei]==s[si]||e[ei]=='.')&&process2(s,e,si+1,ei+1,dp);
+			return dp[si][ei];
+		}else {//ei后面是星
+			boolean res=false;
+			res|=process2(s,e,si,ei+2,dp);// x* 组合拳不解决任何东西
+			while(si!=s.length&&(e[ei]==s[si]||e[ei]=='.')){
+				res|=process2(s,e,++si,ei+2,dp);
+			}
+			dp[si][ei]=res;
+			return dp[si][ei];
+		}
 	}
 
 	public static boolean isMatchDP(String str, String exp) {
@@ -90,25 +114,19 @@ public class Code01_RegularExpressionMatch {
 		int slen = s.length;
 		int elen = e.length;
 		boolean[][] dp = new boolean[slen + 1][elen + 1];
-		dp[slen][elen] = true;
-		for (int j = elen - 2; j > -1; j = j - 2) {
-			if (e[j] != '*' && e[j + 1] == '*') {
-				dp[slen][j] = true;
-			} else {
-				break;
-			}
-		}
-		if (slen > 0 && elen > 0) {
-			if ((e[elen - 1] == '.' || s[slen - 1] == e[elen - 1])) {
-				dp[slen - 1][elen - 1] = true;
-			}
+		dp[slen][elen]=true;//dp[i][elen]
+		if (s[slen-1]==e[elen-1]||e[elen-1]=='.') dp[slen-1][elen-1]=true;//dp[i][elen-1]
+		//dp[slen][i]
+		for (int i = elen-1;i>=0; i-=2) {
+			if (e[i]=='*') dp[slen][i]=true;
+			else break;
 		}
 		return dp;
 	}
 
 	public static void main(String[] args) {
-		String str = "abcccdefg";
-		String exp = "ab.*d.*e.*";
+		String str = "abcccdefgee";
+		String exp = "ab.*d.*e.*.";
 		System.out.println(isMatch(str, exp));
 		System.out.println(isMatchDP(str, exp));
 

@@ -65,21 +65,21 @@ public class Code02_RecoverBST {
 	public static Node recoverTree(Node head) {
 		Node[] errs = getTwoErrNodes(head);
 		Node[] parents = getTwoErrParents(head, errs[0], errs[1]);
-		Node e1 = errs[0];
-		Node e1P = parents[0];
-		Node e1L = e1.left;
-		Node e1R = e1.right;
+		Node e1 = errs[0];//错误的结点1
+		Node e1P = parents[0];//结点1的父节点
+		Node e1L = e1.left;//结点1的左孩子
+		Node e1R = e1.right;//结点1的右孩子
 		Node e2 = errs[1];
 		Node e2P = parents[1];
 		Node e2L = e2.left;
 		Node e2R = e2.right;
 		if (e1 == head) {
-			if (e1 == e2P) { // ���һ
+			if (e1 == e2P) {//e2直接挂在e1的下面
 				e1.left = e2L;
 				e1.right = e2R;
 				e2.right = e1;
 				e2.left = e1L;
-			} else if (e2P.left == e2) { // �����
+			} else if (e2P.left == e2) {
 				e2P.left = e1;
 				e2.left = e1L;
 				e2.right = e1R;
@@ -94,12 +94,12 @@ public class Code02_RecoverBST {
 			}
 			head = e2;
 		} else if (e2 == head) {
-			if (e2 == e1P) { // �����
+			if (e2 == e1P) {
 				e2.left = e1L;
 				e2.right = e1R;
 				e1.left = e2;
 				e1.right = e2R;
-			} else if (e1P.left == e1) { // �����
+			} else if (e1P.left == e1) {
 				e1P.left = e2;
 				e1.left = e2L;
 				e1.right = e2R;
@@ -115,7 +115,7 @@ public class Code02_RecoverBST {
 			head = e1;
 		} else {
 			if (e1 == e2P) {
-				if (e1P.left == e1) { // �����
+				if (e1P.left == e1) {
 					e1P.left = e2;
 					e1.left = e2L;
 					e1.right = e2R;
@@ -129,7 +129,7 @@ public class Code02_RecoverBST {
 					e2.right = e1;
 				}
 			} else if (e2 == e1P) {
-				if (e2P.left == e2) { // �����
+				if (e2P.left == e2) {
 					e2P.left = e1;
 					e2.left = e1L;
 					e2.right = e1R;
@@ -144,14 +144,14 @@ public class Code02_RecoverBST {
 				}
 			} else {
 				if (e1P.left == e1) {
-					if (e2P.left == e2) { // ���ʮһ
+					if (e2P.left == e2) {
 						e1.left = e2L;
 						e1.right = e2R;
 						e2.left = e1L;
 						e2.right = e1R;
 						e1P.left = e2;
 						e2P.left = e1;
-					} else { // ���ʮ��
+					} else {
 						e1.left = e2L;
 						e1.right = e2R;
 						e2.left = e1L;
@@ -160,14 +160,14 @@ public class Code02_RecoverBST {
 						e2P.right = e1;
 					}
 				} else {
-					if (e2P.left == e2) { // ���ʮ��
+					if (e2P.left == e2) {
 						e1.left = e2L;
 						e1.right = e2R;
 						e2.left = e1L;
 						e2.right = e1R;
 						e1P.right = e2;
 						e2P.left = e1;
-					} else { // ���ʮ��
+					} else {
 						e1.left = e2L;
 						e1.right = e2R;
 						e2.left = e1L;
