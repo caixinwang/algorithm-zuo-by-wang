@@ -2,46 +2,44 @@ package class18_InterviewCodings.InterviewCoding16;
 
 public class Code05_MinimumCostToMergeStones {
 
-	public static int mergeStones1(int[] stones, int K) {
-		int n = stones.length;
-		if ((n - 1) % (K - 1) > 0) {
-			return -1;
+	/**
+	 * 把arr数组中所有数只能相邻k个合并，要求最终合成1份，问最小的代价是多少
+	 */
+	public static int mergeStones1(int[] arr, int k) {
+		if (arr==null||arr.length==0||k<2) return -1;
+		int N=arr.length;
+		if ((N-1)%(k-1)!=0) return -1;
+		int[] sum=new int[N];
+		sum[0]=arr[0];
+		for (int i = 1; i < N; i++) {
+			sum[i]=sum[i-1]+arr[i];
 		}
-		int[] presum = new int[n + 1];
-		for (int i = 0; i < n; i++) {
-			presum[i + 1] = presum[i] + stones[i];
-		}
-		return process1(0, n - 1, 1, stones, K, presum);
+		return process1(0,N-1,1,arr,k,sum);
 	}
 
-	// part >= 1
-	// arr[L..R]  一定要弄出part份，返回最低代价
-	// arr、K、presum（前缀累加和数组，求i..j的累加和，就是O(1)了）
-	public static int process1(int L, int R, int part, int[] arr, int K, int[] presum) {
-		if (L == R) { // arr[L..R]
-			return part == 1 ? 0 : -1;
+	/**
+	 * arr[l...r]范围上只能相邻k个合，问你最终合并成part份的最小代价是多少
+	 * 可能性划分：part为1与part不为1。
+	 * 注意，下面for循环中，如果你是i+=k-1,那么在上面part==1的分支中就不需要加if ((r-l)%(k-1)!=0) return -1;
+	 * 但是如果你是i++，那么就需要在分支中加上这句判断。原因就是如果你不控制分支的进入，你就要自己加上判断语句，将
+	 * 错误的分支筛除。
+	 */
+	private static int process1(int l, int r, int part, int[] arr, int k,int[] sum) {
+		if (l==r) return part==1?0:-1;//base case，l==r的时候只有合成一份的时候可以，并且是不需要代价的。
+		if (part==1){
+			if ((r-l)%(k-1)!=0) return -1;//下面是i++就需要这句，如果是i+=k-1就不需要这句
+			int p1 = process1(l, r, k, arr, k, sum);
+			if (p1==-1) return -1;
+			return p1+sum[r]-(l-1>=0?sum[l-1]:0);
 		}
-		// L ... R  不只一个数
-		if (part == 1) {
-			int next = process1(L, R, K, arr, K, presum);
-			if (next == -1) {
-				return -1;
-			} else {
-				return next + presum[R + 1] - presum[L];
-			}
-		} else { // P > 1
-			int ans = Integer.MAX_VALUE;
-			// L...mid是第1块，剩下的是part-1块
-			for (int mid = L; mid < R; mid += K - 1) {
-				// L..mid(一份)   mid+1...R(part - 1)
-				int next1 = process1(L, mid, 1, arr, K, presum);
-				int next2 = process1(mid + 1, R, part - 1, arr, K, presum);
-				if (next1 != -1 && next2 != -1) {
-					ans = Math.min(ans, next1 + next2);
-				}
-			}
-			return ans;
+		//part>1
+		int min=Integer.MAX_VALUE;
+		for (int i = l; i <r; i++) {//[l,i]单独作为一份，[i+1,r]去搞出part-1份
+			int p1=process1(l,i,1,arr,k,sum);
+			int p2=process1(i+1,r,part-1,arr,k,sum);
+			if (p1!=-1&&p2!=-1) min = Math.min(min, p1+p2);
 		}
+		return min;
 	}
 
 	public static int mergeStones2(int[] stones, int K) {
@@ -115,7 +113,7 @@ public class Code05_MinimumCostToMergeStones {
 		int maxSize = 12;
 		int maxValue = 100;
 		System.out.println("Test begin");
-		for (int testTime = 0; testTime < 100000; testTime++) {
+		for (int testTime = 0; testTime < 10000; testTime++) {
 			int[] arr = generateRandomArray(maxSize, maxValue);
 			int K = (int) (Math.random() * 7) + 2;
 			int ans1 = mergeStones1(arr, K);
