@@ -174,6 +174,39 @@ public class TestTemplates {
         System.out.println(isok ? "success" : "fail");
     }
 
+        public static void testForStructure(){//测试证明两个UnionFind都是正确的
+        RandomUtil r=new RandomUtil();
+        int times=100;
+        int size=10000;
+        boolean isok=true;
+        for (int i = 0; i < times; i++) {//进行times次测试
+            int realSize=(int) (Math.random()*(size+1));//[0,1000]随机数据规模
+            int tests=10000;
+//            S structure1=;
+//            S structure2=;
+            for (int j = 0; j < tests; j++) {//每次测试随机进行times次的数据操作并且检查数据的正确性
+                if (r.oneInTen()){//1的比例去union，9的比例去isSameSet
+
+//                    if (){
+//                        isok=false;
+//                        break;
+//                    }
+//                    if (){
+//                        isok=false;
+//                        break;
+//                    }
+                }else {
+//                    if (){
+//                        isok=false;
+//                        break;
+//                    }
+                }
+            }
+            if (!isok) break;
+        }
+        System.out.println(isok?"success":"fail");
+    }
+
     public static int m1(int[] arr, int parameter1) {
         return 0;
     }
