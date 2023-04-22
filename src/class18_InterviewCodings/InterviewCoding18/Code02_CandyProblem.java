@@ -51,7 +51,7 @@ public class Code02_CandyProblem {
                 res+=1;//左边现在没有比我大的了,我要1个糖
                 l=1;//左边现在有一个孩子，我自己
                 i++;
-            }else {//在下降
+            }else {//在下降，在下降的拐点我才结算
                 int low = getLow(arr, i);
                 res+=count(low-i+2);
                 r=low-i+2;//右边的孩子数量
@@ -139,6 +139,67 @@ public class Code02_CandyProblem {
         return res;
     }
 
+	public static int candy2_cx(int[] arr) {
+		if (arr == null || arr.length == 0) {
+			return 0;
+		}
+		int i=getLow2(arr,0);
+		int res=count2(arr,0,i++)[0];//第一个下坡先算
+		int l=1;//左边已经有一个比i大的了
+		int r=0;//右边目前不知道
+		int same=0;
+		while (i<arr.length){
+			if (arr[i-1]<arr[i]){//在上升
+				same=0;
+				res+=++l;//左边有l个小孩，我要比他们多的糖
+				i++;
+			}else if (arr[i-1]==arr[i]){
+				same++;
+				res+=l;//左边现在没有比我大的了,我要1个糖
+				i++;
+			}else {//在下降，在下降的拐点我才结算
+				int low = getLow2(arr, i-1);
+				int[] data = count2(arr, i-1, low);
+				r=data[1];//右边的孩子数量
+				res+=data[0];
+				res-= Math.min(l, r);
+				if (r>l) res+=same*(r-l);
+				l=1;
+				i=low+1;
+				same=0;
+			}
+		}
+		return res;
+	}
+
+	public static int[] count2(int[] arr,int l,int r) {
+		int res=1;
+		int base=1;
+		for (r--;r>=l;r--){
+			if (arr[r]>arr[r+1]){
+				res+=++base;
+			}else {
+				res+=base;
+			}
+		}
+		return new int[]{res,base};
+	}
+
+	//一直递增最后会返回len-1位置
+	public static int getHigh2(int[] arr, int i) {
+		while (i + 1 < arr.length && arr[i] <= arr[i + 1]) {
+			i++;
+		}
+		return i;
+	}
+
+	public static int getLow2(int[] arr, int i) {
+		while (i + 1 < arr.length && arr[i] >= arr[i + 1]) {
+			i++;
+		}
+		return i;
+	}
+
     public static int nextMinIndex2(int[] arr, int start) {
         for (int i = start; i != arr.length - 1; i++) {
             if (arr[i] < arr[i + 1]) {
@@ -190,7 +251,7 @@ public class Code02_CandyProblem {
         long time1=0,time2=0;
         boolean isok = true;
         int maxSize = 100;//数组大小在[0~maxSize]随机
-        int maxValue = 100;//数组的值在[0,maxValue]随机
+        int maxValue = 10;//数组的值在[0,maxValue]随机
 //        int parameter1=0;//测试函数的参数
 //        int maxParameter1=100;//参数1在[0,maxParameter1]随机
         int[] t1 = null, t2 = null;
@@ -207,10 +268,10 @@ public class Code02_CandyProblem {
 //            t2 = arrayUtil.generateRandomArr(arrayUtil.ran(maxSize), 1, maxValue);//正数数组[1,maxValue]
 
             long l = System.currentTimeMillis();
-            res1 = candy1(t1);
+            res1 = candy2(t1);
             time1+=System.currentTimeMillis()-l;
             l=System.currentTimeMillis();
-            res2 = candy1_cx(t1);
+            res2 = candy2_cx(t1);
             time2+=System.currentTimeMillis()-l;
             if (res1 != res2) {
                 isok = false;
@@ -226,9 +287,11 @@ public class Code02_CandyProblem {
         System.out.println(res2);//针对返回值的操作
         System.out.println(isok ? "success" : "fail");
     }
+
+
     public static void main(String[] args) {
 //        test2();
-//        test1();;
+//        test1();
         testForArr();
     }
 
