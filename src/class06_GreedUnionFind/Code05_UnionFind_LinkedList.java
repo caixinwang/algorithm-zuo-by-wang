@@ -2,7 +2,7 @@ package class06_GreedUnionFind;
 
 import java.util.*;
 
-public class Code05_UnionFind {//链表实现
+public class Code05_UnionFind_LinkedList {//链表实现
 
     /**
      * 集合里面的元素是类型是V，随意指定。如果元素类型刚好是整数，从0开始编号的话，那么可以使用数组的实现
@@ -93,7 +93,10 @@ public class Code05_UnionFind {//链表实现
         }
     }
 
-    static class UnionFind2<V> {//我的实现，测试通过
+    /**
+     * 我的实现，测试通过
+     */
+    static class UnionFind2<V> {
 
         public static class Node<V> {
             public V value;
@@ -101,10 +104,11 @@ public class Code05_UnionFind {//链表实现
             public Node(V value) {
                 this.value = value;
             }
+
         }
 
-        public HashMap<V, Node> nodes;//通过给定的V，快速找到对应的Node
-        public HashMap<Node, Integer> size;//只有代表结点才有size值，一个代表结点代表一个集合
+        private HashMap<V, Node> nodes;//通过给定的V，快速找到对应的Node
+        private HashMap<Node, Integer> size;//只有代表结点才有size值，一个代表结点代表一个集合
 
         public UnionFind2(List<V> values) {
             nodes = new HashMap<>();
@@ -120,7 +124,7 @@ public class Code05_UnionFind {//链表实现
 
         /**
          *
-         * @param node:如果node不在nodes表里面，那么会返回自己
+         * @param node 如果node不在nodes表里面，那么会返回自己
          * @return 返回node所在集合的代表结点
          */
         private Node findFather(Node node) {
@@ -166,6 +170,10 @@ public class Code05_UnionFind {//链表实现
         }
 
     }
+
+
+
+
 
     //test
     public static ArrayList<String> generateRandomStringList(int size){//生成一个规模为size的，装着随机String的List

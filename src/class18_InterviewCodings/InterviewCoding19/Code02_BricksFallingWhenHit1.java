@@ -2,205 +2,141 @@ package class18_InterviewCodings.InterviewCoding19;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Stack;
+import java.util.List;
 
-/**
- * 		private Dot[][] dots; // 位置到点的对应关系
- * 		private int N; // 行数
- * 		private int M; // 列数
- * 	这三个是干嘛用的？得搞一件事，在两行七列上这个一、在五行三列上这个一，我怎么表示这两个一的不同？它明明是两个不同的意义。
- *  我是不能单独用一这个值来表示不同的。那就这样来。这样来，我建立一个小的Dot这么一个类。我搞一个跟这个等规模的表dots。
- *  我在二行七列申请一个新的对象。我在五行三列上也申请一个新的对象，我利用这两个对象的内存地址不同。标记这两个一不同。
- * 我只想要它的内存地址，所以这个类Dot里面什么都不放
- *
- */
 public class Code02_BricksFallingWhenHit1 {
 
-	// 每一个1，都有一个专属于自己的Dot
-	public static class Dot {
 
-	}
+	/**
+	 * 你用什么来映射集合里面的元素，你就建立什么样的nodes。例如你用String来映射集合里面的Node，那么你就用一个
+     * HashMap<String,Node>。这题使用(x,y)来映射Node，那么毫无疑问，直接用一个矩阵来映射，所以nodes是一个矩阵
+     * 细节:无论何时何地，你new了一个Node，你就要去更新好nodes、size、count、cellingSet这几个结构
+	 */
+	static class UnionFind {
 
-	public static class UnionFind {
-		// 原始数组，经过炮弹的影响之后，所得到的grid
-		private int[][] grid; // 主函数处理（炮弹变2的处理）后的原始矩阵
-		// 如果gird[i][j] == 1, dots[i][j] = new 的点
-		private Dot[][] dots; // 位置到点的对应关系
-		private int N; // 原始矩阵行数
-		private int M; // 原始矩阵列数
-		private int cellingAll; // 有多少个1能连接到天花板
+        public static class Node {
+            public Node parent;
+            public Node(){
+                parent=this;
+            }
+        }
 
-		// 某个集合，是不是整体接到天花版上去了，如果是，假设这个集合代表点是X,cellingSet包含x
-		// 如果不是，假设这个集合代表点是X,cellingSet不包含X
-		private HashSet<Dot> cellingSet; // 集合能够连到天花板，它的代表点才在里面。只放代表点
-		private HashMap<Dot, Dot> fatherMap; // 任何一个dot都有记录，value就是父节点
-		private HashMap<Dot, Integer> sizeMap;
-		// 只有一个dot是代表点，才有记录，value表示这个集合的大小
+        private Node[][] nodes;//用(x,y)来映射一个Node,不同题目的nodes是什么结构要你自己去决定。
+        private HashMap<Node, Integer> size;//只有代表结点才有size值，一个代表结点代表一个集合
+        //count和cellingSet的更新依赖于size，所以要放在size结构更新前去更新count和cellingSet--你用谁，就把谁放在后面更新
+        //插前 更删后
+        private int count;//和题目有关的，连在天花板上的砖块的数量
+        private HashSet<Node> cellingSet;//添加的时机为创建了一个行为0的Node。更新时机为两个结合union的时候
 
-		// matrix是加上炮弹影响之后的matrix，炮弹会让某些位置的1变成2，2和0一样，表示不连通；只有1是连通的，上下左右
-		public UnionFind(int[][] matrix) {
-			initSpace(matrix);
-			initConnect();
-		}
+        /**
+         * 把影响后的矩阵传进来，然后把所有为1的位置建立一个单独的集合。然后上下左右去连1。
+         * 每次new一个Node的时候，如果对应的点的x为0，那么把这个点加到cellingSet里面
+         * @param em effected matrix
+         */
+        public UnionFind(int[][] em) {
+            count=0;
+            cellingSet=new HashSet<>();
+            nodes=new Node[em.length][em[0].length];
+            size=new HashMap<>();
+            int N=em.length,M=em[0].length;
+            for (int i = 0; i < em.length; i++) {
+                for (int j = 0; j < em[0].length; j++) {
+                    if (em[i][j] == 1) {
+                        nodes[i][j] = new Node();
+                        size.put(nodes[i][j], 1);
+                        if (i == 0) {
+                            cellingSet.add(nodes[i][j]);
+                            count++;
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < M; j++) {
+                    if (em[i][j] == 1) {
+                        if (i-1>=0&&em[i-1][j]==1) union(i,j,i-1,j);
+                        if (i+1<N&&em[i+1][j]==1) union(i,j,i+1,j);
+                        if (j-1>=0&&em[i][j-1]==1) union(i,j,i,j-1);
+                        if (j+1<M&&em[i][j+1]==1) union(i,j,i,j+1);
+                    }
+                }
+            }
+        }
 
-		/**
-		 * 如果之前set里面已经有father 1了。那么father 1跟father 2可能都在set中，
-		 * 但是以后father 1的数据再也用不着了。因为之后所有的点它都以father 2作为代表。
-		 * 所以set中有可能会有脏数据，脏了就脏了，无所谓。
-		 */
-		private void initSpace(int[][] matrix) {
-			grid = matrix;
-			N = grid.length;
-			M = grid[0].length;
-			// 接到天花板上砖的数量
-			cellingAll = 0;
-			dots = new Dot[N][M]; // dot null
-			cellingSet = new HashSet<>();
-			fatherMap = new HashMap<>();
-			sizeMap = new HashMap<>();
-			for (int row = 0; row < N; row++) {
-				for (int col = 0; col < M; col++) {
-					// 遍历每一个[i][j] 2 0 直接跳过
-					if (grid[row][col] == 1) { // 该点是我关心的，不是1就不关心
-						Dot cur = new Dot();
-						dots[row][col] = cur;
-						fatherMap.put(cur, cur);
-						sizeMap.put(cur, 1);
-						if (row == 0) { // dot是天花板上的点
-							cellingSet.add(cur);
-							cellingAll++;
-						}
-					}
-				}
-			}
-		}
+        /**
+         *
+         * @param node 如果node不在nodes表里面，那么会返回自己
+         * @return 返回node所在集合的代表结点
+         */
+        private Node findFather(Node node) {
+            if (node==node.parent) return node;
+            else return node.parent=findFather(node.parent);//打扁平
+        }
 
-		private void initConnect() {
-			for (int row = 0; row < N; row++) {
-				for (int col = 0; col < M; col++) {
-					union(row, col, row - 1, col);
-					union(row, col, row + 1, col);
-					union(row, col, row, col - 1);
-					union(row, col, row, col + 1);
-				}
-			}
-		}
+        public void union(int x1, int y1,int x2,int y2){
+            Node head1 = findFather(nodes[x1][y1]);
+            Node head2 = findFather(nodes[x2][y2]);
+            if (head1 == head2) {//确认不是一个集合
+                return;
+            }
+            if (size.get(head1)<size.get(head2)){//让head1指针永远指向大的
+                Node tmp=head1;
+                head1=head2;
+                head2=tmp;
+            }
+            head2.parent=head1;//小挂大
+            if (cellingSet.contains(head1)^cellingSet.contains(head2)){//有且仅有其中一个不包含
+                count+=!cellingSet.contains(head1)?size.get(head1):size.get(head2);//谁不包含在内就把谁加进去,这句在前
+                cellingSet.add(head1);//head2如果在，冗余就冗余了，以后肯定用不到。你也可以把head2移除掉
+                cellingSet.remove(head2);
+            }
+            size.put(head1,size.get(head1)+size.get(head2) );//更新大集合的size
+            size.remove(head2);//小集合的size移除
+        }
 
-		// row，col 的dot，所在的集合，代表dot是谁返回
-		private Dot find(int row, int col) {
-			Dot cur = dots[row][col];
-			Stack<Dot> stack = new Stack<>();
-			while (cur != fatherMap.get(cur)) {
-				stack.add(cur);
-				cur = fatherMap.get(cur);
-			}
-			while (!stack.isEmpty()) {
-				fatherMap.put(stack.pop(), cur);
-			}
-			return cur;
-		}
+        public int finger(int[][] em,int i,int j){
+            int pre=count;
+            int after=count;
+            int N=em.length,M=em[0].length;
+            if (em[i][j]==2){
+                em[i][j]=1;//为1就新建node
+                nodes[i][j]=new Node();
+                size.put(nodes[i][j], 1);
+                if (i == 0) {//新建node就要看看这个node是不是在天花板上
+                    cellingSet.add(nodes[i][j]);
+                    count++;
+                }
+                if (i-1>=0&&em[i-1][j]==1) union(i,j,i-1,j);
+                if (i+1<N&&em[i+1][j]==1) union(i,j,i+1,j);
+                if (j-1>=0&&em[i][j-1]==1) union(i,j,i,j-1);
+                if (j+1<M&&em[i][j+1]==1) union(i,j,i,j+1);
+                after=count;
+            }
+            return after>pre?after-pre-1:0;
+        }
+    }
+    public static int[] hitBricks(int[][] grid, int[][] hits) {
+        // 把炮弹影响加上，grid会怎么变
+        for (int i = 0; i < hits.length; i++) {
+            if (grid[hits[i][0]][hits[i][1]] == 1) {
+                grid[hits[i][0]][hits[i][1]] = 2;
+            }
+        }
 
-		private void union(int r1, int c1, int r2, int c2) {
-			if (valid(r1, c1) && valid(r2, c2)) {
-				Dot father1 = find(r1, c1);
-				Dot father2 = find(r2, c2);
-				if (father1 != father2) {
-					int size1 = sizeMap.get(father1);
-					int size2 = sizeMap.get(father2);
+        UnionFind unionFind = new UnionFind(grid);
+        int[] ans = new int[hits.length];
+        for (int i = hits.length - 1; i >= 0; i--) {
+            ans[i]= unionFind.finger(grid,hits[i][0], hits[i][1]);
+        }
+        return ans;
+    }
 
-//					Dot big = size1 >= size2 ? father1 : father2;
-//					Dot small = big == father1 ? father2 : father1;
-//					fatherMap.put(small, big);
-//					sizeMap.put(big, size1 + size2);
-//					// 集合1整体连不连的到天花板上
-//					boolean status1 = cellingSet.contains(father1);
-//					// 集合2整体连不连的到天花板上
-//					boolean status2 = cellingSet.contains(father2);
-//					if(status1 ^ status2) {
-//						cellingSet.add(big);
-//						cellingAll += status1 ? size2 : size1;
-//					}
-//					
-					// 集合1整体连不连的到天花板上
-					boolean status1 = cellingSet.contains(father1);
-					// 集合2整体连不连的到天花板上
-					boolean status2 = cellingSet.contains(father2);
-					if (size1 <= size2) {
-						// 集合1与集合2，已经合完了，共同的父节点father2
-						fatherMap.put(father1, father2);
-						sizeMap.put(father2, size1 + size2);
-						// 如果两个集合能否接到天花板的状态不一样
-						if (status1 ^ status2) {
-							cellingSet.add(father2);
-							cellingAll += status1 ? size2 : size1;
-						}
-					} else {
-						fatherMap.put(father2, father1);
-						sizeMap.put(father1, size1 + size2);
-						if (status1 ^ status2) {
-							cellingSet.add(father1);
-							cellingAll += status1 ? size2 : size1;
-						}
-					}
-				}
-			}
-		}
-
-		private boolean valid(int row, int col) {
-			return row >= 0 && row < N && col >= 0 && col < M && grid[row][col] == 1;
-		}
-
-		public int cellingNum() {
-			return cellingAll;
-		}
-
-		// 原来row,col 2 finger 1
-		// 在该位置变成1的情况下，并查集该如何变化，接到天花板上的1又会如何变化
-		public int finger(int row, int col) {
-			int pre = cellingAll;
-			grid[row][col] = 1;
-			Dot cur = new Dot();
-			dots[row][col] = cur;
-			if (row == 0) {
-				cellingSet.add(cur);
-				cellingAll++;
-			}
-			fatherMap.put(cur, cur);
-			sizeMap.put(cur, 1);
-			union(row, col, row - 1, col);
-			union(row, col, row + 1, col);
-			union(row, col, row, col - 1);
-			union(row, col, row, col + 1);
-			int now = cellingAll;
-			return now == pre ? 0 : now - pre - 1;
-		}
-	}
-
-	public static int[] hitBricks(int[][] grid, int[][] hits) {
-		// 把炮弹影响加上，grid会怎么变
-		for (int i = 0; i < hits.length; i++) {
-			if (grid[hits[i][0]][hits[i][1]] == 1) {
-				grid[hits[i][0]][hits[i][1]] = 2;
-			}
-		}
-
-		UnionFind unionFind = new UnionFind(grid);
-		int[] ans = new int[hits.length];
-		for (int i = hits.length - 1; i >= 0; i--) {
-			if (grid[hits[i][0]][hits[i][1]] == 2) {
-				ans[i] = unionFind.finger(hits[i][0], hits[i][1]);
-			}
-		}
-		return ans;
-	}
-
-	public static void main(String[] args) {
-		int[][] grid = { { 1, 0, 1 }, { 1, 1, 1 } };
-		int[][] hits = { { 0, 0 }, { 0, 2 }, { 1, 1 } };
-		int[] ans = hitBricks(grid, hits);
-		for (int i = 0; i < ans.length; i++) {
-			System.out.println(ans[i]);
-		}
-	}
-
+    public static void main(String[] args) {
+        int[][] grid = { { 1, 0, 1 }, { 1, 1, 1 },{1,0,0} };
+        int[][] hits = { { 0, 0 }, { 0, 2 }, { 1, 1 } ,{2,1}};
+        int[] ans = hitBricks(grid, hits);
+        for (int i = 0; i < ans.length; i++) {
+            System.out.println(ans[i]);
+        }
+    }
 }

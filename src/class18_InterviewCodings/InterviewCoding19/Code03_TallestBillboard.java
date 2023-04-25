@@ -4,34 +4,45 @@ import java.util.HashMap;
 
 public class Code03_TallestBillboard {
 
-	public int tallestBillboard(int[] rods) {
-		// key  集合对的某个差
-		// value  满足差值为key的集合对中，最好的一对，较小集合的累加和
-		// 较大 -> value + key
-		HashMap<Integer, Integer> dp = new HashMap<>(), cur;
-		dp.put(0, 0);// 空集   和  空集    
-		for (int num : rods) {
-			if (num != 0) {
-				// cur 内部数据完全和dp一样
-				cur = new HashMap<>(dp); // 考虑x之前的集合差值状况拷贝下来
-				for (int d : cur.keySet()) {
-					int diffMore = cur.get(d); // 最好的一对，较小集合的累加和
-					// x决定放入，比较大的那个
-					dp.put(d + num, Math.max(diffMore, dp.getOrDefault(num + d, 0)));
-					// x决定放入，比较小的那个
-					// 新的差值 Math.abs(x - d)
-					// 之前差值为Math.abs(x - d)，的那一对，就要和这一对，决策一下
-					// 之前那一对，较小集合的累加和diffXD
-					int diffXD = dp.getOrDefault(Math.abs(num - d), 0);
-					if (d >= num) { // x决定放入比较小的那个, 但是放入之后，没有超过这一对较大的那个
-						dp.put(d - num, Math.max(diffMore + num, diffXD));
-					} else { // x决定放入比较小的那个, 但是放入之后，没有超过这一对较大的那个
-						dp.put(num - d, Math.max(diffMore + d, diffXD));
-					}
-				}
+	public static int tallestBillboard(int[] rods) {
+		HashMap<Integer,Integer> cur=new HashMap<>();//<diff,lessNum>
+		cur.put(0,0);//空集和空集
+		for (int rod : rods) {
+			cur=f(cur,rod);
+		}
+		return cur.get(0);
+	}
+
+	/**
+	 *
+	 * @param cur 原本的差值以及集合
+	 * @param rod 新增加一个rod进去，看看能不能搞出新的
+	 * @return 返回新的
+	 */
+	private static HashMap<Integer, Integer> f(HashMap<Integer, Integer> cur, int rod) {
+		HashMap<Integer, Integer> res=new HashMap<>(cur);
+		for (Integer key : cur.keySet()) {
+			int less=cur.get(key);//(less,more)
+			int more=less+key;
+
+			int key1=(more+rod)-less;//进左边
+			int val1=less;
+
+			int key2=Math.abs(more-(less+rod));//进右边
+			int val2=Math.min(more,less+rod);
+
+			if (!res.containsKey(key1)){
+				res.put(key1,val1);
+			}else {
+				res.put(key1,Math.max(res.get(key1),val1));
+			}
+			if (!res.containsKey(key2)){
+				res.put(key2,val2);
+			}else {
+				res.put(key2,Math.max(res.get(key2),val2));
 			}
 		}
-		return dp.get(0);
+		return res;
 	}
 
 }

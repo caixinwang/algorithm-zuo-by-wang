@@ -4,71 +4,65 @@ import java.util.Arrays;
 
 public class Code03_PostOfficeProblem {
 
+	/**
+	 * dp[i][j]代表0~i的居民点刚好建够j个邮局，最短路径和
+	 * j>=i+1的格子全部都是0。只要初始化第二列
+	 * @param arr 居民点有arr.len个，具体在哪arr[i]
+	 * @param num 邮局的数量
+	 * @return 返回将num个邮局建立在最合适的位置，最短路径累加和返回
+	 */
 	public static int minDis1(int[] arr, int num) {
-		if (arr == null || arr.length < 2 || num < 1) {
-			return 0;
-		}
-		// record[L][R]表示如果arr[L...R]上只建立一个邮局，总距离最小是多少？
+		if (arr==null||num<1||arr.length<=num) return 0;
+		int N=arr.length;
+		int[][] dp=new int[N][num+1];
 		int[][] record = getRecord(arr);
-		int N = arr.length;
-		int[][] dp = new int[N][num + 1];
-		// dp[...][0] 0个邮局的时候如何如何
-		// dp[0][...] 0
-		for (int i = 0; i < N; i++) {
-			// 0...i 1
-			dp[i][1] = record[0][i];
+		for (int i = 0; i < N; i++) {//第二列
+			dp[i][1]=record[0][i];
 		}
-		for (int i = 1; i < N; i++) {
-			for (int j = 2; j <= Math.min(num, i); j++) {
-				// dp[i][j]
-				// 枚举最后一个邮局负责的范围，K...i
-				// i..i
-				// i-1..i
-				// i-2..i
-				// 1....i
-				// 0....i 单列
-				// 0...k-1 j-1个邮局 +
-				dp[i][j] = record[0][i];
-				for (int k = i; k > 0; k--) { // 1 .... i
-					dp[i][j] = Math.min(dp[i][j], dp[k - 1][j - 1] + record[k][i]);
+		for (int i = 2; i < N; i++) {
+			for (int j = 2;j<=num ; j++) {
+				if (j>=i+1) continue;
+				dp[i][j]=record[0][i];//最后一个邮局全责0~i的全部
+				for (int k = 1; k <= i; k++) {//最后一个邮局全责k~i的全部
+					dp[i][j] = Math.min(dp[i][j],dp[k-1][j-1]+record[k][i]);
 				}
 			}
 		}
-		return dp[N - 1][num];
+		return dp[N-1][num];
 	}
 
+	/**
+	 * 做四边形不等式优化。每个点都从上面和右边获得一个边界。
+	 * 画个图，把choose和dp的初始化一起做了。根据我们的初始化，dp最右边的格子有一部分是没有choose的，自己判断，设置为limit为i。
+	 */
 	public static int minDis2(int[] arr, int num) {
-		if (arr == null || arr.length < 2 || num < 1) {
-			return 0;
-		}
-		// record[L][R]表示如果arr[L...R]上只建立一个邮局，总距离最小是多少？
+		if (arr==null||num<1||arr.length<=num) return 0;
+		int N=arr.length;
+		int[][] dp=new int[N][num+1];
 		int[][] record = getRecord(arr);
-		int N = arr.length;
-		int[][] dp = new int[N][num + 1];
-		// dp[...][0]
-		// dp[0][...] 0..0 0
-		// choose[0][..] 0
-		// choose[i][j] 当时在求dp[i][j]的时候，
-		// 最右的邮局，如果是在负责k...i这一段的时候，取得的最优解，请把choose[i][j] = k
-		int[][] choose = new int[N][num + 1];
-		for (int i = 0; i < N; i++) {
-			// 0..i 1个邮局 0...i 0
-			dp[i][1] = record[0][i];
+		int[][] choose = new int[N][num+1];//最优的时候是从k~i,返回这个k的值
+		for (int i = 0; i < N; i++) {//第二列
+			dp[i][1]=record[0][i];
+			choose[i][1]=i>>1;//只有一个邮局的时候肯定在终点位置最好
 		}
-		for (int i = 1; i < N; i++) {
-			for (int j = Math.min(num, i); j >= 2; j--) {
-				int down = choose[i - 1][j];
-				int up = j == Math.min(num, i) ? i : choose[i][j + 1];
-				dp[i][j] = record[0][i];
-				for (int k = Math.max(1, down); k <= Math.min(up, i); k++) {
-					if (dp[k - 1][j - 1] + record[k][i] < dp[i][j]) {
-						dp[i][j] = dp[k - 1][j - 1] + record[k][i];
-						choose[i][j] = k;
+		for (int i = 2; i < N; i++) {
+			for (int j = num;j>=2 ; j--) {
+				if (j>=i+1) {
+					choose[i][j]=i;
+					continue;
+				}
+				int limit=j+1<=num?choose[i][j+1]:i;
+				int bottom=choose[i-1][j];
+				dp[i][j]=record[0][i];//最后一个邮局全责0~i的全部
+				for (int k = Math.max(bottom, 1); k <= limit; k++) {//最后一个邮局全责k~i的全部
+					if (dp[k-1][j-1]+record[k][i]<dp[i][j]){
+						dp[i][j]=dp[k-1][j-1]+record[k][i];
+						choose[i][j]=k;
 					}
 				}
 			}
 		}
-		return dp[N - 1][num];
+		return dp[N-1][num];
 	}
 
 	public static int[][] getRecord(int[] arr) {
@@ -82,66 +76,6 @@ public class Code03_PostOfficeProblem {
 		return record;
 	}
 
-	public static int minDistances1(int[] arr, int num) {
-		if (arr == null || num < 1 || arr.length < num) {
-			return 0;
-		}
-		int[][] w = new int[arr.length + 1][arr.length + 1];
-		for (int i = 0; i < arr.length; i++) {
-			for (int j = i + 1; j < arr.length; j++) {
-				w[i][j] = w[i][j - 1] + arr[j] - arr[(i + j) / 2];
-			}
-		}
-		int[][] dp = new int[num][arr.length];
-		for (int j = 0; j != arr.length; j++) {
-			dp[0][j] = w[0][j];
-		}
-		for (int i = 1; i < num; i++) {
-			for (int j = i + 1; j < arr.length; j++) {
-				dp[i][j] = Integer.MAX_VALUE;
-				for (int k = 0; k <= j; k++) {
-					dp[i][j] = Math.min(dp[i][j], dp[i - 1][k] + w[k + 1][j]);
-				}
-			}
-		}
-		return dp[num - 1][arr.length - 1];
-	}
-
-	public static int minDistances2(int[] arr, int num) {
-		if (arr == null || num < 1 || arr.length < num) {
-			return 0;
-		}
-		int[][] w = new int[arr.length + 1][arr.length + 1];
-		for (int i = 0; i < arr.length; i++) {
-			for (int j = i + 1; j < arr.length; j++) {
-				w[i][j] = w[i][j - 1] + arr[j] - arr[(i + j) / 2];
-			}
-		}
-		int[][] dp = new int[num][arr.length];
-		int[][] s = new int[num][arr.length];
-		for (int j = 0; j != arr.length; j++) {
-			dp[0][j] = w[0][j];
-			s[0][j] = 0;
-		}
-		int minK = 0;
-		int maxK = 0;
-		int cur = 0;
-		for (int i = 1; i < num; i++) {
-			for (int j = arr.length - 1; j > i; j--) {
-				minK = s[i - 1][j];
-				maxK = j == arr.length - 1 ? arr.length - 1 : s[i][j + 1];
-				dp[i][j] = Integer.MAX_VALUE;
-				for (int k = minK; k <= maxK; k++) {
-					cur = dp[i - 1][k] + w[k + 1][j];
-					if (cur <= dp[i][j]) {
-						dp[i][j] = cur;
-						s[i][j] = k;
-					}
-				}
-			}
-		}
-		return dp[num - 1][arr.length - 1];
-	}
 
 	// for test
 	public static int[] getSortedArray(int len, int range) {
@@ -166,8 +100,7 @@ public class Code03_PostOfficeProblem {
 		int[] arr = { 1,3,8,10,12 };
 		int num = 3;
 		System.out.println(minDis1(arr, num));
-		System.out.println(minDistances1(arr, num));
-		System.out.println(minDistances2(arr, num));
+		System.out.println(minDis2(arr, num));
 
 		int times = 100; // test time
 		int len = 1000; // test array length
@@ -185,7 +118,7 @@ public class Code03_PostOfficeProblem {
 			int office = (int) (Math.random() * p) + 1;
 			arr = getSortedArray(len, range);
 			start = System.currentTimeMillis();
-			res1 = minDistances1(arr, office);
+			res1 = minDis1(arr, office);
 			end = System.currentTimeMillis();
 			time1 += end - start;
 			start = System.currentTimeMillis();

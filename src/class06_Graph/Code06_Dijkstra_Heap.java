@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Code06_Dijkstra2 {//邻接矩阵表示--手写堆
+public class Code06_Dijkstra_Heap {//邻接矩阵表示--手写堆
     static final int MAX = 999999;
 
     static class Node {//邻接点

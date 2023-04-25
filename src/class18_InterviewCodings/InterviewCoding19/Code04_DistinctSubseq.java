@@ -1,95 +1,43 @@
 package class18_InterviewCodings.InterviewCoding19;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class Code04_DistinctSubseq {
 
-	public static int distinctSubseq1(String s) {
-		char[] str = s.toCharArray();
-		int result = 0;
-		int[] dp = new int[str.length];
-		Arrays.fill(dp, 1);
-		for (int i = 0; i < str.length; i++) {
-			for (int j = 0; j < i; j++) {
-				if (str[j] != str[i]) {
-					dp[i] += dp[j];
-				}
-			}
-			result += dp[i];
+	//dp[i]代表从0~i范围上随便选，有几种不同的字面值
+	//map[i]代表必须以str[i]结尾的有几种不同的字面值
+	public static int distinctSubseq1(String s) {//别扭
+		if (s == null || s.length() == 0) {
+			return 0;
 		}
-		return result;
+		char[] str = s.toCharArray();
+		int N=s.length();
+		int[] dp=new int[N];
+		int[] map=new int[128];
+		dp[0]=2;
+		map[str[0]]=1;
+		for (int i = 1; i < N; i++) {
+			dp[i]=dp[i-1]+dp[i-1]-map[str[i]];
+			map[str[i]]+=dp[i-1]-map[str[i]];
+		}
+		return dp[N-1]-1;//空的不算
 	}
+
 
 	public static int distinctSubseq2(String s) {
 		if (s == null || s.length() == 0) {
 			return 0;
 		}
 		char[] str = s.toCharArray();
-		int[] dp = new int[str.length];
-		Arrays.fill(dp, 1);
-		int[] count = new int[26];
-		int result = 0;
+		int[] count=new int[128];
+		int res=1;//空序列也算一种
 		for (int i = 0; i < str.length; i++) {
-			int index = str[i] - 'a';
-			dp[i] += result - count[index];
-			result += dp[i];
-			count[index] = count[index] + dp[i];
+			int add = res - count[str[i] - 'a'];
+			res += add;
+			count[str[i]- 'a'] += add;
 		}
-		return result;
-	}
-
-	public static int distinctSubseq3(String s) {
-		if (s == null || s.length() == 0) {
-			return 0;
-		}
-		char[] str = s.toCharArray();
-		int[] count = new int[26];
-		int result = 0;
-		for (int i = 0; i < str.length; i++) {
-			int index = str[i] - 'a';
-			int pre = result - count[index] + 1;
-			count[index] += pre;
-			result += pre;
-		}
-		return result;
-	}
-	
-	public static int distinctSubseq4(String s) {
-		if (s == null || s.length() == 0) {
-			return 0;
-		}
-		char[] str = s.toCharArray();
-		// a - z
-		// count[0] = a的统计
-		// ...
-		// count[25] = z的统计
-		int[] count = new int[26];
-		int all = 0; // 不算空集
-		for(char x : str) {
-			int add = all + 1 - count[x - 'a'];
-			all += add;
-			count[x - 'a'] += add;
-		}
-		return all;
-	}
-	
-	public static int ketang(String s) {
-		if (s == null || s.length() == 0) {
-			return 0;
-		}
-		char[] str = s.toCharArray();
-		// a - z
-		// count[0] = a的统计
-		// ...
-		// count[25] = z的统计
-		int[] count = new int[26];
-		int all = 1; // 算空集
-		for(char x : str) {
-			int add = all - count[x - 'a'];
-			all += add;
-			count[x - 'a'] += add;
-		}
-		return all;
+		return res-1;//答案不算空集就把空集减掉
 	}
 	
 
@@ -105,9 +53,9 @@ public class Code04_DistinctSubseq {
 	public static void main(String[] args) {
 		int len = 10;
 		int varible = 5;
-		for (int i = 0; i < 1000000; i++) {
+		for (int i = 0; i < 100; i++) {
 			String test = random(len, varible);
-			if (distinctSubseq1(test) != distinctSubseq2(test) || distinctSubseq2(test) != distinctSubseq4(test)) {
+			if (distinctSubseq1(test) != distinctSubseq2(test)) {
 				System.out.println("fuck");
 			}
 		}

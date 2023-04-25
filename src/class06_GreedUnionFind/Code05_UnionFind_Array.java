@@ -1,11 +1,8 @@
 package class06_GreedUnionFind;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
 
-public class Code05_UnionFind2 {//数组实现
+public class Code05_UnionFind_Array {//数组实现
 
     public static class UnionFind {
         private int [] parent;//给元素编号，默认从0开始,下标i就代表是第i号元素

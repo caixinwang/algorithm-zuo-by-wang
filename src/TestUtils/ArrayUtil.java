@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class ArrayUtil {
+
     /**
      * @param arr 数组
      * @return 返回一个和arr一样的数组
@@ -40,9 +41,12 @@ public class ArrayUtil {
     public void printArr(int[] arr) {
         if (arr == null)
             return;
-        for (int a : arr) {
-            System.out.print(a + " ");
+        System.out.printf("数组长度%s:{",arr.length);
+        for (int i = 0; i < arr.length; i++) {
+            if (i!=0) System.out.printf(",");
+            System.out.printf("%2d",arr[i]);
         }
+        System.out.printf("}");
         System.out.println();
     }
 
