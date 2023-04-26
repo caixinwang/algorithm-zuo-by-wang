@@ -67,57 +67,73 @@ public class Code04_MergeRecord {
 	}
 
 	public static int[] reversePair2(int[] originArr, int[] reverseArr, int power) {
-		int[] reverse = copyArray(originArr);
-		reversePart(reverse, 0, reverse.length - 1);
-		int[] recordDown = new int[power + 1];
-		int[] recordUp = new int[power + 1];
-		process(originArr, 0, originArr.length - 1, power, recordDown);
-		process(reverse, 0, reverse.length - 1, power, recordUp);
-		int[] ans = new int[reverseArr.length];
+		int[] reverseOriginArr=new int[originArr.length];
+		System.arraycopy(originArr, 0, reverseOriginArr, 0, reverseOriginArr.length);
+		reversePart(reverseOriginArr,0,reverseOriginArr.length-1);
+		int[] dp1=new int[power+1];
+		int[] dp2=new int[power+1];
+		process(originArr,0,originArr.length-1,power,dp1);
+		process(reverseOriginArr,0,reverseOriginArr.length-1,power,dp2);
+		int[] ans=new int[reverseArr.length];
 		for (int i = 0; i < reverseArr.length; i++) {
-			int curPower = reverseArr[i];
-			for (int p = 1; p <= curPower; p++) {
-				int tmp = recordDown[p];
-				recordDown[p] = recordUp[p];
-				recordUp[p] = tmp;
+			int pow=reverseArr[i];
+			for (int p = 0; p <= pow; p++) {// <=pow的位置全部都要交换
+				int t=dp1[p];
+				dp1[p]=dp2[p];
+				dp2[p]=t;
 			}
-			for (int p = 1; p <= power; p++) {
-				ans[i] += recordDown[p];
+			for (int val : dp1) {
+				ans[i] += val;
 			}
 		}
 		return ans;
 	}
 
-	// arr[L...R] 一共有2的power次方个数
-	// arr[0...7] 一共有2的3次方个数
-	public static void process(int[] arr, int L, int R, int power, int[] record) {
-		if (L == R) {
-			return;
-		}
-		int mid = L + ((R - L) >> 1);
-		process(arr, L, mid, power - 1, record);
-		process(arr, mid + 1, R, power - 1, record);
-		record[power] += merge(arr, L, mid, R);
+	/**
+	 * 从本质来说，归并排序就是用分治法去求一个arr中的所有逆序对。一个数组拆分为两半，逆序对来自于左边和右边，以及跨越左右边。
+	 * merge相当于就是求了跨越左右两边的。但是这里我们不是求总的逆序对个数。我们要的是按照某个大小来分组，求所有组的组内的逆序对
+	 * 个数之和。根据组的大小2^power 填到record[power]数组里面。事实上就是把原本的逆序对的总数分散到了Record数组里面了。
+	 * 我递归调用的时候，子问题没有把自己内部的总数告诉我，所以我们在父问题存的时候只存了跨越两个区间的逆序对。Record的总和
+	 * 才是原本的逆序对的总数。由于我们的Record只存了，跨越区间的逆序对。那么如果我将2^power大小的组每个都去reverse了，
+	 * 大于2^power的那些大组不受影响，因为我们只记录了跨越区间的逆序对。你只需要去更小的区间去交换正序对和逆序对即可
+	 * @param arr 统计数组[L...R]范围内的数，并且将它每组内的逆序对的总数之和，填到record[power]上
+	 * @param l -
+	 * @param r -
+	 * @param power arr[L..R]上面数的总数为 2^power
+	 * @param record -
+	 */
+	public static void process(int[] arr, int l, int r, int power, int[] record) {
+		if (l==r) return;//如果L==R，那么power==1，此时没有逆序对，不需要到填到record里面
+		int mid=l+(r-l>>1);
+		process(arr,l,mid,power-1,record);
+		process(arr,mid+1,r,power-1,record);
+		record[power]+=merge(arr,l,mid,r);
 	}
 
-	public static int merge(int[] arr, int L, int m, int r) {
-		int[] help = new int[r - L + 1];
-		int i = 0;
-		int p1 = L;
-		int p2 = m + 1;
-		int ans = 0;
-		while (p1 <= m && p2 <= r) {
-			ans += arr[p1] > arr[p2] ? (m - p1 + 1) : 0;
-			help[i++] = arr[p1] <= arr[p2] ? arr[p1++] : arr[p2++];
+	public static int merge(int[] arr, int l, int m, int r) {
+		int p1=l,p2=m+1;
+		int[] help=new int[r-l+1];
+		for (int i = 0; i < help.length; i++) {
+			help[i]=arr[l+i];
 		}
-		while (p1 <= m) {
-			help[i++] = arr[p1++];
+		int i=0;
+		int ans=0;//这一个小组的逆序对个数
+		while(p1<=m&&p2<=r){
+			if (arr[p1]>arr[p2]){
+				ans+=m-p1+1;//差别就在这里，我p1>p2了，arr[p1~m]全部都大于p2
+				help[i++]=arr[p2++];
+			}else {
+				help[i++]=arr[p1++];
+			}
 		}
-		while (p2 <= r) {
-			help[i++] = arr[p2++];
+		while(p1<=m){
+			help[i++]=arr[p1++];
 		}
-		for (i = 0; i < help.length; i++) {
-			arr[L + i] = help[i];
+		while(p2<=r){
+			help[i++]=arr[p2++];
+		}
+		for (int k = 0; k < help.length; k++) {
+			arr[l+k]=help[k];
 		}
 		return ans;
 	}
