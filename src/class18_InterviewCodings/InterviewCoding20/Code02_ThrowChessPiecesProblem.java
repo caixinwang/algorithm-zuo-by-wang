@@ -24,7 +24,7 @@ public class Code02_ThrowChessPiecesProblem {
 		return min;
 	}
 
-	public static int solution2(int nLevel, int kChess) {
+	public static int solution2(int nLevel, int kChess) {//直接暴力递归改动态规划
 		if (nLevel<1||kChess<1) return 0;
 		int[][] dp=new int[nLevel+1][kChess+1];
 		//dp[0][j]=0
@@ -44,7 +44,7 @@ public class Code02_ThrowChessPiecesProblem {
 		return dp[nLevel][kChess];
 	}
 
-	public static int solution3(int nLevel, int kChess) {
+	public static int solution3(int nLevel, int kChess) {//空间压缩
 		if (nLevel < 1 || kChess < 1) {
 			return 0;
 		}
