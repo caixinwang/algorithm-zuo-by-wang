@@ -243,15 +243,15 @@ public class Code04_WordSearch {
 //        System.out.println(res1);//针对返回值的操作
 //        System.out.println(res2);//针对返回值的操作
         System.out.print("res1:");
-        stringUtil.printList(res1);
+        stringUtil.printStrList(res1);
         System.out.println(res1==null?"res1==null":"no null");
         System.out.println();
         System.out.print("res2:");
-        stringUtil.printList(res2);
+        stringUtil.printStrList(res2);
         System.out.println(res2==null?"res2==null":"no null");
         System.out.println();
         System.out.print("words:");
-        stringUtil.printArr(parameter2);
+        stringUtil.printStrArr(parameter2);
         System.out.println();
         System.out.println(isok ? "success" : "fail");
     }

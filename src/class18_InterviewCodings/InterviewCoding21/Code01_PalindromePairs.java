@@ -1,113 +1,312 @@
 package class18_InterviewCodings.InterviewCoding21;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import TestUtils.ArrayUtil;
+import TestUtils.StringUtil;
+
+import java.util.*;
 
 public class Code01_PalindromePairs {
 
-	//   [ [0,1]   [3, 8]        ]  
-	public static List<List<Integer>> palindromePairs(String[] words) {
-		HashMap<String, Integer> wordset = new HashMap<>();
+	//
+	public static List<List<Integer>>  palindromePairs(String[] words){
+		if (words==null||words.length<2) return null;
+		HashMap<String,Integer> indexMap=new HashMap<>();
 		for (int i = 0; i < words.length; i++) {
-			wordset.put(words[i], i);//有重复下标的时候value就放一个装着下标的List。这里我们认为无重复字符串
+			indexMap.put(words[i],i);//字符串不重复
 		}
-		List<List<Integer>> res = new ArrayList<>();
-		for (int i = 0; i < words.length; i++) {
-			res.addAll(findAll(words[i], i, wordset));
-		}
-		return res;
-	}
-
-	public static List<List<Integer>> findAll(String word, int index,
-			HashMap<String, Integer> words) {
-		List<List<Integer>> res = new ArrayList<>();
-		String reverse = reverse(word);
-		Integer rest = words.get("");
-		if (rest != null && rest != index && word.equals(reverse)) {
-			addRecord(res, rest, index);
-			addRecord(res, index, rest);
-		}
-		int[] rs = manacherss(word);
-		int mid = rs.length >> 1;
-		for (int i = 1; i < mid; i++) {
-			if (i - rs[i] == -1) {
-				rest = words.get(reverse.substring(0, mid - i));
-				if (rest != null && rest != index) {
-					addRecord(res, rest, index);
+		List<List<Integer>> ans=new ArrayList<>();
+		for (int j = 0; j < words.length; j++) {
+			String word=words[j];
+			String reword = reverse(word);
+			if (word.equals("")){
+				for (int i = 0; i < words.length; i++) {
+					if (i!=j&&isPalindrome(words[i])){//不能是空串自己
+						addAns(ans,i,j);
+						addAns(ans,j,i);
+					}
 				}
+				continue;
 			}
-		}
-		for (int i = mid + 1; i < rs.length; i++) {
-			if (i + rs[i] == rs.length) {
-				rest = words.get(reverse.substring((mid << 1) - i));
-				if (rest != null && rest != index) {
-					addRecord(res, index, rest);
+			if (indexMap.containsKey(reword)){//没有前缀,整体看一下
+				addAns(ans,indexMap.get(reword),j);
+			}
+			int[] parr = manacher(word);//word[0~i]前缀串如果是回文串，那么parr[i+1]=i+1
+			int p=0;//0~p的前缀串是回文串我才看
+			while(p<word.length()-1){//全是前缀对应找空串，这个我们处理过了
+				if (p+1==parr[p+1]){//说明word[0~p]是一个前缀串
+					String other = word.substring(p + 1);//后面的那一部分
+					String reverse = reverse(other);
+					if (indexMap.containsKey(reverse)){
+						List<Integer> pair=new ArrayList<>();
+						pair.add(indexMap.get(reverse));
+						pair.add(j);
+						ans.add(pair);
+					}
 				}
+				p++;
 			}
-		}
-		return res;
-	}
-
-	public static void addRecord(List<List<Integer>> res, int left, int right) {
-		List<Integer> newr = new ArrayList<>();
-		newr.add(left);
-		newr.add(right);
-		res.add(newr);
-	}
-
-	public static int[] manacherss(String word) {
-		char[] mchs = manachercs(word);
-		int[] rs = new int[mchs.length];
-		int center = -1;
-		int pr = -1;
-		for (int i = 0; i != mchs.length; i++) {
-			rs[i] = pr > i ? Math.min(rs[(center << 1) - i], pr - i) : 1;
-			while (i + rs[i] < mchs.length && i - rs[i] > -1) {
-				if (mchs[i + rs[i]] != mchs[i - rs[i]]) {
-					break;
+			parr=manacher(reword);//parr对应的是后缀串
+			p=0;//0~p前缀串代表N-1-p~N-1
+			while(p<word.length()-1){//全是后缀对应找空串，这个我们处理过了
+				if (p+1==parr[p+1]){//说明reword[0~p]前缀串是一个回文,那么说明word[N-1-p,N-1]后缀串是回文
+					String other = word.substring(0,word.length()-1-p);//word[0~N-1-p-1]
+					String reverse = reverse(other);
+					if (indexMap.containsKey(reverse)){
+						List<Integer> pair=new ArrayList<>();
+						pair.add(j);
+						pair.add(indexMap.get(reverse));
+						ans.add(pair);
+					}
 				}
-				rs[i]++;
-			}
-			if (i + rs[i] > pr) {
-				pr = i + rs[i];
-				center = i;
+				p++;
 			}
 		}
-		return rs;
+		return ans;
 	}
 
-	public static char[] manachercs(String word) {
-		char[] chs = word.toCharArray();
-		char[] mchs = new char[chs.length * 2 + 1];
+	public static void addAns(List<List<Integer>> ans,int i,int j){
+		if (i==j) return;
+		List<Integer> pair=new ArrayList<>();
+		pair.add(i);
+		pair.add(j);
+		ans.add(pair);
+	}
+
+	public static String reverse(String s){
+		if (s==null||s.length()<=1) return s;
+		char[] str = s.toCharArray();
+		int l=0,r=str.length-1;
+		while(l<r){
+			char t=str[l];
+			str[l]=str[r];
+			str[r]=t;
+			l++;
+			r--;
+		}
+		return String.valueOf(str);
+	}
+
+	public static int[] manacher(String s) {//直接由right2改过来
+		if (s == null || s.length() == 0) return null;
+		char[] str = manacherString(s);//垫上#
+		int[] arr=new int[str.length];//每个位置出发匹配的最大回文半径
+		int c=-1;//c是目前到达的最右的回文串，这个回文串是从c位置向左右两边扩展出来的
+		int r=-1;//r是目前到达的最右的回文串的右边界，包含, ..r]
+		int max=0;
+		for (int i = 0; i < str.length; i++) {
+			int p=i>r?0:Math.min(r-i,arr[2*c-i]);//p代表此时i位置作为中心的回文半径，只有i<r之前的记录才能帮到你，并且最多帮你到r位置
+			while(i-p>0&&i+p<str.length-1&&str[i-p-1]==str[i+p+1]){//越界了或者不等了就出while
+				p++;//半径一直阔，阔到不能再扩，停
+			}
+			if (i+p>r){//判断一下我们的帮助信息需不需要更新,i出发的回文串比r还右就更新
+				r=i+p;
+				c=i;
+			}
+			arr[i]=p;//更新辅助结构
+			//越界或者str[r+1]!=str[l-1]
+			max = Math.max(max,p);
+		}
+		return arr;
+	}
+
+	public static char[] manacherString(String str) {
+		char[] charArr = str.toCharArray();
+		char[] res = new char[str.length() * 2 + 1];
 		int index = 0;
-		for (int i = 0; i != mchs.length; i++) {
-			mchs[i] = (i & 1) == 0 ? '#' : chs[index++];
+		for (int i = 0; i != res.length; i++) {//#永远都是在偶数位置
+			res[i] = (i & 1) == 0 ? '#' : charArr[index++];
 		}
-		return mchs;
+		return res;
 	}
 
-	public static String reverse(String str) {
-		char[] chs = str.toCharArray();
-		int l = 0;
-		int r = chs.length - 1;
-		while (l < r) {
-			char tmp = chs[l];
-			chs[l++] = chs[r];
-			chs[r--] = tmp;
+	public static boolean isPalindrome(String s){
+		if (s==null) return false;
+		if (s.length()==0||s.length()==1) return true;
+		char[] str = s.toCharArray();
+		int N=str.length;
+		char[] reverse=reverse(s).toCharArray();
+		for (int i = 0; i < reverse.length; i++) {
+			if (reverse[i]!=str[i]) return false;
 		}
-		return String.valueOf(chs);
+		return true;
+	}
+
+	public static List<List<Integer>> palindromePairs2(String[] words) {
+		if (words==null||words.length<2) return null;
+		HashMap<String,List<Pari>> map=new HashMap<>();
+		for (int i = 0; i < words.length; i++) {
+			for (int j = 0; j < words.length; j++) {
+				if (j!=i){
+					String s =words[i]+words[j];
+					if (!map.containsKey(s))  map.put(s,new ArrayList<>());
+					map.get(s).add(new Pari(i,j));
+				}
+			}
+		}
+		List<List<Integer>> res=new ArrayList<>();
+		for (String s : map.keySet()) {
+			if (isPalindrome(s)){
+				List<Pari> paris = map.get(s);
+				for (Pari pari : paris) {
+					List<Integer> list=new ArrayList<>();
+					list.add(pari.x);
+					list.add(pari.y);
+					res.add(list);
+				}
+			}
+		}
+		return res;
+	}
+
+	static class Pari{
+		public int x;
+		public int y;
+
+		public Pari(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj==null) return false;
+			Pari p= (Pari) obj;
+			return x==p.x&&y==p.y;
+		}
+	}
+
+	static class PairComparator implements Comparator<Pari>{
+		@Override
+		public int compare(Pari o1, Pari o2) {
+			return o1.x!=o2.x?o1.x-o2.x:o1.y-o2.y;
+		}
+	}
+
+	//for test {[1,2],[2,3],[2,4]}  =>  {Paris}
+	public static boolean equals( List<List<Integer>> lists1, List<List<Integer>> lists2){
+		if (lists1==null&&lists2==null)  return true;
+		if (lists1==null||lists2==null) return false;
+		if(lists1.size()!=lists2.size()) return false;
+		List<Pari> l1=new ArrayList<>();
+		List<Pari> l2=new ArrayList<>();
+		for (List<Integer> list : lists1) {
+			if (list.size()!=2) return false;
+			Pari p=new Pari(list.get(0),list.get(1));
+			l1.add(p);
+		}
+		for (List<Integer> list : lists2) {
+			if (list.size()!=2) return false;
+			Pari p=new Pari(list.get(0),list.get(1));
+			l2.add(p);
+		}
+		Collections.sort(l1,new PairComparator());
+		Collections.sort(l2,new PairComparator());
+		for (int i = 0; i < l1.size(); i++) {
+			if (!l1.get(i).equals(l2.get(i))) return false;
+		}
+		return true;
+	}
+
+	public static void  test1(){
+		List<List<Integer>> lists1=new ArrayList<>();
+		List<Integer> list1=new ArrayList<>();
+		list1.add(1);
+		list1.add(2);
+		List<Integer> list2=new ArrayList<>();
+		list2.add(2);
+		list2.add(4);
+		List<Integer> list3=new ArrayList<>();
+		list3.add(6);
+		list3.add(7);
+		lists1.add(list1);
+		lists1.add(list2);
+		lists1.add(list3);
+
+		List<List<Integer>> lists2=new ArrayList<>();
+		List<Integer> listb=new ArrayList<>();
+		listb.add(2);
+		listb.add(4);
+		List<Integer> lista=new ArrayList<>();
+		lista.add(1);
+		lista.add(2);
+		List<Integer> listc=new ArrayList<>();
+		listc.add(6);
+		listc.add(7);
+		lists2.add(lista);
+		lists2.add(listb);
+		lists2.add(listc);
+
+		System.out.println(equals(lists1,lists2));
+	}
+
+	public static void test2(){
+		System.out.println(isPalindrome("12321"));
+		System.out.println(isPalindrome("abaaba"));
+		System.out.println(isPalindrome("123211"));
+	}
+
+	public static void testForStringArr() {//参数为String[]
+		StringUtil stringUtil = new StringUtil();
+		int times = 1000;//测试次数
+		long time1 = 0, time2 = 0;
+		boolean isok = true;
+		int maxSize = 5;//String长度在[0~maxSize]随机
+		int arrSize = 100;
+
+//        int parameter1=0;//测试函数的参数
+//        int maxParameter1=100;//参数1在[0,maxParameter1]随机
+
+		String[] t1 = null;
+//        String[] t2=null;
+
+		List<List<Integer>> res1 = null, res2 = null;
+		for (int i = 0; i < times; i++) {
+//            parameter1=arrayUtil.ran(maxParameter1);
+			t1 = stringUtil.generateRandomStringArrNoRepeat(stringUtil.ran(arrSize), stringUtil.ran(maxSize));
+
+//        t2= stringUtil.generateRandomStringArrNoRepeat(stringUtil.ran(arrSize), stringUtil.ran(maxSize));
+
+//        t1= stringUtil.generateRandomStringArr(stringUtil.ran(arrSize), stringUtil.ran(maxSize));
+//        t2= stringUtil.generateRandomStringArr(stringUtil.ran(arrSize), stringUtil.ran(maxSize));
+//			System.out.println("====================================");
+//			stringUtil.printStrArr(t1);
+			long l = System.currentTimeMillis();
+			res1 = palindromePairs(t1);
+//			System.out.println(res1);//针对返回值的操作
+			time1 += System.currentTimeMillis() - l;
+			l = System.currentTimeMillis();
+			res2 = palindromePairs2(t1);
+//			System.out.println(res2);//针对返回值的操作
+			time2 += System.currentTimeMillis() - l;
+//			System.out.println("====================================");
+			if (!equals(res1,res2)) {
+				isok = false;
+				break;
+			}
+		}
+
+		System.out.println("================"+(isok?"测试成功":"测试失败")+"===================");
+		stringUtil.printStrArr(t1);
+//        System.out.println("t2:"+t2);
+//        System.out.println("parameter1:"+parameter1);//打印参数
+		if (isok) System.out.println("m1 cost " + time1 + "ms");
+		System.out.println(res1);//针对返回值的操作
+		if (isok) System.out.println("m2 cost " + time2 + "ms");
+		System.out.println(res2);//针对返回值的操作
+		System.out.println(isok ? "success" : "fail");
+		System.out.println("================"+(isok?"测试成功":"测试失败")+"===================");
+
+	}
+
+	public static void test3(){
+		ArrayUtil arrayUtil=new ArrayUtil();
 	}
 
 	public static void main(String[] args) {
-		String test = "112321";
-		System.out.println(String.valueOf(manachercs(test)));
-		int[] arr = manacherss(test);
-		for (int i = 0; i < arr.length; i++) {
-			System.out.print(arr[i] + " ");
-		}
-		System.out.println();
-
+//		test1();
+//		test2();
+		testForStringArr();
+//		test3();
 	}
 
 }
