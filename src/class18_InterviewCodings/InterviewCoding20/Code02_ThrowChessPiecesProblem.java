@@ -3,49 +3,42 @@ package class18_InterviewCodings.InterviewCoding20;
 public class Code02_ThrowChessPiecesProblem {
 
 	public static int solution1(int nLevel, int kChess) {
-		if (nLevel < 1 || kChess < 1) {
-			return 0;
-		}
-		return Process1(nLevel, kChess);
+		if (nLevel<1||kChess<1) return 0;
+		return process1(nLevel,kChess);
 	}
 
-	// rest还剩多少层楼需要去验证
-	// k还有多少颗棋子能够使用
-	// 一定要验证出最高的不会碎的楼层！但是每次都是坏运气。
-	// 返回至少需要扔几次？
-	public static int Process1(int rest, int k) {
-		if (rest == 0) {
-			return 0;
+	/**
+	 * 因为运气很差，所以本题就是在所有的最坏情况中取最小的。你可以到1~rest中的任何一层i扔。
+	 * i如果碎了就还剩i-1层要验证。i没碎就去上面去验证
+	 * @param rest 还剩多少层楼需要去验证
+	 * @param k 还有多少颗棋子能够使用
+	 * @return 一定要验证出最高的不会碎的楼层,但是每次都是坏运气,返回至少需要扔几次
+	 */
+	public static int process1(int rest, int k) {
+		if (rest==0) return 0;
+		if (k==1) return rest;
+		int min=Integer.MAX_VALUE;
+		for (int i = 1; i <= rest  ; i++) {
+			min = Math.min(min, Math.max(1+process1(rest-i,k),1+process1(i-1,k-1)));
 		}
-		if (k == 1) {
-			return rest;
-		}
-		int min = Integer.MAX_VALUE;
-		for (int i = 1; i != rest + 1; i++) { // 第一次扔的时候，仍在了i层
-			min = Math.min(min,
-					Math.max(Process1(i - 1, k - 1), Process1(rest - i, k)));
-		}
-		return min + 1;
+		return min;
 	}
 
 	public static int solution2(int nLevel, int kChess) {
-		if (nLevel < 1 || kChess < 1) {
-			return 0;
+		if (nLevel<1||kChess<1) return 0;
+		int[][] dp=new int[nLevel+1][kChess+1];
+		//dp[0][j]=0
+		//第一列无意义
+		for (int i = 0; i <= nLevel; i++) {//第二列
+			dp[i][1]=i;
 		}
-		if (kChess == 1) {
-			return nLevel;
-		}
-		int[][] dp = new int[nLevel + 1][kChess + 1];
-		for (int i = 1; i != dp.length; i++) {
-			dp[i][1] = i;
-		}
-		for (int i = 1; i != dp.length; i++) {
-			for (int j = 2; j != dp[0].length; j++) {
-				int min = Integer.MAX_VALUE;
-				for (int k = 1; k != i + 1; k++) {
-					min = Math.min(min, Math.max(dp[k - 1][j - 1], dp[i - k][j]));
+		for (int rest = 1; rest <= nLevel; rest++) {
+			for (int k = 2; k <= kChess; k++) {
+				int min=Integer.MAX_VALUE;
+				for (int i = 1; i <= rest  ; i++) {
+					min = Math.min(min, Math.max(1+dp[rest-i][k],1+dp[i-1][k-1]));
 				}
-				dp[i][j] = min + 1;
+				dp[rest][k]= min;
 			}
 		}
 		return dp[nLevel][kChess];
@@ -79,34 +72,32 @@ public class Code02_ThrowChessPiecesProblem {
 	}
 
 	public static int solution4(int nLevel, int kChess) {
-		if (nLevel < 1 || kChess < 1) {
-			return 0;
+		if (nLevel<1||kChess<1) return 0;
+		int[][] dp=new int[nLevel+1][kChess+1];
+		int[][] best=new int[nLevel+1][kChess+1];
+		for (int i = 0; i < best.length; i++) {
+			for (int j = 0; j < best[0].length; j++) {
+				best[i][j]=-1;
+			}
 		}
-		if (kChess == 1) {
-			return nLevel;
+		//dp[0][j]=0
+		//第一列无意义
+		for (int i = 0; i <= nLevel; i++) {//第二列
+			dp[i][1]=i;
+//			best[i][1]=i;//加不加都可以跑对
 		}
-		int[][] dp = new int[nLevel + 1][kChess + 1];
-		for (int i = 1; i != dp.length; i++) {
-			dp[i][1] = i;
-		}
-		int[] cands = new int[kChess + 1];
-		for (int i = 1; i != dp[0].length; i++) {
-			dp[1][i] = 1;
-			cands[i] = 1;
-		}
-		for (int i = 2; i < nLevel + 1; i++) {
-			for (int j = kChess; j > 1; j--) {
-				int min = Integer.MAX_VALUE;
-				int minEnum = cands[j];
-				int maxEnum = j == kChess ? i / 2 + 1 : cands[j + 1];
-				for (int k = minEnum; k < maxEnum + 1; k++) {
-					int cur = Math.max(dp[k - 1][j - 1], dp[i - k][j]);
-					if (cur <= min) {
-						min = cur;
-						cands[j] = k;
+		for (int rest = 1; rest <= nLevel; rest++) {
+			for (int k = 2; k <= kChess; k++) {
+				int min=Integer.MAX_VALUE;
+				int bottom=best[rest-1][k]!=-1?best[rest-1][k]:1;
+				int limit=(k+1<=kChess&&best[rest][k+1]!=-1)?best[rest][k+1]:rest;
+				for (int i = bottom; i <= limit  ; i++) {
+					if (Math.max(1+dp[rest-i][k],1+dp[i-1][k-1])<min){
+						min=Math.max(1+dp[rest-i][k],1+dp[i-1][k-1]);
+						best[rest][k]=i;
 					}
 				}
-				dp[i][j] = min + 1;
+				dp[rest][k]= min;
 			}
 		}
 		return dp[nLevel][kChess];
