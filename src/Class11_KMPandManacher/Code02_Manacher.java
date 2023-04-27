@@ -33,6 +33,26 @@ public class Code02_Manacher {
         return max;
     }
 
+    /**
+     * 只返回parr--长度为原始字符串的两倍+1。parr[i+1]=i+1则代表原始字符串s[0...i]的前缀串是回文串。
+     */
+    public static int[] manacherParr(String s) {
+        if (s == null || s.length() == 0) return null;
+        char[] str = manacherString(s);
+        int[] parr=new int[str.length];
+        int c=-1,r=-1,p=0;//[c-p,r] r=c+p
+        for (int i = 0; i < str.length; i++) {
+            p=i<=r?Math.min(r-i,parr[2*c-i]):0;
+            while(i-p-1>=0&&i+p+1<str.length&&str[i-p-1]==str[i+p+1])  p++;
+            if (i+p>r){
+                c=i;
+                r=i+p;
+            }
+            parr[i]=p;
+        }
+        return parr;
+    }
+
     public static char[] manacherString(String str) {
         char[] charArr = str.toCharArray();
         char[] res = new char[str.length() * 2 + 1];
