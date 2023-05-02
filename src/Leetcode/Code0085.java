@@ -48,15 +48,15 @@ public class Code0085 {//单调栈--最大矩形面积
         for (int i = 0; i < arr.length; i++) {
             while (!stack.isEmpty() && arr[i]<arr[stack.peek()]){
                 Integer index = stack.pop();
-                int left=stack.isEmpty()?-1:stack.peek();
+                int left=stack.isEmpty()?-1:stack.peek();//如果栈空了，说明pop左边没有比它小的
                 int right=i;
-                res = Math.max(res, arr[index]*(right-left-1));
+                res = Math.max(res, arr[index]*(right-left-1));//高度乘以宽度
             }
             stack.push(i);
         }
         while(!stack.isEmpty()){
             Integer index = stack.pop();
-            int right=arr.length;
+            int right=arr.length;//右边没有比自己小的
             int left=stack.isEmpty()?-1:stack.peek();
             res = Math.max(res, arr[index]*(right-left-1));
         }

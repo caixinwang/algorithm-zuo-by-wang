@@ -19,30 +19,27 @@ public class Code04_MaximalRectangle {
 		return maxArea;
 	}
 
-	// height是正方图数组
-	public static int maxRecFromBottom(int[] height) {
-		if (height == null || height.length == 0) {
-			return 0;
-		}
-		int maxArea = 0;
-		// 左右两侧离最近，小的 ,,,,  底  -> 顶        小   ->  大
-		Stack<Integer> stack = new Stack<Integer>();
-		for (int i = 0; i < height.length; i++) {
-			while (!stack.isEmpty() && height[i] <= height[stack.peek()]) {
-				int j = stack.pop(); // 结算哪个位置的答案
-				int k = stack.isEmpty() ? -1 : stack.peek(); // 左边不能扩到的位置
-				int curArea = (i - k - 1) * height[j];
-				maxArea = Math.max(maxArea, curArea);
+	// height是直方图数组
+	public static int maxRecFromBottom(int[] arr) {
+		if (arr==null||arr.length==0) return 0;
+		int max=0;
+		Stack<Integer> stack=new Stack<>();
+		for (int i = 0; i < arr.length; i++) {
+			while(!stack.isEmpty()&&arr[i]<arr[stack.peek()]){
+				Integer pop = stack.pop();
+				int left=stack.isEmpty()?-1:stack.peek();
+				int right=i;
+				max = Math.max(max, arr[pop]*(right-left-1));
 			}
 			stack.push(i);
 		}
-		while (!stack.isEmpty()) {
-			int j = stack.pop();
-			int k = stack.isEmpty() ? -1 : stack.peek();
-			int curArea = (height.length - k - 1) * height[j];
-			maxArea = Math.max(maxArea, curArea);
+		while(!stack.isEmpty()){
+			Integer pop = stack.pop();
+			int left=stack.isEmpty()?-1:stack.peek();
+			int right=arr.length;
+			max = Math.max(max, arr[pop]*(right-left-1));
 		}
-		return maxArea;
+		return max;
 	}
 
 	public static void main(String[] args) {
